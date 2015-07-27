@@ -1,0 +1,10 @@
+{
+  "name": "PaCM",
+  "app_id": "",
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "http://192.168.0.102:57080/"
+    }
+  ]
+}
