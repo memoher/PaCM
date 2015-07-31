@@ -2,46 +2,48 @@
 
     angular.module('starter.controllers', [])
 
-            .controller('newCtrl', function ($scope, dbContext) {
+            .controller('newCtrl', function ($scope) {
 
             })
 
-            .controller('recordsCtrl', function ($scope, dbContext) {
+            .controller('recordsCtrl', function ($scope) {
 
             })
 
-            .controller('toolsCtrl', function ($scope, dbContext, synchronizeDataService) {
+            .controller('toolsCtrl', function ($scope, dbContext) {
 
                 $scope.runningProcess = false;
                 
                 $scope.installDatabase = function () {
                     $scope.runningProcess = true;
                     dbContext.installDatabase(
-                        function () {
+                        function (successMessage) {
                             $scope.runningProcess = false;
                             $scope.$apply();
+                            alert(successMessage);
                         },
                         function (errorMessage) {
                             $scope.runningProcess = false;
                             $scope.$apply();
                             alert(errorMessage);
                         },
-                        true);
+                        false);
                 };
                 
                 $scope.importData = function () {
                     $scope.runningProcess = true;
                     dbContext.importData(
-                        function () {
+                        function (successMessage) {
                             $scope.runningProcess = false;
                             $scope.$apply();
+                            alert(successMessage);
                         },
                         function (errorMessage) {
                             $scope.runningProcess = false;
                             $scope.$apply();
                             alert(errorMessage);
                         },
-                        true);
+                        false);
                 };
             })
 
@@ -67,7 +69,7 @@
                 };
             })
 
-            .controller('maintenanceCtrl', function ($scope, dbContext) {
+            .controller('maintenanceCtrl', function ($scope) {
                 $scope.model = {};
             })
 

@@ -61,7 +61,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
     })
 
-    .run(function ($ionicPlatform, dbContext) {
+    .run(function ($ionicPlatform) {
 
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -77,15 +77,15 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
             }
         });
         
-        dbContext.beginTransaction(function (tx) {
-            tx
-            .insert('CfgCountries', { name: 'Colombia', guid: '123' })
-            .insert('CfgCountries', { name: 'Perú', guid: '456' })
-            .insert('CfgCountries', { name: 'Argentina', guid: '456' })
-            .insert('CfgCountries', { name: 'Venezuela', guid: '456' })
-            .insert('CfgCountries', { name: 'Panamá', guid: '456' })
-            ;
-        });
+//        dbContext.beginTransaction(function (tx) {
+//            tx
+//            .insert('CfgCountries', { name: 'Colombia', guid: '123' })
+//            .insert('CfgCountries', { name: 'Perú', guid: '456' })
+//            .insert('CfgCountries', { name: 'Argentina', guid: '456' })
+//            .insert('CfgCountries', { name: 'Venezuela', guid: '456' })
+//            .insert('CfgCountries', { name: 'Panamá', guid: '456' })
+//            ;
+//        });
 
 //        dbContext.beginTransaction(function (tx) {
 //            console.debug(new Date(), 1);
