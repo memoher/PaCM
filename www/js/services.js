@@ -218,12 +218,14 @@ angular.module('starter.services', [])
                 var _dbContext = this;
                 
                 //Este método se encarga de generar todas las tablas en la base de datos
-                
+                alert(0);
                 _dbContext.beginTransaction(function (tx) {
+                    alert(1);
                     tx
                     .executeSql("SELECT 1")
-                    .then(function () { return tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")'); })
+                    .then(function () { alert(2); return tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")'); })
                     .then(function (sqlResultSet) {
+                        alert(3);
                         //Elimina todas las tablas
                         var promises = [];
                         PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
@@ -233,7 +235,7 @@ angular.module('starter.services', [])
                         });
                         return Promise.all(promises);
                     })
-                    .then(function () { return tx.executeSql('create table AppSettings ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null )'); })
+                    .then(function () { alert(4); return tx.executeSql('create table AppSettings ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null )'); })
                     .then(function () { return tx.executeSql('create table AppFiles ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT not null, MIMEType TEXT, Encoding TEXT not null )'); })
                     .then(function () { return tx.executeSql('create table AppKeys ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Salt TEXT not null, Hash TEXT not null )'); })
                     .then(function () { return tx.executeSql('create table AppUsers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Username TEXT not null, FirstName TEXT not null, LastName TEXT not null, EmailAddress TEXT not null, Administrator BOOL not null, Enabled BOOL not null, PasswordId BIGINT not null, constraint FK_User_PasswordId foreign key (PasswordId) references AppKeys )'); })
@@ -274,6 +276,7 @@ angular.module('starter.services', [])
                         }
                     })
                     .catch(function (sqlError) {
+                        alert(5);
                         if (typeof(onError) === 'function') {
                             if (sqlError && sqlError.code) {
                                 var errorMessage = 'ERROR: ' + sqlError.code + ': ' + sqlError.message;
