@@ -1,1 +1,5 @@
 /* Empty. Add your own CSS if you like */
+
+.pane.tab-content.has-header {
+    top: 44px;
+}

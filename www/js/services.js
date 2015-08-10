@@ -2,18 +2,31 @@
 
 angular.module('starter.services', [])
 
-    .factory('dbContext', function ($http) {
+    .factory('guidGenerator', function () {
+
+        var _s4 = function () {
+            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+        };
+        
+        return {
+            new: function () {
+                return _s4() + _s4() + '-' + _s4() + '-' + _s4() + '-' + _s4() + '-' + _s4() + _s4() + _s4();
+            }
+        };
+    })
+
+    .factory('dbContext', function ($http, guidGenerator) {
 
         var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.102:57080/';
         var _importTables = [
             'AppSettings', 'AppFiles', 'AppKeys', 'AppUsers', 'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 'CfgCompany', 'CfgCustomers',
-            'MntMachineTrademark', 'MntMachineModels', 'MntMachines',
+            'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntConnectorTypes', 'MntConnectors', 'MntBatteryTypes', 'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
             'MntArticles', 'MntDiagnosticTypes', 'MntDiagnostics', 'MntCheckList', 'MntAssemblyStatus', 'MntAssemblies', 'MntMaintenanceStatus', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
         ];
         var _exportTables = [
             'AppFiles',
-            'MntMachineTrademark', 'MntMachineModels', 'MntMachines',
+            'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
             'MntAssemblies', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
         ];
@@ -58,8 +71,7 @@ angular.module('starter.services', [])
                             var self = this;
 
                             var arrFields = [];
-                            for (var i = 0; i < fields.length; i++) {
-                                var f = fields[i];
+                            PaCM.eachArray(fields, function (inx, f) {
                                 var s = '[' + f.name + ']'
                                     + (f.type ? ' ' + f.type : '')
                                     + (f.required ? ' NOT NULL' : ' NULL')
@@ -68,7 +80,7 @@ angular.module('starter.services', [])
                                     + (f.unique ? ' UNIQUE' : '')
                                     + (f.default ? ' ' + f.default : '');
                                 arrFields.push(s);
-                            }
+                            });
 
                             var sqlStatement = 'CREATE TABLE ' + table + ' (@fields)'
                                 .replace('@fields', arrFields.join(', '));
@@ -120,6 +132,11 @@ angular.module('starter.services', [])
                         },
                         insert: function (table, values) {
                             var self = this;
+                            
+                            if (_tablesInheritedOfMntObjects.indexOf(table) < 0) {
+                                values.Guid = values.Guid || guidGenerator.new();
+                                values.LastModified = values.LastModified || new Date();
+                            }
 
                             var parameters = [];
                             var arrFields = [];
@@ -147,6 +164,11 @@ angular.module('starter.services', [])
                         },
                         update: function (table, values, where, parameters) {
                             var self = this;
+                            
+                            if (_tablesInheritedOfMntObjects.indexOf(table) < 0) {
+                                values.Guid = values.Guid || guidGenerator.new();
+                                values.LastModified = new Date();
+                            }
 
                             var _parameters = [];
                             var arrFields = [];
@@ -166,11 +188,9 @@ angular.module('starter.services', [])
                                 sqlStatement += ' WHERE ' + where;
                             }
                             
-                            if (parameters && parameters.length > 0) {
-                                for (var i = 0; i < parameters.length; i++) {
-                                    _parameters.push(parameters[i]);
-                                }
-                            }
+                            PaCM.eachArray(parameters, function (inx, p) {
+                                _parameters.push(p);
+                            });
 
                             delete arrFields;
 
@@ -185,11 +205,9 @@ angular.module('starter.services', [])
                                 sqlStatement += ' WHERE ' + where;
                             }
                             
-                            if (parameters && parameters.length > 0) {
-                                for (var i = 0; i < parameters.length; i++) {
-                                    _parameters.push(parameters[i]);
-                                }
-                            }
+                            PaCM.eachArray(parameters, function (inx, p) {
+                                _parameters.push(p);
+                            });
 
                             return self.executeSql(sqlStatement, _parameters);
                         }
@@ -208,13 +226,11 @@ angular.module('starter.services', [])
                     .then(function (sqlResultSet) {
                         //Elimina todas las tablas
                         var promises = [];
-                        if (sqlResultSet.rows && sqlResultSet.rows.length > 0) {
-                            for (var i = 0; i < sqlResultSet.rows.length; i++) {
-                                promises.push(
-                                    tx.dropTable(sqlResultSet.rows.item(i).name)
-                                );
-                            }
-                        }
+                        PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
+                            promises.push(
+                                tx.dropTable(r.name)
+                            );
+                        });
                         return Promise.all(promises);
                     })
                     .then(function () { return tx.executeSql('create table AppSettings ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null )'); })
@@ -229,8 +245,8 @@ angular.module('starter.services', [])
                     .then(function () { return tx.executeSql('create table CfgIdentityTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ShortName TEXT not null )'); })
                     .then(function () { return tx.executeSql('create table CfgCompany ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT not null, PostalCode TEXT, PhoneNumber TEXT not null, WebSite TEXT, Slogan TEXT, IdentityTypeId BIGINT not null, CityId BIGINT not null, LogoId BIGINT, constraint FK_Company_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Company_CityId foreign key (CityId) references CfgCities, constraint FK_Company_LogoId foreign key (LogoId) references AppFiles )'); })
                     .then(function () { return tx.executeSql('create table CfgCustomers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT, PostalCode TEXT, PhoneNumber TEXT, WebSite TEXT, ContactName TEXT, ContactEmailAddress TEXT, Comments TEXT, Enabled BOOL not null, IdentityTypeId BIGINT not null, CityId BIGINT not null, constraint FK_Customer_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Customer_CityId foreign key (CityId) references CfgCities )'); })
-                    .then(function () { return tx.executeSql('create table MntMachineTrademark ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table MntMachineModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CompartmentLength NUMERIC, CompartmentWidth NUMERIC, CompartmentHeight NUMERIC, TrademarkId BIGINT not null, constraint FK_MachineModel_TrademarkId foreign key (TrademarkId) references MntMachineTrademark )'); })
+                    .then(function () { return tx.executeSql('create table MntMachineTrademarks ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
+                    .then(function () { return tx.executeSql('create table MntMachineModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CompartmentLength NUMERIC, CompartmentWidth NUMERIC, CompartmentHeight NUMERIC, TrademarkId BIGINT not null, constraint FK_MachineModel_TrademarkId foreign key (TrademarkId) references MntMachineTrademarks )'); })
                     .then(function () { return tx.executeSql('create table MntMachines ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Serial TEXT, CustomerReference TEXT, ModelId BIGINT not null, CustomerId BIGINT not null, constraint FK_Machine_ModelId foreign key (ModelId) references MntMachineModels, constraint FK_Machine_CustomerId foreign key (CustomerId) references CfgCustomers )'); })
                     .then(function () { return tx.executeSql('create table MntConnectorTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ColorRequired BOOL not null, ImageId BIGINT not null, constraint FK_ConnectorType_ImageId foreign key (ImageId) references AppFiles )'); })
                     .then(function () { return tx.executeSql('create table MntConnectors ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TypeId BIGINT not null, constraint FK_Connector_TypeId foreign key (TypeId) references MntConnectorTypes )'); })
@@ -289,8 +305,7 @@ angular.module('starter.services', [])
                     return new Promise(function (resolve, reject) {
                         _dbContext.beginTransaction(function (tx) {
                             var promises = [];
-                            for (var i = 0; i < _importTables.length; i++) {
-                                var t = _importTables[i];
+                            PaCM.eachArray(_importTables, function (inx, t) {
                                 var command = null;
                                 if (_tablesInheritedOfMntObjects.indexOf(t) >= 0) {
                                     command = 'SELECT "' + t + '" Tb, t.Id, p.LastModified FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id';
@@ -300,17 +315,16 @@ angular.module('starter.services', [])
                                 promises.push(
                                     tx.executeSql(command)
                                     .then(function (sqlResultSet) {
-                                        for (var j = 0; j < sqlResultSet.rows.length; j++) {
-                                            var r = sqlResultSet.rows.item(j);
+                                        PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                                             localData.push({
                                                 Tb: r.Tb,
                                                 Id: r.Id,
                                                 Lm: new Date(r.LastModified)
                                             });
-                                        }
+                                        });
                                     })
                                 );
-                            }
+                            });
                             Promise.all(promises)
                             .then(function () {
                                 resolve();
@@ -341,8 +355,7 @@ angular.module('starter.services', [])
                     return new Promise(function (resolve, reject) {
                         _dbContext.beginTransaction(function (tx1) {
                             var promises = [];
-                            for(var i = 0; i < response.Records.length; i++) {
-                                var r = response.Records[i];
+                            PaCM.eachArray(response.Records, function (inx, r) {
                                 switch (r.Ac) {
                                     case 'c':
                                         promises.push(
@@ -363,7 +376,7 @@ angular.module('starter.services', [])
                                         onError('Action not support');
                                         return;
                                 }
-                            }
+                            });
                             Promise.all(promises)
                             .then(function () {
                                 resolve();
@@ -394,62 +407,106 @@ angular.module('starter.services', [])
             }
         };
     })
-
-    .factory('entityService', function (dbContext) {
+    
+    .factory('dbSelects', function (dbContext) {
+        
+        var _entities = {
+            Settings: 'AppSettings',
+            File: 'AppFiles',
+            Key: 'AppKeys',
+            User: 'AppUsers',
+            UserSession: 'AppUserSessions',
+            Country: 'CfgCountries',
+            State: 'CfgStates',
+            City: 'CfgCities',
+            Color: 'CfgColors',
+            IdentityType: 'CfgIdentityTypes',
+            Company: 'CfgCompany',
+            Customer: 'CfgCustomers',
+            MachineTrademark: 'MntMachineTrademarks',
+            MachineModel: 'MntMachineModels',
+            Machine: 'MntMachines',
+            ConnectorType: 'MntConnectorTypes',
+            Connector: 'MntConnectors',
+            BatteryType: 'MntBatteryTypes',
+            ObjectTypeTrademark: 'MntObjectTrademarks',
+            ObjectTypeModel: 'MntObjectModels',
+            ObjectType: 'MntObjects',
+            Battery: 'MntBatteries',
+            Cell: 'MntCells',
+            Charger: 'MntChargers',
+            Article: 'MntArticles',
+            DiagnosticType: 'MntDiagnosticTypes',
+            Diagnostic: 'MntDiagnostics',
+            Check: 'MntCheckList',
+            AssemblyStatus: 'MntAssemblyStatus',
+            Assembly: 'MntAssemblies',
+            MaintenanceStatus: 'MntMaintenanceStatus',
+            Maintenance: 'MntMaintenances',
+            MaintenanceCheck: 'MntMaintenanceCheckList',
+            CellReview: 'MntCellsReviews',
+            ArticleOutput: 'MntArticlesOutputs'
+        };
+        
+        var _queries = {
+            Battery: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || p.[Serial], '') || IFNULL(' / # Interno: ' || p.[CustomerReference], '')) [Description], p.[Enabled], p.[Serial], p.[CustomerReference], p.[ModelId], p.[CustomerId], m.[TrademarkId] FROM MntBatteries r INNER JOIN MntObjects p ON r.Id = p.Id INNER JOIN MntObjectModels m ON p.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
+            Charger: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || p.[Serial], '') || IFNULL(' / # Interno: ' || p.[CustomerReference], '')) [Description], p.[Enabled], p.[Serial], p.[CustomerReference], p.[ModelId], p.[CustomerId], m.[TrademarkId] FROM MntChargers  r INNER JOIN MntObjects p ON r.Id = p.Id INNER JOIN MntObjectModels m ON p.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
+            Machine: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId], m.[CompartmentLength], m.[CompartmentWidth], m.[CompartmentHeight] FROM MntMachines r INNER JOIN MntMachineModels m ON r.ModelId = m.Id INNER JOIN MntMachineTrademarks t ON t.Id = m.TrademarkId"
+        };
         
         return {
-            
-        };
-
-    })
-
-    .factory('Chats', function () {
-        // Might use a resource here that returns a JSON array
-
-        // Some fake testing data
-        var chats = [{
-                id: 0,
-                name: 'Ben Sparrow',
-                lastText: 'You on your way?',
-                face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
-            }, {
-                id: 1,
-                name: 'Max Lynx',
-                lastText: 'Hey, it\'s me',
-                face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
-            }, {
-                id: 2,
-                name: 'Adam Bradleyson',
-                lastText: 'I should buy a boat',
-                face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
-            }, {
-                id: 3,
-                name: 'Perry Governor',
-                lastText: 'Look at my mukluks!',
-                face: 'https://pbs.twimg.com/profile_images/598205061232103424/3j5HUXMY.png'
-            }, {
-                id: 4,
-                name: 'Mike Harrington',
-                lastText: 'This is wicked good ice cream.',
-                face: 'https://pbs.twimg.com/profile_images/578237281384841216/R3ae1n61.png'
-            }];
-
-        return {
-            all: function () {
-                return chats;
-            },
-            remove: function (chat) {
-                chats.splice(chats.indexOf(chat), 1);
-            },
-            get: function (chatId) {
-                for (var i = 0; i < chats.length; i++) {
-                    if (chats[i].id === parseInt(chatId)) {
-                        return chats[i];
-                    }
+            get: function (entity, id, debugMode) {
+                var sqlQuery = null;
+                if (typeof(_queries[entity]) === 'undefined') {
+                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
+                } else {
+                    sqlQuery = _queries[entity];
                 }
-                return null;
+                sqlQuery += ' WHERE r.Id = ?';
+                var promise = new Promise(function (resolve, reject) {
+                    dbContext.beginTransaction(function (tx) {
+                        tx.executeSql(sqlQuery, [ id ]).then(function (sqlResultSet) {
+                            resolve(sqlResultSet);
+                        });
+                    }, debugMode);
+                });
+                return promise;
+            },
+            list: function (entity, debugMode) {
+                var sqlQuery = null;
+                if (typeof(_queries[entity]) === 'undefined') {
+                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
+                } else {
+                    sqlQuery = _queries[entity];
+                }
+                var promise = new Promise(function (resolve, reject) {
+                    dbContext.beginTransaction(function (tx) {
+                        tx.executeSql(sqlQuery).then(function (sqlResultSet) {
+                            resolve(sqlResultSet);
+                        });
+                    }, debugMode);
+                });
+                return promise;
+            },
+            find: function (entity, where, parameters, debugMode) {
+                var sqlQuery = null;
+                if (typeof(_queries[entity]) === 'undefined') {
+                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
+                } else {
+                    sqlQuery = _queries[entity];
+                }
+                sqlQuery += ' WHERE ' + where;
+                var promise = new Promise(function (resolve, reject) {
+                    dbContext.beginTransaction(function (tx) {
+                        tx.executeSql(sqlQuery, parameters).then(function (sqlResultSet) {
+                            resolve(sqlResultSet);
+                        });
+                    }, debugMode);
+                });
+                return promise;
             }
         };
+        
     });
     
 })();

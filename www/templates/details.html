@@ -1,0 +1,99 @@
+<ion-view title="New maintenance">
+    <ion-tabs class="tabs-positive tabs-icon-top">
+        <ion-tab title="Search" icon="ion-search" hidden="{{ tabs.hideSearcherTab}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <label class="item item-input">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="search" placeholder="Select one customer, battery or charger" ng-model="searcher.search" ng-change="searcherOnChange()">
+                    </label>
+                </form>
+                <ion-list ng-hide="searcher.hideList">
+                    <ion-item class="item-divider">Customers</ion-item>
+                    <ion-item class="item-button-right" ng-repeat="r in searcher.customers| filter: { name: searcher.search }">
+                        {{ r.name}}
+                        <button class="button button-positive" ng-click="onSelectCustomer(r.id)">
+                            <i class="icon ion-checkmark"></i>
+                        </button>
+                    </ion-item>
+                    <ion-item class="item-divider">Batteries</ion-item>
+                    <ion-item class="item-button-right" ng-repeat="r in searcher.batteries| filter: { description: searcher.search }">
+                        {{ r.description}}
+                        <button class="button button-positive" ng-click="onSelectBattery(r.customerId, r.id)">
+                            <i class="icon ion-checkmark"></i>
+                        </button>
+                    </ion-item>
+                    <ion-item class="item-divider">Chargers</ion-item>
+                    <ion-item class="item-button-right" ng-repeat="r in searcher.chargers| filter: { description: searcher.search }">
+                        {{ r.description}}
+                        <button class="button button-positive" ng-click="onSelectCharger(r.customerId, r.id)">
+                            <i class="icon ion-checkmark"></i>
+                        </button>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Battery" icon="ion-battery-charging" hidden="{{ tabs.hideBatteryTab}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <label class="item item-select">
+                        <span class="input-label">Marca</span>
+                        <select ng-options="t.id as t.name for t in batteryResources.trademarks" ng-model="battery.trademarkId">
+                            <option>Seleccione</option>
+                        </select>
+                    </label>
+                    <label class="item item-select">
+                        <span class="input-label">Modelo</span>
+                        <select ng-options="m.id as m.name for m in batteryResources.models" ng-model="battery.modelId">
+                            <option>Seleccione</option>
+                        </select>
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Serial</span>
+                        <input placeholder="" type="text" ng-model="battery.serial">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label"># Interno</span>
+                        <input placeholder="" type="text" ng-model="battery.customerReference">
+                    </label>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Charger" icon="ion-flash" hidden="{{ tabs.hideChargerTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Machine" icon="ion-gear-a" hidden="{{ tabs.hideMachineTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Work to be done" icon="ion-hammer" hidden="{{ tabs.hideWorkToBeDoneTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Physical inspection" icon="ion-clipboard" hidden="{{ tabs.hidePhysicalInspectionTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Cell inspection" icon="ion-battery-empty" hidden="{{ tabs.hideCellInspectionTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Supplies" icon="ion-medkit" hidden="{{ tabs.hideSuppliesTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Technical report" icon="ion-compose" hidden="{{ tabs.hideTechnicalReportTab}}">
+            <ion-content padding="true" class="has-header">
+                <form></form>
+            </ion-content>
+        </ion-tab>
+    </ion-tabs>
+</ion-view>
+
