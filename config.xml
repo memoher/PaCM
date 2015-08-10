@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.escolcorp.pacm" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.escolcorp.pacm" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>PaCM</name>
     <description>
-        An Ionic Framework and Cordova project.
+        Preventive and corrective maintenance
     </description>
-    <author email="hi@ionicframework" href="http://ionicframework.com/">
-        Ionic Framework Team
+    <author email="julian_her@hotmail.com" href="http://emhesolutions.com/">
+        Julian Hernández R.
     </author>
     <content src="index.html"/>
     <access origin="*"/>
