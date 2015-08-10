@@ -17,7 +17,7 @@ angular.module('starter.services', [])
 
     .factory('dbContext', function ($http, guidGenerator) {
 
-        var addressServer = 'http://192.168.0.102:57080/';
+        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.102:57080/';
         var _importTables = [
             'AppSettings', 'AppFiles', 'AppKeys', 'AppUsers', 'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 'CfgCompany', 'CfgCustomers',
             'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
@@ -36,7 +36,7 @@ angular.module('starter.services', [])
         
         var _databaseInstance = null;
         var _openDatabase = function () {
-            if (!_databaseInstance) {
+            if (_databaseInstance == null) {
                 _databaseInstance = window.openDatabase('mydb', '1.0', 'Test DB', 10 * 1024 * 1024);
             }
             return _databaseInstance;

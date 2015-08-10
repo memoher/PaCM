@@ -160,7 +160,7 @@ angular.module('starter.controllers', [])
             getCustomer: function (id) {
                 dbSelects.get('Customer', id, debugMode).then(function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
-                        console.debug(r);
+
                     });
                 });
             },

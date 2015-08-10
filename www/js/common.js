@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-(function ($window) {
+(function () {
 
-    $window.PaCM = {
+    window.PaCM = {
         eachArray: function (arr, iterator) {
             if (arr && arr.length > 0) {
                 for (var i = 0; i < arr.length; i++) {
@@ -46,4 +46,4 @@
         }
     };
 
-})(window);
+})();
