@@ -7,15 +7,60 @@
 (function () {
 
     window.PaCM = {
+        isArray: function (vlr) {
+            var self = this;
+            return (vlr && self.isDefined(vlr.length) && self.isDefined(vlr.push));
+        },
+        isFunction: function (vlr) {
+            return typeof(vlr) === 'function';
+        },
+        isObject: function (vlr) {
+            var self = this;
+            return (vlr && self.isDefined(vlr.hasOwnProperty));
+        },
+        isDefined: function (vlr) {
+            var self = this;
+            return !self.isUndefined(vlr);
+        },
+        isUndefined: function (vlr) {
+            return typeof(vlr) === 'undefined';
+        },
+        isNumber: function (vlr) {
+            return typeof(vlr) === 'number';
+        },
+        isString: function (vlr) {
+            var self = this;
+            return (vlr && self.isDefined(vlr.replace) && self.isDefined(vlr.toLowerCase));
+        },
+        showError: function (err, msg) {
+            var self = this;
+            if (err) {
+                if (self.isDefined(err.DATABASE_ERR)) {
+                    if (self.isString(msg)) {
+                        alert(msg + '\r\nSQL ERROR: [' + err.code + '] ' + err.message);
+                    } else {
+                        alert('SQL ERROR: [' + err.code + '] ' + err.message);
+                    }
+                } else {
+                    if (self.isString(msg)) {
+                        alert(msg + '\r\nERROR: ' + err.toString());
+                    } else {
+                        alert('ERROR: ' + err.toString());
+                    }                    
+                }
+            }
+        },
         eachArray: function (arr, iterator) {
-            if (arr && arr.length > 0) {
+            var self = this;
+            if (self.isArray(arr) && arr.length > 0) {
                 for (var i = 0; i < arr.length; i++) {
                     iterator(i, arr[i]);
                 }
             }
         },
         eachProperties: function (obj, iterator) {
-            if (obj != null) {
+            var self = this;
+            if (self.isObject(obj)) {
                 for (var p in obj) {
                     if (obj.hasOwnProperty(p)) {
                         iterator(p, obj[p]);

@@ -9,7 +9,7 @@ angular.module('starter.controllers', [])
 
     .controller('detailsCtrl', function ($scope, $stateParams, $ionicTabsDelegate, dbContext, dbSelects) {
         
-        var debugMode = true;
+        var debugMode = 1;
         
         var sm = $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? parseInt($stateParams.maintenanceId) : null,
@@ -119,10 +119,13 @@ angular.module('starter.controllers', [])
         };
         
         var dbSelectsFncs = {
+            onError: function (err) {
+                console.debug(err);
+            },
             getMaintenance: function (id) {
                 var self = this;
                 
-                dbSelects.get('Maintenance', id, debugMode).then(function (sqlResultSet) {
+                var _onSuccess = function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sm.id = r.Id;
                         sm.uniqueCode = r.UniqueCode;
@@ -155,17 +158,23 @@ angular.module('starter.controllers', [])
                             self.getMachine(sm.machineId);
                         }
                     });
-                });
+                };
+                dbSelects.get('Maintenance', id, _onSuccess, self.onError, debugMode);
             },
             getCustomer: function (id) {
-                dbSelects.get('Customer', id, debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                var _onSuccess = function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
 
                     });
-                });
+                };
+                dbSelects.get('Customer', id, _onSuccess, self.onError, debugMode);
             },
             getBattery: function (id) {
-                dbSelects.get('Battery', id, debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                var _onSuccess = function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sb.id = r.Id;
                         sb.trademarkId = r.TrademarkId;
@@ -188,10 +197,13 @@ angular.module('starter.controllers', [])
                         sb.cover = r.Cover;
                         sb.drainHoles = r.DrainHoles;           
                     });
-                });
+                };
+                dbSelects.get('Battery', id, _onSuccess, self.onError, debugMode);
             },
             getCharger: function (id) {
-                dbSelects.get('Charger', id, debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                var _onSuccess = function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sc.id = r.Id;
                         sc.trademarkId = r.TrademarkId;
@@ -202,10 +214,13 @@ angular.module('starter.controllers', [])
                         sc.voltage = r.Voltage;
                         sc.amperage = r.Amperage;
                     });
-                });
+                };
+                dbSelects.get('Charger', id, _onSuccess, self.onError, debugMode);
             },
             getMachine: function (id) {
-                dbSelects.get('Machine', id, debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                var _onSuccess = function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sd.id = r.Id;
                         sd.trademarkId = r.TrademarkId;
@@ -217,18 +232,21 @@ angular.module('starter.controllers', [])
                         sd.compartmentWidth = r.CompartmentWidth;
                         sd.compartmentHeight = r.CompartmentHeight;
                     });
-                });
+                };
+                dbSelects.get('Machine', id, _onSuccess, self.onError, debugMode);
             },
             getBatteryResources: function () {
-                dbSelects.list('ObjectTypeTrademark', debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                dbSelects.list('ObjectTypeTrademark', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.trademarks.push({
                             id: r.Id,
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('ObjectTypeModel', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('ObjectTypeModel', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.models.push({
                             id: r.Id,
@@ -236,16 +254,16 @@ angular.module('starter.controllers', [])
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('ConnectorType', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('ConnectorType', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.connectorTypes.push({
                             id: r.Id,
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('Connector', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('Connector', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.connectors.push({
                             id: r.Id,
@@ -253,8 +271,8 @@ angular.module('starter.controllers', [])
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('Color', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('Color', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.connectorColors.push({
                             id: r.Id,
@@ -262,18 +280,20 @@ angular.module('starter.controllers', [])
                             HEX: r.HEX
                         });
                     });
-                });
+                }, self.onError, debugMode);
             },
             getChargerResources: function () {
-                dbSelects.list('ObjectTypeTrademark', debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                dbSelects.list('ObjectTypeTrademark', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.trademarks.push({
                             id: r.Id,
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('ObjectTypeModel', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('ObjectTypeModel', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.models.push({
                             id: r.Id,
@@ -281,18 +301,20 @@ angular.module('starter.controllers', [])
                             name: r.Name
                         });
                     });
-                });
+                }, self.onError, debugMode);
             },
             getMachineResources: function () {
-                dbSelects.list('MachineTrademark', debugMode).then(function (sqlResultSet) {
+                var self = this;
+                
+                dbSelects.list('MachineTrademark', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.trademarks.push({
                             id: r.Id,
                             name: r.Name
                         });
                     });
-                });
-                dbSelects.list('MachineModel', debugMode).then(function (sqlResultSet) {
+                }, self.onError, debugMode);
+                dbSelects.list('MachineModel', function (sqlResultSet) {
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sbr.models.push({
                             id: r.Id,
@@ -300,7 +322,7 @@ angular.module('starter.controllers', [])
                             name: r.Name
                         });
                     });
-                });
+                }, self.onError, debugMode);
             }
         };
         
@@ -371,15 +393,17 @@ angular.module('starter.controllers', [])
             hideList: true
         };
         var searcherInitialize = function () {
-            dbSelects.list('Customer', debugMode).then(function (sqlResultSet) {
+            dbSelects.list('Customer', function (sqlResultSet) {
+                console.debug(sqlResultSet);
                 PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
+                    
                     ss.customers.push({
                         id: r.Id,
                         name: r.Name
                     });
                 });
-            });
-            dbSelects.list('Battery', debugMode).then(function (sqlResultSet) {
+            }, dbSelectsFncs.onError, debugMode);
+            dbSelects.list('Battery', function (sqlResultSet) {
                 PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                     ss.batteries.push({
                         id: r.Id,
@@ -387,8 +411,8 @@ angular.module('starter.controllers', [])
                         description: r.Description
                     });
                 });
-            });
-            dbSelects.list('Charger', debugMode).then(function (sqlResultSet) {
+            }, dbSelectsFncs.onError, debugMode);
+            dbSelects.list('Charger', function (sqlResultSet) {
                 PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                     ss.chargers.push({
                         id: r.Id,
@@ -396,7 +420,7 @@ angular.module('starter.controllers', [])
                         description: r.Description
                     });
                 });
-            });
+            }, dbSelectsFncs.onError, debugMode);
         };
         $scope.searcherOnChange = function () {
             if (ss.search == '' || ss.search == null) {
@@ -454,33 +478,33 @@ angular.module('starter.controllers', [])
         $scope.installDatabase = function () {
             $scope.runningProcess = true;
             dbContext.installDatabase(
-                function (successMessage) {
+                function () {
                     $scope.runningProcess = false;
                     $scope.$apply();
-                    alert(successMessage);
+                    alert('Database installed successfully');
                 },
-                function (errorMessage) {
+                function (err) {
                     $scope.runningProcess = false;
                     $scope.$apply();
-                    alert(errorMessage);
+                    PaCM.showError(err, 'Failure during installation of the database');
                 },
-                false);
+                1 /*Error*/);
         };
 
         $scope.importData = function () {
             $scope.runningProcess = true;
             dbContext.importData(
-                function (successMessage) {
+                function () {
                     $scope.runningProcess = false;
                     $scope.$apply();
-                    alert(successMessage);
+                    alert('Data imported successfully');
                 },
-                function (errorMessage) {
+                function (err) {
                     $scope.runningProcess = false;
                     $scope.$apply();
-                    alert(errorMessage);
+                    PaCM.showError(err, 'Fails during data import');
                 },
-                false);
+                1 /*Error*/);
         };
     });
 

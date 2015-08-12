@@ -14,60 +14,128 @@ angular.module('starter.services', [])
             }
         };
     })
-
+    
     .factory('dbContext', function ($http, guidGenerator) {
-
-        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.102:57080/';
-        var _importTables = [
+        
+        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //
+        var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 'AppUsers', 'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 'CfgCompany', 'CfgCustomers',
             'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntConnectorTypes', 'MntConnectors', 'MntBatteryTypes', 'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
             'MntArticles', 'MntDiagnosticTypes', 'MntDiagnostics', 'MntCheckList', 'MntAssemblyStatus', 'MntAssemblies', 'MntMaintenanceStatus', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
         ];
-        var _exportTables = [
+        var tablesForExport = [
             'AppFiles',
             'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
             'MntAssemblies', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
         ];
-        var _tablesInheritedOfMntObjects = [
+        var tablesInheritedOfMntObjects = [
             'MntBatteries', 'MntChargers'
         ];
         
-        var _databaseInstance = null;
-        var _openDatabase = function () {
-            if (_databaseInstance == null) {
-                _databaseInstance = window.openDatabase('mydb', '1.0', 'Test DB', 10 * 1024 * 1024);
-            }
-            return _databaseInstance;
-        };
-        
         return {
-            beginTransaction: function(scope, debugMode) {
-                debugMode = (debugMode === true);
-
-                _openDatabase().transaction(function (tx) {
+            beginTransaction: function (scope, onSuccess, onError, debugMode) {
+                
+                var _sqlError = null;
+                var _onSuccess = function () {
+                    if (_sqlError) {
+                        _onError(_sqlError);
+                    } else {
+                        if (debugMode >= 4)
+                            console.info("Successful transaction");
+                        
+                        if (PaCM.isFunction(onSuccess))
+                            onSuccess();
+                    }
+                };
+                var _onError = function (sqlError) {
+                    if (debugMode >= 1)
+                        console.error("Failed transaction", sqlError);
+                    
+                    if (PaCM.isFunction(onError)) {
+                        onError(sqlError);
+                    } else {
+                        throw sqlError;
+                    }
+                };
+                
+                var db = window.openDatabase('mydb', '1.0', 'Test DB', 10 * 1024 * 1024);
+                db.transaction(function (tx) {
                     scope({
-                        executeSql: function (sqlStatement, parameters) {
+                        executeSql: function (sqlCommand, sqlParameters, onSuccessCommand, onErrorCommand) {
+                            var self = this;
+                            
+                            var _onSuccessCommand = function (tx1, sqlResultSet) {
+                                if (debugMode >= 4)
+                                    console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
+                                
+                                if (PaCM.isFunction(onSuccessCommand))
+                                    onSuccessCommand(self, sqlResultSet);
+                            };
+                            var _onErrorCommand = function (tx1, sqlError) {
+                                if (debugMode >= 1)
+                                    console.error(new Date(), sqlCommand, sqlParameters, sqlError);
+                                
+                                _sqlError = null;
+                                if (PaCM.isFunction(onErrorCommand))
+                                    onErrorCommand(self, sqlError);
+                                else
+                                    _sqlError = sqlError;
+                            };
+                            
+                            tx.executeSql(sqlCommand, sqlParameters, _onSuccessCommand, _onErrorCommand);
+                            
+                            return self;
+                        },
+                        executeMultiSql: function (sqlCommands, onSuccessIterator, onSuccellCommands, onErrorCommands) {
                             var self = this;
 
-                            return new Promise(function (resolve, reject) {
-                                tx.executeSql(
-                                    sqlStatement, 
-                                    parameters, 
-                                    function (tx1, sqlResultSet) {
-                                        if (debugMode)
-                                            console.debug(new Date(), sqlStatement, parameters, sqlResultSet);
-                                        resolve(sqlResultSet);
-                                    }, 
-                                    function (tx1, sqlError) {
-                                        if (debugMode)
-                                            console.debug(new Date(), sqlStatement, parameters, sqlError);
-                                        reject(sqlError);
-                                    });
-                                });
+                            if (sqlCommands && sqlCommands.length > 0) {
+                                var _sqlCommands = sqlCommands.reverse();
+                                
+                                var _buildFnc = null;
+                                if (PaCM.isFunction(onSuccessIterator)) {
+                                    _buildFnc = function (sqlCommand, nextFnc) {
+                                        return function (tx1, sqlResultSet1) {
+                                            onSuccessIterator(tx1, sqlResultSet1);
+                                            tx1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
+                                        };
+                                    }
+                                } else {
+                                    _buildFnc = function (sqlCommand, nextFnc) {
+                                        return function (tx1, sqlResultSet1) {
+                                            tx1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
+                                        };
+                                    }
+                                }
+                                
+                                var sqlFncs = [];
+                                for (var i = 0; i < _sqlCommands.length; i++) {
+                                    var sqlCmd = _sqlCommands[i];
+
+                                    if (i > 0 && i < _sqlCommands.length - 1) {
+                                        sqlFncs.push(_buildFnc(sqlCmd, sqlFncs[i - 1]));
+                                    }
+                                    else if (i == (_sqlCommands.length - 1)) {
+                                        self.executeSql(sqlCmd, null, sqlFncs[i - 1], onErrorCommands);
+                                    }
+                                    else if (i == 0) {
+                                        sqlFncs.push(_buildFnc(sqlCmd, function (tx1, sqlResultSet1) {
+                                            if (PaCM.isFunction(onSuccessIterator))
+                                                onSuccessIterator(tx1, sqlResultSet1);
+                                            if (PaCM.isFunction(onSuccellCommands))
+                                                onSuccellCommands(tx1);
+                                        }));
+                                    }
+                                }
+                            } else {
+                                self.executeSql("SELECT 1", null, onSuccellCommands, onErrorCommands);
+                            }
+                            
+                            return self;
                         },
-                        createTable: function (table, fields) {
+                        createTable: function (table, fields, onSuccessCommand, onErrorCommand) {
                             var self = this;
 
                             var arrFields = [];
@@ -82,58 +150,66 @@ angular.module('starter.services', [])
                                 arrFields.push(s);
                             });
 
-                            var sqlStatement = 'CREATE TABLE ' + table + ' (@fields)'
+                            var sqlCommand = 'CREATE TABLE ' + table + ' (@fields)'
                                 .replace('@fields', arrFields.join(', '));
 
                             delete arrFields;
 
-                            return self.executeSql(sqlStatement);
+                            self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         },
-                        dropTable: function (table) {
+                        dropTable: function (table, onSuccessCommand, onErrorCommand) {
                             var self = this;
-
-                            var sqlStatement = 'DROP TABLE IF EXISTS ' + table;
-
-                            return self.executeSql(sqlStatement);
+                            
+                            var sqlCommand = 'DROP TABLE IF EXISTS ' + table;
+                            
+                            self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         },
-                        select: function (table, options) {
+                        select: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
-
+                            
                             var parameters = null;
-                            var sqlStatement = 'SELECT * FROM ' + table;
+                            var sqlCommand = 'SELECT * FROM ' + table;
                             if (options) {
                                 if (options.fields) {
-                                    sqlStatement = sqlStatement.replace('*', options.fields);
+                                    sqlCommand = sqlCommand.replace('*', options.fields);
                                 }
                                 if (options.where) {
-                                    sqlStatement += ' WHERE ' + options.where.conditions;
+                                    sqlCommand += ' WHERE ' + options.where.conditions;
                                     if (options.where.parameters
                                      && options.where.parameters.length > 0) {
                                         parameters = options.where.parameters;
                                     }
                                 }
                                 if (options.orderBy) {
-                                    sqlStatement += ' ORDER BY ' + options.orderBy;
+                                    sqlCommand += ' ORDER BY ' + options.orderBy;
                                 }
                                 if (options.limit) {
-                                    sqlStatement += ' LIMIT ' + options.limit;
+                                    sqlCommand += ' LIMIT ' + options.limit;
                                 }
                             }
-
-                            return self.executeSql(sqlStatement, parameters);
+                            
+                            self.executeSql(sqlCommand, parameters, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         },
-                        first: function (table, options) {
-                            var self = this;
-
-                            options = options || {};
-                            options.limit = 1;
-
-                            return self.select(table, options);
-                        },
-                        insert: function (table, values) {
+                        first: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            if (_tablesInheritedOfMntObjects.indexOf(table) < 0) {
+                            options = options || {};
+                            options.limit = 1;
+                            
+                            self.select(table, options, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
+                        },
+                        insert: function (table, values, onSuccessCommand, onErrorCommand) {
+                            var self = this;
+                            
+                            if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
                                 values.Guid = values.Guid || guidGenerator.new();
                                 values.LastModified = values.LastModified || new Date();
                             }
@@ -160,12 +236,14 @@ angular.module('starter.services', [])
                             delete arrFields;
                             delete parFields;
 
-                            return self.executeSql(sqlStatement, parameters);
+                            self.executeSql(sqlStatement, parameters, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         },
-                        update: function (table, values, where, parameters) {
+                        update: function (table, values, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            if (_tablesInheritedOfMntObjects.indexOf(table) < 0) {
+                            if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
                                 values.Guid = values.Guid || guidGenerator.new();
                                 values.LastModified = new Date();
                             }
@@ -194,9 +272,11 @@ angular.module('starter.services', [])
 
                             delete arrFields;
 
-                            return self.executeSql(sqlStatement, _parameters);
+                            self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         },
-                        delete: function (table, where, parameters) {
+                        delete: function (table, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
 
                             var _parameters = [];
@@ -209,204 +289,135 @@ angular.module('starter.services', [])
                                 _parameters.push(p);
                             });
 
-                            return self.executeSql(sqlStatement, _parameters);
+                            self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
+                            
+                            return self;
                         }
                     });
-                });
+                }, _onError, _onSuccess);
             },
             installDatabase: function (onSuccess, onError, debugMode) {
-                var _dbContext = this;
+                var self = this;
                 
-                //Este método se encarga de generar todas las tablas en la base de datos
-                alert(0);
-                _dbContext.beginTransaction(function (tx) {
-                    alert(1);
-                    tx
-                    .executeSql("SELECT 1")
-//                    .then(function () { alert(2); return tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")'); })
-//                    .then(function (sqlResultSet) {
-//                        alert(3);
-//                        //Elimina todas las tablas
-//                        var promises = [];
-//                        PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
-//                            promises.push(
-//                                tx.dropTable(r.name)
-//                            );
-//                        });
-//                        return Promise.all(promises);
-//                    })
-                    .then(function () { alert(4); return tx.executeSql('create table AppSettings ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null )'); })
-                    .then(function () { return tx.executeSql('create table AppFiles ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT not null, MIMEType TEXT, Encoding TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table AppKeys ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Salt TEXT not null, Hash TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table AppUsers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Username TEXT not null, FirstName TEXT not null, LastName TEXT not null, EmailAddress TEXT not null, Administrator BOOL not null, Enabled BOOL not null, PasswordId BIGINT not null, constraint FK_User_PasswordId foreign key (PasswordId) references AppKeys )'); })
-                    .then(function () { return tx.executeSql('create table AppUserSessions ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Session TEXT not null, Host TEXT not null, Agent TEXT not null, LocalAddress TEXT not null, UserAddress TEXT not null, Started DATETIME not null, Ended DATETIME, UserId BIGINT not null, constraint FK_UserSession_UserId foreign key (UserId) references AppUsers )'); })
-                    .then(function () { return tx.executeSql('create table CfgCountries ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table CfgStates ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CountryId BIGINT not null, constraint FK_State_CountryId foreign key (CountryId) references CfgCountries )'); })
-                    .then(function () { return tx.executeSql('create table CfgCities ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, StateId BIGINT not null, constraint FK_City_StateId foreign key (StateId) references CfgStates )'); })
-                    .then(function () { return tx.executeSql('create table CfgColors ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, HEX TEXT, RGB TEXT )'); })
-                    .then(function () { return tx.executeSql('create table CfgIdentityTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ShortName TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table CfgCompany ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT not null, PostalCode TEXT, PhoneNumber TEXT not null, WebSite TEXT, Slogan TEXT, IdentityTypeId BIGINT not null, CityId BIGINT not null, LogoId BIGINT, constraint FK_Company_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Company_CityId foreign key (CityId) references CfgCities, constraint FK_Company_LogoId foreign key (LogoId) references AppFiles )'); })
-                    .then(function () { return tx.executeSql('create table CfgCustomers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT, PostalCode TEXT, PhoneNumber TEXT, WebSite TEXT, ContactName TEXT, ContactEmailAddress TEXT, Comments TEXT, Enabled BOOL not null, IdentityTypeId BIGINT not null, CityId BIGINT not null, constraint FK_Customer_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Customer_CityId foreign key (CityId) references CfgCities )'); })
-                    .then(function () { return tx.executeSql('create table MntMachineTrademarks ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table MntMachineModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CompartmentLength NUMERIC, CompartmentWidth NUMERIC, CompartmentHeight NUMERIC, TrademarkId BIGINT not null, constraint FK_MachineModel_TrademarkId foreign key (TrademarkId) references MntMachineTrademarks )'); })
-                    .then(function () { return tx.executeSql('create table MntMachines ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Serial TEXT, CustomerReference TEXT, ModelId BIGINT not null, CustomerId BIGINT not null, constraint FK_Machine_ModelId foreign key (ModelId) references MntMachineModels, constraint FK_Machine_CustomerId foreign key (CustomerId) references CfgCustomers )'); })
-                    .then(function () { return tx.executeSql('create table MntConnectorTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ColorRequired BOOL not null, ImageId BIGINT not null, constraint FK_ConnectorType_ImageId foreign key (ImageId) references AppFiles )'); })
-                    .then(function () { return tx.executeSql('create table MntConnectors ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TypeId BIGINT not null, constraint FK_Connector_TypeId foreign key (TypeId) references MntConnectorTypes )'); })
-                    .then(function () { return tx.executeSql('create table MntBatteryTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Voltage INT not null, NumberOfCells INT not null )'); })
-                    .then(function () { return tx.executeSql('create table MntObjectTrademarks ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table MntObjectModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TrademarkId BIGINT not null, constraint FK_ObjectTypeModel_TrademarkId foreign key (TrademarkId) references MntObjectTrademarks )'); })
-                    .then(function () { return tx.executeSql('create table MntObjects ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Serial TEXT, CustomerReference TEXT, Enabled BOOL not null, ModelId BIGINT not null, CustomerId BIGINT not null, constraint FK_ObjectType_ModelId foreign key (ModelId) references MntObjectModels, constraint FK_ObjectType_CustomerId foreign key (CustomerId) references CfgCustomers )'); })
-                    .then(function () { return tx.executeSql('create table MntBatteries ( Id BIGINT not null, Amperage TEXT not null, StandardBox BOOL not null, Cover BOOL not null, DrainHoles BOOL not null, MinimunWeight NUMERIC, MaximunWeight NUMERIC, Length NUMERIC, Width NUMERIC, BoxHeight NUMERIC, HandleHeight NUMERIC, TypeId BIGINT not null, ConnectorId BIGINT not null, ConnectorColorId BIGINT, primary key (Id), constraint FKF520AC824409B984 foreign key (Id) references MntObjects, constraint FK_Battery_TypeId foreign key (TypeId) references MntBatteryTypes, constraint FK_Battery_ConnectorId foreign key (ConnectorId) references MntConnectors, constraint FK_Battery_ConnectorColorId foreign key (ConnectorColorId) references CfgColors )'); })
-                    .then(function () { return tx.executeSql('create table MntChargers ( Id BIGINT not null, Voltage TEXT not null, Amperage TEXT not null, primary key (Id), constraint FKB35EAA924409B984 foreign key (Id) references MntObjects )'); })
-                    .then(function () { return tx.executeSql('create table MntCells ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, "Order" INT not null, BatteryId BIGINT not null, constraint FK_Cell_BatteryId foreign key (BatteryId) references MntBatteries )'); })
-                    .then(function () { return tx.executeSql('create table MntArticles ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, InventoryCode TEXT, EnabledBatteries BOOL not null, EnabledChargers BOOL not null, CorrectiveMaintenanceEnabled BOOL not null )'); })
-                    .then(function () { return tx.executeSql('create table MntDiagnosticTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )'); })
-                    .then(function () { return tx.executeSql('create table MntDiagnostics ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TypeId BIGINT not null, constraint FK_Diagnostic_TypeId foreign key (TypeId) references MntDiagnosticTypes )'); })
-                    .then(function () { return tx.executeSql('create table MntCheckList ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, "Order" INT not null, EnabledBatteries BOOL not null, EnabledChargers BOOL not null, DiagnosticTypeId BIGINT not null, constraint FK_Check_DiagnosticTypeId foreign key (DiagnosticTypeId) references MntDiagnosticTypes )'); })
-                    .then(function () { return tx.executeSql('create table MntAssemblyStatus ( Id BIGINT not null, Guid TEXT not null, LastModified DATETIME not null, Description TEXT, primary key (Id) )'); })
-                    .then(function () { return tx.executeSql('create table MntAssemblies ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Type TEXT not null, UniqueCode TEXT not null, Date DATETIME not null, Comments TEXT, CustomerId BIGINT not null, ObjectTypeId BIGINT not null, ExecutedById BIGINT not null, StatusId BIGINT not null, constraint FK_Assembly_CustomerId foreign key (CustomerId) references CfgCustomers, constraint FK_Assembly_ObjectTypeId foreign key (ObjectTypeId) references MntObjects, constraint FK_Assembly_ExecutedById foreign key (ExecutedById) references AppUsers, constraint FK_Assembly_StatusId foreign key (StatusId) references MntAssemblyStatus )'); })
-                    .then(function () { return tx.executeSql('create table MntMaintenanceStatus ( Id BIGINT not null, Guid TEXT not null, LastModified DATETIME not null, Description TEXT, primary key (Id) )'); })
-                    .then(function () { return tx.executeSql('create table MntMaintenances ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Type TEXT not null, UniqueCode TEXT not null, Date DATETIME not null, Preventive BOOL not null, Corrective BOOL not null, AcceptedBy TEXT not null, WorkToBeDone TEXT, TechnicalReport TEXT, CustomerId BIGINT not null, MachineId BIGINT, ObjectTypeId BIGINT not null, ExecutedById BIGINT not null, ExecutedByDigitalSignatureId BIGINT, AcceptedByDigitalSignatureId BIGINT, StatusId BIGINT not null, constraint FK_Maintenance_CustomerId foreign key (CustomerId) references CfgCustomers, constraint FK_Maintenance_MachineId foreign key (MachineId) references MntMachines, constraint FK_Maintenance_ObjectTypeId foreign key (ObjectTypeId) references MntObjects, constraint FK_Maintenance_ExecutedById foreign key (ExecutedById) references AppUsers, constraint FK_Maintenance_ExecutedByDigitalSignatureId foreign key (ExecutedByDigitalSignatureId) references AppFiles, constraint FK_Maintenance_AcceptedByDigitalSignatureId foreign key (AcceptedByDigitalSignatureId) references AppFiles, constraint FK_Maintenance_StatusId foreign key (StatusId) references MntMaintenanceStatus )'); })
-                    .then(function () { return tx.executeSql('create table MntMaintenanceCheckList ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Comments TEXT, MaintenanceId BIGINT not null, CheckId BIGINT not null, DiagnosticId BIGINT not null, constraint FK_MaintenanceCheck_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_MaintenanceCheck_CheckId foreign key (CheckId) references MntCheckList, constraint FK_MaintenanceCheck_DiagnosticId foreign key (DiagnosticId) references MntDiagnostics )'); })
-                    .then(function () { return tx.executeSql('create table MntCellsReviews ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Voltage NUMERIC not null, Density NUMERIC not null, Comments TEXT, CellId BIGINT not null, MaintenanceId BIGINT, AssemblyId BIGINT, constraint FK_CellReview_CellId foreign key (CellId) references MntCells, constraint FK_CellReview_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_CellReview_AssemblyId foreign key (AssemblyId) references MntAssemblies )'); })
-                    .then(function () { return tx.executeSql('create table MntArticlesOutputs ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Quantity NUMERIC not null, ArticleId BIGINT not null, MaintenanceId BIGINT, AssemblyId BIGINT, constraint FK_ArticleOutput_ArticleId foreign key (ArticleId) references MntArticles, constraint FK_ArticleOutput_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_ArticleOutput_AssemblyId foreign key (AssemblyId) references MntAssemblies )'); })
-                    .then(function () {
-                        if (typeof(onSuccess) === 'function') {
-                            onSuccess('Database installed successfully');
-                        }
-                    })
-                    .catch(function (sqlError) {
-                        alert(5);
-                        if (typeof(onError) === 'function') {
-                            if (sqlError && sqlError.code) {
-                                var errorMessage = 'ERROR: ' + sqlError.code + ': ' + sqlError.message;
-                                onError(errorMessage);
-                            } else {
-                                onError(sqlError);
-                            }
-                        } else {
-                            throw sqlError;
-                        }
+                var fnc01 = function (tx) {
+                    tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")', null, fnc02);
+                };
+                var fnc02 = function (tx, sqlResultSet) {
+                    var sqlCommands = [];
+                    PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
+                        sqlCommands.push('DROP TABLE ' + r.name);
                     });
-                }, debugMode);
+                    tx.executeMultiSql(sqlCommands, null, fnc03);
+                };
+                var fnc03 = function (tx, sqlResultSet) {
+                    var sqlCommands = [
+                        'create table AppSettings ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null )',
+                        'create table AppFiles ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT not null, MIMEType TEXT, Encoding TEXT not null )',
+                        'create table AppKeys ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Salt TEXT not null, Hash TEXT not null )',
+                        'create table AppUsers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Username TEXT not null, FirstName TEXT not null, LastName TEXT not null, EmailAddress TEXT not null, Administrator BOOL not null, Enabled BOOL not null, PasswordId BIGINT not null, constraint FK_User_PasswordId foreign key (PasswordId) references AppKeys )',
+                        'create table AppUserSessions ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Session TEXT not null, Host TEXT not null, Agent TEXT not null, LocalAddress TEXT not null, UserAddress TEXT not null, Started DATETIME not null, Ended DATETIME, UserId BIGINT not null, constraint FK_UserSession_UserId foreign key (UserId) references AppUsers )',
+                        'create table CfgCountries ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )',
+                        'create table CfgStates ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CountryId BIGINT not null, constraint FK_State_CountryId foreign key (CountryId) references CfgCountries )',
+                        'create table CfgCities ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, StateId BIGINT not null, constraint FK_City_StateId foreign key (StateId) references CfgStates )',
+                        'create table CfgColors ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, HEX TEXT, RGB TEXT )',
+                        'create table CfgIdentityTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ShortName TEXT not null )',
+                        'create table CfgCompany ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT not null, PostalCode TEXT, PhoneNumber TEXT not null, WebSite TEXT, Slogan TEXT, IdentityTypeId BIGINT not null, CityId BIGINT not null, LogoId BIGINT, constraint FK_Company_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Company_CityId foreign key (CityId) references CfgCities, constraint FK_Company_LogoId foreign key (LogoId) references AppFiles )',
+                        'create table CfgCustomers ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Identity TEXT not null, Name TEXT not null, ShortName TEXT, Address TEXT, PostalCode TEXT, PhoneNumber TEXT, WebSite TEXT, ContactName TEXT, ContactEmailAddress TEXT, Comments TEXT, Enabled BOOL not null, IdentityTypeId BIGINT not null, CityId BIGINT not null, constraint FK_Customer_IdentityTypeId foreign key (IdentityTypeId) references CfgIdentityTypes, constraint FK_Customer_CityId foreign key (CityId) references CfgCities )',
+                        'create table MntMachineTrademarks ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )',
+                        'create table MntMachineModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, CompartmentLength NUMERIC, CompartmentWidth NUMERIC, CompartmentHeight NUMERIC, TrademarkId BIGINT not null, constraint FK_MachineModel_TrademarkId foreign key (TrademarkId) references MntMachineTrademarks )',
+                        'create table MntMachines ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Serial TEXT, CustomerReference TEXT, ModelId BIGINT not null, CustomerId BIGINT not null, constraint FK_Machine_ModelId foreign key (ModelId) references MntMachineModels, constraint FK_Machine_CustomerId foreign key (CustomerId) references CfgCustomers )',
+                        'create table MntConnectorTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, ColorRequired BOOL not null, ImageId BIGINT not null, constraint FK_ConnectorType_ImageId foreign key (ImageId) references AppFiles )',
+                        'create table MntConnectors ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TypeId BIGINT not null, constraint FK_Connector_TypeId foreign key (TypeId) references MntConnectorTypes )',
+                        'create table MntBatteryTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Voltage INT not null, NumberOfCells INT not null )',
+                        'create table MntObjectTrademarks ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )',
+                        'create table MntObjectModels ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TrademarkId BIGINT not null, constraint FK_ObjectTypeModel_TrademarkId foreign key (TrademarkId) references MntObjectTrademarks )',
+                        'create table MntObjects ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Serial TEXT, CustomerReference TEXT, Enabled BOOL not null, ModelId BIGINT not null, CustomerId BIGINT not null, constraint FK_ObjectType_ModelId foreign key (ModelId) references MntObjectModels, constraint FK_ObjectType_CustomerId foreign key (CustomerId) references CfgCustomers )',
+                        'create table MntBatteries ( Id BIGINT not null, Amperage TEXT not null, StandardBox BOOL not null, Cover BOOL not null, DrainHoles BOOL not null, MinimunWeight NUMERIC, MaximunWeight NUMERIC, Length NUMERIC, Width NUMERIC, BoxHeight NUMERIC, HandleHeight NUMERIC, TypeId BIGINT not null, ConnectorId BIGINT not null, ConnectorColorId BIGINT, primary key (Id), constraint FKF520AC824409B984 foreign key (Id) references MntObjects, constraint FK_Battery_TypeId foreign key (TypeId) references MntBatteryTypes, constraint FK_Battery_ConnectorId foreign key (ConnectorId) references MntConnectors, constraint FK_Battery_ConnectorColorId foreign key (ConnectorColorId) references CfgColors )',
+                        'create table MntChargers ( Id BIGINT not null, Voltage TEXT not null, Amperage TEXT not null, primary key (Id), constraint FKB35EAA924409B984 foreign key (Id) references MntObjects )',
+                        'create table MntCells ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, "Order" INT not null, BatteryId BIGINT not null, constraint FK_Cell_BatteryId foreign key (BatteryId) references MntBatteries )',
+                        'create table MntArticles ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, InventoryCode TEXT, EnabledBatteries BOOL not null, EnabledChargers BOOL not null, CorrectiveMaintenanceEnabled BOOL not null )',
+                        'create table MntDiagnosticTypes ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null )',
+                        'create table MntDiagnostics ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, TypeId BIGINT not null, constraint FK_Diagnostic_TypeId foreign key (TypeId) references MntDiagnosticTypes )',
+                        'create table MntCheckList ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Name TEXT not null, "Order" INT not null, EnabledBatteries BOOL not null, EnabledChargers BOOL not null, DiagnosticTypeId BIGINT not null, constraint FK_Check_DiagnosticTypeId foreign key (DiagnosticTypeId) references MntDiagnosticTypes )',
+                        'create table MntAssemblyStatus ( Id BIGINT not null, Guid TEXT not null, LastModified DATETIME not null, Description TEXT, primary key (Id) )',
+                        'create table MntAssemblies ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Type TEXT not null, UniqueCode TEXT not null, Date DATETIME not null, Comments TEXT, CustomerId BIGINT not null, ObjectTypeId BIGINT not null, ExecutedById BIGINT not null, StatusId BIGINT not null, constraint FK_Assembly_CustomerId foreign key (CustomerId) references CfgCustomers, constraint FK_Assembly_ObjectTypeId foreign key (ObjectTypeId) references MntObjects, constraint FK_Assembly_ExecutedById foreign key (ExecutedById) references AppUsers, constraint FK_Assembly_StatusId foreign key (StatusId) references MntAssemblyStatus )',
+                        'create table MntMaintenanceStatus ( Id BIGINT not null, Guid TEXT not null, LastModified DATETIME not null, Description TEXT, primary key (Id) )',
+                        'create table MntMaintenances ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Type TEXT not null, UniqueCode TEXT not null, Date DATETIME not null, Preventive BOOL not null, Corrective BOOL not null, AcceptedBy TEXT not null, WorkToBeDone TEXT, TechnicalReport TEXT, CustomerId BIGINT not null, MachineId BIGINT, ObjectTypeId BIGINT not null, ExecutedById BIGINT not null, ExecutedByDigitalSignatureId BIGINT, AcceptedByDigitalSignatureId BIGINT, StatusId BIGINT not null, constraint FK_Maintenance_CustomerId foreign key (CustomerId) references CfgCustomers, constraint FK_Maintenance_MachineId foreign key (MachineId) references MntMachines, constraint FK_Maintenance_ObjectTypeId foreign key (ObjectTypeId) references MntObjects, constraint FK_Maintenance_ExecutedById foreign key (ExecutedById) references AppUsers, constraint FK_Maintenance_ExecutedByDigitalSignatureId foreign key (ExecutedByDigitalSignatureId) references AppFiles, constraint FK_Maintenance_AcceptedByDigitalSignatureId foreign key (AcceptedByDigitalSignatureId) references AppFiles, constraint FK_Maintenance_StatusId foreign key (StatusId) references MntMaintenanceStatus )',
+                        'create table MntMaintenanceCheckList ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Comments TEXT, MaintenanceId BIGINT not null, CheckId BIGINT not null, DiagnosticId BIGINT not null, constraint FK_MaintenanceCheck_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_MaintenanceCheck_CheckId foreign key (CheckId) references MntCheckList, constraint FK_MaintenanceCheck_DiagnosticId foreign key (DiagnosticId) references MntDiagnostics )',
+                        'create table MntCellsReviews ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Voltage NUMERIC not null, Density NUMERIC not null, Comments TEXT, CellId BIGINT not null, MaintenanceId BIGINT, AssemblyId BIGINT, constraint FK_CellReview_CellId foreign key (CellId) references MntCells, constraint FK_CellReview_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_CellReview_AssemblyId foreign key (AssemblyId) references MntAssemblies )',
+                        'create table MntArticlesOutputs ( Id integer primary key autoincrement, Guid TEXT not null, LastModified DATETIME not null, Quantity NUMERIC not null, ArticleId BIGINT not null, MaintenanceId BIGINT, AssemblyId BIGINT, constraint FK_ArticleOutput_ArticleId foreign key (ArticleId) references MntArticles, constraint FK_ArticleOutput_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_ArticleOutput_AssemblyId foreign key (AssemblyId) references MntAssemblies )'                        
+                    ];
+                    tx.executeMultiSql(sqlCommands);
+                };
+                
+                self.beginTransaction(function (tx) {
+                    fnc01(tx);
+                }, onSuccess, onError, debugMode);
             },
             importData: function (onSuccess, onError, debugMode) {
-                var _dbContext = this;
-                
-                //Este método sirve para obtener los nuevos registros y los registros
-                //modificados recientemente desde el servidor de todas las tablas de parametrización
-                //simplemente, hay que enviar por cada tabla, el guid y la fecha de
-                //actualización de los registros que existan localmente
-                
-                //Para evitar problemas con las operaciones asyncronas, lo mejor es enviar un solo
-                //paquete de datos, y esperar una sola respuesta del servidor
+                var self = this;
                 
                 var localData = [];
                 
-                Promise.resolve()
-                .then(function () {
-                    return new Promise(function (resolve, reject) {
-                        _dbContext.beginTransaction(function (tx) {
-                            var promises = [];
-                            PaCM.eachArray(_importTables, function (inx, t) {
-                                var command = null;
-                                if (_tablesInheritedOfMntObjects.indexOf(t) >= 0) {
-                                    command = 'SELECT "' + t + '" Tb, t.Id, p.LastModified FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id';
-                                } else {
-                                    command = 'SELECT "' + t + '" Tb, t.Id, t.LastModified FROM ' + t + ' t';
-                                }
-                                promises.push(
-                                    tx.executeSql(command)
-                                    .then(function (sqlResultSet) {
-                                        PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
-                                            localData.push({
-                                                Tb: r.Tb,
-                                                Id: r.Id,
-                                                Lm: new Date(r.LastModified)
-                                            });
-                                        });
-                                    })
-                                );
-                            });
-                            Promise.all(promises)
-                            .then(function () {
-                                resolve();
-                            })
-                            .catch(function (sqlError) {
-                                reject(sqlError);
-                            });
-                        }, debugMode);
-                    });
-                })
-                //Envia datos al servidor
-                .then(function () {
-                    return new Promise(function (resolve, reject) {
-                        $http.post(addressServer + 'SyncronizeData/GetData', {
-                            tables: _importTables,
-                            records: localData
-                        })
-                        .success(function (response) {
-                            resolve(response);
-                        })
-                        .error(function (response) {
-                            reject(response);
-                        });
-                    });                    
-                })
-                //Procesa la información que ha sido devuelta por el servidor
-                .then(function (response) {
-                    return new Promise(function (resolve, reject) {
-                        _dbContext.beginTransaction(function (tx1) {
-                            var promises = [];
-                            PaCM.eachArray(response.Records, function (inx, r) {
-                                switch (r.Ac) {
-                                    case 'c':
-                                        promises.push(
-                                            tx1.insert(r.Tb, r.Dt)
-                                        );
-                                        break;
-                                    case 'u':
-                                        promises.push(
-                                            tx1.update(r.Tb, r.Dt, "Id=" + r.Id)
-                                        );
-                                        break;
-                                    case 'd':
-                                        promises.push(
-                                            tx1.delete(r.Tb, "Id=" + r.Id)
-                                        );
-                                        break;
-                                    default:
-                                        onError('Action not support');
-                                        return;
-                                }
-                            });
-                            Promise.all(promises)
-                            .then(function () {
-                                resolve();
-                            })
-                            .catch(function (sqlError) {
-                                reject(sqlError);
-                            });
-                        }, debugMode);
-                    });
-                })
-                .then(function () {
-                    if (typeof(onSuccess) === 'function') {
-                        onSuccess('Data imported successfully');
-                    }
-                })
-                .catch(function (sqlError) {
-                    if (typeof(onError) === 'function') {
-                        if (sqlError && sqlError.code) {
-                            var errorMessage = 'ERROR: ' + sqlError.code + ': ' + sqlError.message;
-                            onError(errorMessage);
+                var fnc01 = function (tx) {
+                    var sqlCommands = [];
+                    PaCM.eachArray(tablesForImport, function (inx, t) {
+                        var command = null;
+                        if (tablesInheritedOfMntObjects.indexOf(t) >= 0) {
+                            command = 'SELECT "' + t + '" Tb, t.Id, p.LastModified FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id';
                         } else {
-                            onError(sqlError);
+                            command = 'SELECT "' + t + '" Tb, t.Id, t.LastModified FROM ' + t + ' t';
                         }
-                    } else {
-                        throw sqlError;
-                    }
-                });
+                        sqlCommands.push(command);
+                    });
+                    tx.executeMultiSql(sqlCommands, function (tx1, sqlResultSet1) {
+                        PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
+                            localData.push({
+                                Tb: r.Tb,
+                                Id: r.Id,
+                                Lm: new Date(r.LastModified)
+                            });
+                        });
+                    });
+                };
+                var fnc02 = function () {
+                    $http.post(addressServer + 'SyncronizeData/GetData', {
+                        tables: tablesForImport,
+                        records: localData
+                    })
+                    .success(function (response) {
+                        fnc03(response);
+                    })
+                    .error(function (response) {
+                        onError(response);
+                    });
+                };
+                var fnc03 = function (response) {
+                    self.beginTransaction(function (tx) {
+                        PaCM.eachArray(response.Records, function (inx, r) {
+                            switch (r.Ac) {
+                                case 'c':
+                                    tx.insert(r.Tb, r.Dt);
+                                    break;
+                                case 'u':
+                                    tx.update(r.Tb, r.Dt, "Id=" + r.Id);
+                                    break;
+                                case 'd':
+                                    tx.delete(r.Tb, "Id=" + r.Id);
+                                    break;
+                                default:
+                                    throw 'Action not support';
+                            }
+                        });
+                    }, onSuccess, onError, debugMode);
+                };
+                
+                self.beginTransaction(function (tx) {
+                    fnc01(tx);
+                }, fnc02, onError, debugMode);
+            },
+            exportData: function (onSuccess, onError, debugMode) {
+                
             }
         };
     })
@@ -458,40 +469,38 @@ angular.module('starter.services', [])
         };
         
         return {
-            get: function (entity, id, debugMode) {
+            get: function (entity, id, onSuccess, onErrror, debugMode) {
                 var sqlQuery = null;
-                if (typeof(_queries[entity]) === 'undefined') {
-                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
-                } else {
+                if (PaCM.isDefined(_queries[entity])) {
                     sqlQuery = _queries[entity];
+                } else {
+                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
                 }
                 sqlQuery += ' WHERE r.Id = ?';
-                var promise = new Promise(function (resolve, reject) {
-                    dbContext.beginTransaction(function (tx) {
-                        tx.executeSql(sqlQuery, [ id ]).then(function (sqlResultSet) {
-                            resolve(sqlResultSet);
-                        });
-                    }, debugMode);
-                });
-                return promise;
+                
+                dbContext.beginTransaction(function (tx) {
+                    tx.executeSql(sqlQuery, [ id ], function (tx1, sqlResultSet1) {
+                        if (PaCM.isFunction(onSuccess))
+                            onSuccess(sqlResultSet1);
+                    });
+                }, null, onErrror, debugMode);
             },
-            list: function (entity, debugMode) {
+            list: function (entity, onSuccess, onErrror, debugMode) {
                 var sqlQuery = null;
-                if (typeof(_queries[entity]) === 'undefined') {
-                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
-                } else {
+                if (PaCM.isDefined(_queries[entity])) {
                     sqlQuery = _queries[entity];
+                } else {
+                    sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
                 }
-                var promise = new Promise(function (resolve, reject) {
-                    dbContext.beginTransaction(function (tx) {
-                        tx.executeSql(sqlQuery).then(function (sqlResultSet) {
-                            resolve(sqlResultSet);
-                        });
-                    }, debugMode);
-                });
-                return promise;
+                
+                dbContext.beginTransaction(function (tx) {
+                    tx.executeSql(sqlQuery, null, function (tx1, sqlResultSet1) {
+                        if (PaCM.isFunction(onSuccess))
+                            onSuccess(sqlResultSet1);
+                    });
+                }, null, onErrror, debugMode);
             },
-            find: function (entity, where, parameters, debugMode) {
+            find: function (entity, where, parameters, onSuccess, onErrror, debugMode) {
                 var sqlQuery = null;
                 if (typeof(_queries[entity]) === 'undefined') {
                     sqlQuery = 'SELECT r.* FROM ' + _entities[entity] + ' r';
@@ -499,14 +508,13 @@ angular.module('starter.services', [])
                     sqlQuery = _queries[entity];
                 }
                 sqlQuery += ' WHERE ' + where;
-                var promise = new Promise(function (resolve, reject) {
-                    dbContext.beginTransaction(function (tx) {
-                        tx.executeSql(sqlQuery, parameters).then(function (sqlResultSet) {
-                            resolve(sqlResultSet);
-                        });
-                    }, debugMode);
-                });
-                return promise;
+                
+                dbContext.beginTransaction(function (tx) {
+                    tx.executeSql(sqlQuery, parameters, function (tx1, sqlResultSet1) {
+                        if (PaCM.isFunction(onSuccess))
+                            onSuccess(sqlResultSet1);
+                    });
+                }, null, onErrror, debugMode);
             }
         };
         
