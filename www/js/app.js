@@ -22,10 +22,24 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 
     })
     
+    .run(function ($timeout, userSession) {
+        
+        $timeout(function () {
+            userSession.sigIn("julian_her@hotmail.com", "123456");
+        }, 500);
+        
+    })
+    
     .config(function($ionicConfigProvider) {
         
         // Set the tabs in the bottom position
         $ionicConfigProvider.tabs.position('bottom');
+    })
+    
+    .config(function($httpProvider) {
+        
+        // Set timeout for ajax actions
+        $httpProvider.defaults.timeout = 10000;
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
@@ -45,6 +59,16 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
             })
 
             // Each tab has its own nav history stack:
+            
+            .state('app.login', {
+                url: '/login',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/login.html',
+                        controller: 'loginCtrl'
+                    }
+                }
+            })
 
             .state('app.new', {
                 url: '/new',
@@ -80,6 +104,16 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
                     'menuContent': {
                         templateUrl: 'templates/records.html',
                         controller: 'recordsCtrl'
+                    }
+                }
+            })
+
+            .state('app.details', {
+                url: '/details/:maintenanceId',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/details.html',
+                        controller: 'detailsCtrl'
                     }
                 }
             })

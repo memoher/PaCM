@@ -1,5 +1,111 @@
-<ion-view view-title="Records">
+<ion-view view-title="Historial">
     <ion-content padding="true" class="has-header">
-        Records
+        <form>
+            <div class="row">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Cliente" readonly="readonly" ng-model="filters.customerName">
+                        </label>
+                        <button class="button button-small" ng-click="searchCustomer()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                        <button class="button button-small" ng-click="resetCustomer()">
+                            <i class="icon ion-close"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Realizado por" readonly="readonly" ng-model="filters.executedByUsername">
+                        </label>
+                        <button class="button button-small" ng-click="searchExecutedBy()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                        <button class="button button-small" ng-click="resetExecutedBy()">
+                            <i class="icon ion-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Marca" readonly="readonly" ng-model="filters.objectTypeTrademarkName">
+                        </label>
+                        <button class="button button-small" ng-click="searchObjectTypeTrademark()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                        <button class="button button-small" ng-click="resetObjectTypeTrademark()">
+                            <i class="icon ion-close"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Modelo" readonly="readonly" ng-model="filters.objectTypeModelName">
+                        </label>
+                        <button class="button button-small" ng-click="searchObjectTypeModel()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                        <button class="button button-small" ng-click="resetObjectTypeModel()">
+                            <i class="icon ion-close"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Bateria / cargador" readonly="readonly" ng-model="filters.objectTypeDescription">
+                        </label>
+                        <button class="button button-small" ng-click="searchObjectType()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                        <button class="button button-small" ng-click="resetObjectType()">
+                            <i class="icon ion-close"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <li class="item item-toggle">
+                        Baterias
+                        <label class="toggle toggle-positive">
+                            <input type="checkbox">
+                            <div class="track">
+                                <div class="handle"></div>
+                            </div>
+                        </label>
+                    </li>
+                </div>
+                <div class="col">
+                    <li class="item item-toggle">
+                        Cargadores
+                        <label class="toggle toggle-positive">
+                            <input type="checkbox">
+                            <div class="track">
+                                <div class="handle"></div>
+                            </div>
+                        </label>
+                    </li>
+                </div>
+                <div class="col">
+                    <button class="button button-block button-positive" ng-click="searchHistory()">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+        </form>
+        <ion-list>
+            <ion-item class="item-button-right" ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
+                {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble '}}
+                {{ r.Type.indexOf('Battery') >= 0 ? 'bateria ' : 'cargador '}}
+                {{ r.ObjectTypeDescription}}
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-view>

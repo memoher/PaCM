@@ -1,4 +1,4 @@
-<ion-view title="New maintenance">
+<ion-view title="Nuevo mantenimiento">
     <ion-tabs class="tabs-positive tabs-icon-top">
         <ion-tab title="Search" icon="ion-search" hidden="{{ tabs.hideSearcherTab}}">
             <ion-content padding="true" class="has-header">
@@ -36,109 +36,123 @@
         <ion-tab title="Battery" icon="ion-battery-charging" hidden="{{ tabs.hideBatteryTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <label class="item item-select">
-                        <span class="input-label">Marca</span>
-                        <select ng-options="t.Id as t.Name for t in batteryResources.trademarks" ng-model="battery.trademarkId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-select">
-                        <span class="input-label">Modelo</span>
-                        <select ng-options="m.Id as m.Name for m in batteryResources.models" ng-model="battery.modelId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label">Serial</span>
-                        <input placeholder="" type="text" ng-model="battery.serial">
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label"># Interno</span>
-                        <input placeholder="" type="text" ng-model="battery.customerReference">
-                    </label>
+                    <ion-list>
+                        <label class="item item-select">
+                            <span class="input-label">Marca</span>
+                            <select ng-options="t.Id as t.Name for t in batteryResources.trademarks" ng-model="battery.trademarkId">
+                            </select>
+                        </label>
+                        <label class="item item-select">
+                            <span class="input-label">Modelo</span>
+                            <select ng-options="m.Id as m.Name for m in batteryResources.models" ng-model="battery.modelId">
+                            </select>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Serial</span>
+                            <input placeholder="" type="text" ng-model="battery.serial">
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"># Interno</span>
+                            <input placeholder="" type="text" ng-model="battery.customerReference">
+                        </label>
+                    </ion-list>
                 </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Charger" icon="ion-flash" hidden="{{ tabs.hideChargerTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <label class="item item-select">
-                        <span class="input-label">Marca</span>
-                        <select ng-options="t.Id as t.Name for t in chargerResources.trademarks" ng-model="charger.trademarkId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-select">
-                        <span class="input-label">Modelo</span>
-                        <select ng-options="m.Id as m.Name for m in chargerResources.models" ng-model="charger.modelId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label">Serial</span>
-                        <input placeholder="" type="text" ng-model="charger.serial">
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label"># Interno</span>
-                        <input placeholder="" type="text" ng-model="charger.customerReference">
-                    </label>
+                    <ion-list>
+                        <label class="item item-select">
+                            <span class="input-label">Marca</span>
+                            <select ng-options="t.Id as t.Name for t in chargerResources.trademarks" ng-model="charger.trademarkId">
+                            </select>
+                        </label>
+                        <label class="item item-select">
+                            <span class="input-label">Modelo</span>
+                            <select ng-options="m.Id as m.Name for m in chargerResources.models" ng-model="charger.modelId">
+                            </select>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Serial</span>
+                            <input placeholder="" type="text" ng-model="charger.serial">
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"># Interno</span>
+                            <input placeholder="" type="text" ng-model="charger.customerReference">
+                        </label>
+                    </ion-list>
                 </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Machine" icon="ion-gear-a" hidden="{{ tabs.hideMachineTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <label class="item item-select">
-                        <span class="input-label">Marca</span>
-                        <select ng-options="t.Id as t.Name for t in machineResources.trademarks" ng-model="machine.trademarkId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-select">
-                        <span class="input-label">Modelo</span>
-                        <select ng-options="m.Id as m.Name for m in machineResources.models" ng-model="machine.modelId">
-                            <option>Seleccione</option>
-                        </select>
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label">Serial</span>
-                        <input placeholder="" type="text" ng-model="machine.serial">
-                    </label>
-                    <label class="item item-input">
-                        <span class="input-label"># Interno</span>
-                        <input placeholder="" type="text" ng-model="machine.customerReference">
-                    </label>
+                    <ion-list>
+                        <label class="item item-select">
+                            <span class="input-label">Marca</span>
+                            <select ng-options="t.Id as t.Name for t in machineResources.trademarks" ng-model="machine.trademarkId">
+                            </select>
+                        </label>
+                        <label class="item item-select">
+                            <span class="input-label">Modelo</span>
+                            <select ng-options="m.Id as m.Name for m in machineResources.models" ng-model="machine.modelId">
+                            </select>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Serial</span>
+                            <input placeholder="" type="text" ng-model="machine.serial">
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"># Interno</span>
+                            <input placeholder="" type="text" ng-model="machine.customerReference">
+                        </label>
+                    </ion-list>
                 </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Work to be done" icon="ion-hammer" hidden="{{ tabs.hideWorkToBeDoneTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <label class="item item-input">
-                        <span class="input-label">Trabajo a realizar</span>
-                        <textarea ng-model="maintenance.workToBeDone"></textarea>
-                    </label>
+                    <ion-list>
+                        <label class="item item-input">
+                            <span class="input-label">Trabajo a realizar</span>
+                            <textarea ng-model="maintenance.workToBeDone"></textarea>
+                        </label>
+                    </ion-list>
                 </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Physical inspection" icon="ion-clipboard" hidden="{{ tabs.hidePhysicalInspectionTab}}">
             <ion-content padding="true" class="has-header">
-                <form></form>
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Cell inspection" icon="ion-battery-empty" hidden="{{ tabs.hideCellInspectionTab}}">
             <ion-content padding="true" class="has-header">
-                <form></form>
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Supplies" icon="ion-medkit" hidden="{{ tabs.hideSuppliesTab}}">
             <ion-content padding="true" class="has-header">
-                <form></form>
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
             </ion-content>
         </ion-tab>
         <ion-tab title="Technical report" icon="ion-compose" hidden="{{ tabs.hideTechnicalReportTab}}">
             <ion-content padding="true" class="has-header">
-                <form></form>
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
             </ion-content>
         </ion-tab>
     </ion-tabs>

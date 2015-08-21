@@ -16,17 +16,17 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
-                <ion-item menu-close ng-click="login()">
-                    Login
+                <ion-item menu-close href="#/app/login" ng-hide="userSession.isLogged()">
+                    Iniciar sesión
                 </ion-item>
-                <ion-item menu-close href="#/app/new">
-                    New
+                <ion-item menu-close href="#/app/new" ng-show="userSession.isLogged()">
+                    Nuevo
                 </ion-item>
-                <ion-item menu-close href="#/app/records">
-                    Records
+                <ion-item menu-close href="#/app/records" ng-show="userSession.isLogged()">
+                    Historial
                 </ion-item>
                 <ion-item menu-close href="#/app/tools">
-                    Tools
+                    Herramientas
                 </ion-item>
             </ion-list>
         </ion-content>

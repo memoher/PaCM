@@ -3,3 +3,12 @@
 .pane.tab-content.has-header {
     top: 44px;
 }
+
+input, select, textarea {
+    width: 100%;
+}
+
+.col .button.button-block, .col .button.button-full {
+    margin-top: 0;
+    margin-bottom: 0;
+}

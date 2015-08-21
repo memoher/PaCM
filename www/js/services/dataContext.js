@@ -7,7 +7,7 @@
 
     PaCM.servicesModule.factory('dataContext', function (dbContext) {
 
-        var debugMode = 1;
+        var debugMode = 4;
 
         var entities = {
             Settings: 'AppSettings',
@@ -47,9 +47,12 @@
             ArticleOutput: 'MntArticlesOutputs'
         };
         var queries = {
+            ObjectType: "r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId] FROM MntObjects r INNER JOIN MntObjectModels m ON r.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
             Battery: "r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || p.[Serial], '') || IFNULL(' / # Interno: ' || p.[CustomerReference], '')) [Description], p.[Enabled], p.[Serial], p.[CustomerReference], p.[ModelId], p.[CustomerId], m.[TrademarkId], p.[LastModified] FROM MntBatteries r INNER JOIN MntObjects p ON r.Id = p.Id INNER JOIN MntObjectModels m ON p.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
             Charger: "r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || p.[Serial], '') || IFNULL(' / # Interno: ' || p.[CustomerReference], '')) [Description], p.[Enabled], p.[Serial], p.[CustomerReference], p.[ModelId], p.[CustomerId], m.[TrademarkId], p.[LastModified] FROM MntChargers  r INNER JOIN MntObjects p ON r.Id = p.Id INNER JOIN MntObjectModels m ON p.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
-            Machine: "r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId], m.[CompartmentLength], m.[CompartmentWidth], m.[CompartmentHeight] FROM MntMachines r INNER JOIN MntMachineModels m ON r.ModelId = m.Id INNER JOIN MntMachineTrademarks t ON t.Id = m.TrademarkId"
+            Machine: "r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId], m.[CompartmentLength], m.[CompartmentWidth], m.[CompartmentHeight] FROM MntMachines r INNER JOIN MntMachineModels m ON r.ModelId = m.Id INNER JOIN MntMachineTrademarks t ON t.Id = m.TrademarkId",
+            Assembly: "r.*, (ot.[Name] || ' / ' || om.[Name] || IFNULL(' / Serial: ' || o.[Serial], '') || IFNULL(' / # Interno: ' || o.[CustomerReference], '')) [ObjectTypeDescription], o.[ModelId] ObjectTypeModelId, om.[TrademarkId] ObjectTypeTrademarkId FROM MntAssemblies r INNER JOIN MntObjects o ON r.ObjectTypeId = o.Id INNER JOIN MntObjectModels om ON o.ModelId = om.Id INNER JOIN MntObjectTrademarks ot ON om.TrademarkId = ot.Id",
+            Maintenance: "r.*, (ot.[Name] || ' / ' || om.[Name] || IFNULL(' / Serial: ' || o.[Serial], '') || IFNULL(' / # Interno: ' || o.[CustomerReference], '')) [ObjectTypeDescription], o.[ModelId] ObjectTypeModelId, om.[TrademarkId] ObjectTypeTrademarkId, m.[ModelId] MachineModelId, mm.[TrademarkId] MachineTrademarkId FROM MntMaintenances r INNER JOIN MntObjects o ON r.ObjectTypeId = o.Id INNER JOIN MntObjectModels om ON o.ModelId = om.Id INNER JOIN MntObjectTrademarks ot ON om.TrademarkId = ot.Id LEFT  JOIN MntMachines m ON r.MachineId = m.Id LEFT  JOIN MntMachineModels mm ON m.ModelId = mm.Id"
         };
         var dataCached = {};
         var dataDictionaryCached = {};
@@ -134,14 +137,61 @@
             get: function (entity, id) {
                 return dataDictionaryCached[entity][id];
             },
+            first: function (entity, where) {
+                
+                var validWhere =
+                PaCM.eachProperties(where, function (key, value) {
+                    return true;
+                });
+                
+                if (validWhere === true) {
+                    var result = 
+                    PaCM.eachArray(dataCached[entity], function (inx, r) {
+                        var valid = true;
+                        PaCM.eachProperties(where, function (key, value) {
+                            if (r[key] != value)
+                                valid = false;
+                        });
+                        if (valid === true) {
+                            alert(1);
+                            return r;
+                        }
+                    });
+                    return result;
+                } else {
+                    throw 'Where is not valid';
+                }
+            },
             list: function (entity) {
                 return dataCached[entity];
-            } /*,
-            find: function (entity, where, parameters, onSuccess, onError) {
-                refreshDataCached(function () {
-                    onSuccess(dataCached[entity]);
-                }, onError);
-            }*/
+            },
+            find: function (entity, where) {
+                var self = this;
+                
+                var validWhere =
+                PaCM.eachProperties(where, function (key, value) {
+                    return true;
+                });
+
+                var result = [];
+                if (validWhere === true) {
+                    PaCM.eachArray(dataCached[entity], function (inx, r) {
+                        var valid = true;
+                        PaCM.eachProperties(where, function (key, value) {
+                            if (r[key] != value)
+                                valid = false;
+                        });
+                        if (valid === true) {
+                            result.push(r);
+                        }
+                    });
+                } else {
+                    PaCM.eachArray(dataCached[entity], function (inx, r) {
+                        result.push(r);
+                    });
+                }
+                return result;
+            }
         };
     });
 

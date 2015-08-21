@@ -2,8 +2,6 @@
     
     PaCM.controllersModule.controller('detailsCtrl', function ($scope, $stateParams, $ionicTabsDelegate, dbSelects, dataContext) {
         
-        var debugMode = 1;
-        
         $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? parseInt($stateParams.maintenanceId) : null,
             uniqueCode: null,
@@ -35,8 +33,8 @@
                 $scope.maintenance.preventive = r.Preventive;
                 $scope.maintenance.corrective = r.Corrective;
                 $scope.maintenance.customerId = r.CustomerId;
-                $scope.maintenance.batteryId = r.BatteryId;
-                $scope.maintenance.chargerId = r.ChargerId;
+                $scope.maintenance.batteryId = (r.Type.indexOf('Battery') >= 0 ? r.ObjectTypeId :null );
+                $scope.maintenance.chargerId = (r.Type.indexOf('Charger') >= 0 ? r.ObjectTypeId :null );
                 $scope.maintenance.machineId = r.MachineId;
                 $scope.maintenance.workToBeDone = r.WorkToBeDone;
                 $scope.maintenance.checkList = [];
@@ -47,9 +45,6 @@
                 $scope.maintenance.executedById = r.ExecutedById;
                 $scope.maintenance.acceptedBy = r.AcceptedBy;
 
-                if ($scope.maintenance.customerId) {
-                    getCustomer($scope.maintenance.customerId);
-                }
                 if ($scope.maintenance.batteryId) {
                     getBattery($scope.maintenance.batteryId);
                 }
@@ -175,6 +170,43 @@
             }
         };
         
+        $scope.searcher = {
+            search: '',
+            customers: dataContext.list('Customer'),
+            batteries: dataContext.list('Battery'),
+            chargers: dataContext.list('Charger'),
+            hideList: true
+        };
+        $scope.searcherOnChange = function () {
+            if (PaCM.isNullOrEmptyString($scope.searcher.search)) {
+                if ($scope.searcher.hideList != true)
+                    $scope.searcher.hideList = true;
+            } else {
+                if ($scope.searcher.hideList != false)
+                    $scope.searcher.hideList = false;
+            }
+        };
+        $scope.onSelectCustomer = function (customerId) {
+            $scope.maintenance.customerId = customerId;
+            $scope.maintenance.batteryId = null;
+            $scope.maintenance.chargerId = null;
+            loadData();
+        };
+        $scope.onSelectBattery = function (customerId, batteryId) {
+            $scope.maintenance.customerId = customerId;
+            $scope.maintenance.batteryId = batteryId;
+            $scope.maintenance.chargerId = null;
+            loadData();
+            $ionicTabsDelegate.select(1);
+        };
+        $scope.onSelectCharger = function (customerId, chargerId) {
+            $scope.maintenance.customerId = customerId;
+            $scope.maintenance.batteryId = null;
+            $scope.maintenance.chargerId = chargerId;
+            loadData();
+            $ionicTabsDelegate.select(2);
+        };
+
         $scope.tabs = {
             hideSearcherTab: true,
             hideBatteryTab: true,
@@ -188,8 +220,8 @@
         };
         var tabsRefresh = function () {
             if ($scope.maintenance.id) {
-                if (st.hideSearcherTab != true)
-                    st.hideSearcherTab = true;
+                if ($scope.tabs.hideSearcherTab != true)
+                    $scope.tabs.hideSearcherTab = true;
             } else {
                 if ($scope.tabs.hideSearcherTab != false)
                     $scope.tabs.hideSearcherTab = false;
@@ -232,45 +264,6 @@
             }
         };
         
-        $scope.searcher = {
-            search: '',
-            customers: dataContext.list('Customer'),
-            batteries: dataContext.list('Battery'),
-            chargers: dataContext.list('Charger'),
-            hideList: true
-        };
-        $scope.searcherOnChange = function () {
-            if (PaCM.isNullOrEmptyString($scope.searcher.search)) {
-                if ($scope.searcher.hideList != true)
-                    $scope.searcher.hideList = true;
-            } else {
-                if ($scope.searcher.hideList != false)
-                    $scope.searcher.hideList = false;
-            }
-        };
-        
-        
-        $scope.onSelectCustomer = function (customerId) {
-            $scope.maintenance.customerId = customerId;
-            $scope.maintenance.batteryId = null;
-            $scope.maintenance.chargerId = null;
-            loadData();
-        };
-        $scope.onSelectBattery = function (customerId, batteryId) {
-            $scope.maintenance.customerId = customerId;
-            $scope.maintenance.batteryId = batteryId;
-            $scope.maintenance.chargerId = null;
-            loadData();
-            $ionicTabsDelegate.select(1);
-        };
-        $scope.onSelectCharger = function (customerId, chargerId) {
-            $scope.maintenance.customerId = customerId;
-            $scope.maintenance.batteryId = null;
-            $scope.maintenance.chargerId = chargerId;
-            loadData();
-            $ionicTabsDelegate.select(2);
-        };
-
         var loadData = function () {
             if ($scope.maintenance.id) {
                 getMaintenance($scope.maintenance.id);
@@ -288,8 +281,6 @@
             }
             tabsRefresh();
         };
-        
-        tabsRefresh();
         loadData();
         
     });

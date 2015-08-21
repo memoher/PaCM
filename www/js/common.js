@@ -24,7 +24,7 @@
         },
         isString: function (vlr) {
             var self = this;
-            return (vlr && self.isDefined(vlr.replace) && self.isDefined(vlr.toLowerCase));
+            return typeof(vlr) === 'string';
         },
         isNullOrEmptyString: function (vlr) {
             var self = this;
@@ -50,12 +50,107 @@
                 alert(msg);
             }
         },
+        mergeArray: function (arr1, arr2, arr3) {
+            var self = this;
+            
+            var arr1Valid = self.eachArray(arr1, function (inx, e) { return true; });
+            var arr2Valid = self.eachArray(arr2, function (inx, e) { return true; });
+            var arr3Valid = self.eachArray(arr3, function (inx, e) { return true; });
+            
+            if (arr1Valid && !arr2Valid && !arr3Valid) {
+                return arr1;
+            } else {
+                var result = [];
+                self.eachArray(arr1, function (inx, e) {
+                    if (result.indexOf(e) < 0) {
+                        result.push(e);
+                    }
+                });
+                self.eachArray(arr2, function (inx, e) {
+                    if (result.indexOf(e) < 0) {
+                        result.push(e);
+                    }
+                });
+                self.eachArray(arr3, function (inx, e) {
+                    if (result.indexOf(e) < 0) {
+                        result.push(e);
+                    }
+                });
+                return result;
+            }
+        },
+        syncronizeArray: function (key, arr0, arr1, arr2, arr3) {
+            var self = this;
+            
+            var validKey =
+            PaCM.eachProperties(key, function (k, v) {
+                return true;
+            });
+            
+            var arrT = self.mergeArray(arr1, arr2, arr3);
+                
+            if (validKey) {
+                self.eachArrayInvert(arr0, function (inx, e) {
+                    var i = self.eachArray(arrT, function (inx2, e2) {
+                        var valid = true;
+                        self.eachArray(key, function (inx3, v) {
+                            if (e[v] != e2[v])
+                                valid = false;
+                        });
+                        if (valid === true) {
+                            return inx2;
+                        }
+                    });
+                    if (i) {
+                        arr0[inx] = arrT[i];
+                        arrT.splice(i, 1);
+                    } else {
+                        arr0.splice(inx, 1);
+                    }
+                });
+                self.eachArrayInvert(arrT, function (inx, e) {
+                    var i = self.eachArray(arr0, function (inx2, e2) {
+                        var valid = true;
+                        self.eachArray(key, function (inx3, v) {
+                            if (e[v] != e2[v])
+                                valid = false;
+                        });
+                        if (valid === true) {
+                            return inx2;
+                        }
+                    });
+                    if (!(i)) {
+                        arr0.push(e);
+                    }
+                    arrT.splice(inx, 1);
+                });
+            } else {
+                self.eachArrayInvert(arr0, function (inx, e) {
+                    var i = arrT.indexOf(e);
+                    if (i >= 0) {
+                        arrT.splice(i, 1);
+                    } else {
+                        arr0.splice(inx, 1);
+                    }
+                });
+                self.eachArrayInvert(arrT, function (inx, e) {
+                    var i = arr0.indexOf(e);
+                    if (i < 0) {
+                        arr0.push(e);
+                    }
+                    arrT.splice(inx, 1);
+                });
+            }
+        },
         eachArray: function (arr, iterator) {
             var self = this;
             if (arr) {
                 if (self.isArray(arr)) {
                     for (var i = 0; i < arr.length; i++) {
-                        iterator(i, arr[i]);
+                        var result = iterator(i, arr[i]);
+                        if (self.isDefined(result)) {
+                            return result;
+                        }
                     }
                 } else {
                     throw 'Array is not valid';
@@ -67,7 +162,10 @@
             if (arr) {
                 if (self.isArray(arr)) {
                     for (var i = arr.length - 1; i >= 0; i--) {
-                        iterator(i, arr[i]);
+                        var result = iterator(i, arr[i]);
+                        if (self.isDefined(result)) {
+                            return result;
+                        }
                     }
                 } else {
                     throw 'Array is not valid';
@@ -80,7 +178,10 @@
                 if (self.isObject(obj)) {
                     for (var p in obj) {
                         if (obj.hasOwnProperty(p)) {
-                            iterator(p, obj[p]);
+                            var result = iterator(p, obj[p]);
+                            if (self.isDefined(result)) {
+                                return result;
+                            }
                         }
                     }
                 } else {
@@ -94,18 +195,23 @@
                 if (self.isDefined(sqlRS.rows)) {
                     for (var i = 0; i < sqlRS.rows.length; i++) {
                         var r = sqlRS.rows.item(i);
+                        var o = {};
                         self.eachProperties(r, function (key, val) {
-                            if (self.isString(val)) {
-                                if (val === 'true') {
-                                    r[key] = true;
-                                } else if (val === 'false') {
-                                    r[key] = false;
-                                } else if (val.indexOf('GMT-') >= 0) {
-                                    r[key] = new Date(val);
+                            o[key] = val;
+                            if (self.isString(o[key])) {
+                                if (o[key] == 'true') {
+                                    o[key] = true;
+                                } else if (o[key] == 'false') {
+                                    o[key] = false;
+                                } else if (o[key].indexOf('GMT-') >= 0) {
+                                    o[key] = new Date(o[key]);
                                 }
                             }
                         });
-                        iterator(i, r);
+                        var result = iterator(i, o);
+                        if (self.isDefined(result)) {
+                            return result;
+                        }
                     } 
                 } else {
                     throw 'SQLResultSet is not valid';
@@ -118,18 +224,23 @@
                 if (self.isDefined(sqlRS.rows)) {
                     for (var i = sqlRS.rows.length - 1; i >= 0; i--) {
                         var r = sqlRS.rows.item(i);
+                        var o = {};
                         self.eachProperties(r, function (key, val) {
-                            if (self.isString(val)) {
-                                if (val === 'true') {
-                                    r[key] = true;
-                                } else if (val === 'false') {
-                                    r[key] = false;
-                                } else if (val.indexOf('GMT-') >= 0) {
-                                    r[key] = new Date(val);
+                            o[key] = val;
+                            if (self.isString(o[key])) {
+                                if (o[key] == 'true') {
+                                    o[key] = true;
+                                } else if (o[key] == 'false') {
+                                    o[key] = false;
+                                } else if (o[key].indexOf('GMT-') >= 0) {
+                                    o[key] = new Date(o[key]);
                                 }
                             }
                         });
-                        iterator(i, r);
+                        var result = iterator(i, o);
+                        if (self.isDefined(result)) {
+                            return result;
+                        }
                     } 
                 } else {
                     throw 'SQLResultSet is not valid';
