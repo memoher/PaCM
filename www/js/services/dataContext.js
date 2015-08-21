@@ -7,7 +7,7 @@
 
     PaCM.servicesModule.factory('dataContext', function (dbContext) {
 
-        var debugMode = 4;
+        var debugMode = 1;
 
         var entities = {
             Settings: 'AppSettings',
@@ -153,7 +153,6 @@
                                 valid = false;
                         });
                         if (valid === true) {
-                            alert(1);
                             return r;
                         }
                     });

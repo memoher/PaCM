@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $ionicModal, dataContext, userSession) {
+    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
 
         $scope.runningProcess = false;
         

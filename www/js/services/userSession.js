@@ -12,13 +12,12 @@
                 var self = this;
                 var user = dataContext.first('User', { EmailAddress: emailAddress, Enabled: true });
                 if (user == null)
-                    throw '1 - El usuario o la contraseña no es válido';
+                    throw 'El usuario o la contraseña no es válido';
                 
                 var pass = dataContext.get('Key', user.PasswordId);
                 var hash = crytographySHA1.getHash(password, pass.Salt);
-                alert(hash + '   ' + pass.Hash);
                 if (hash != pass.Hash)
-                    throw '2 - El usuario o la contraseña no es válido';
+                    throw 'El usuario o la contraseña no es válido';
                 
                 self.user = user;
             },

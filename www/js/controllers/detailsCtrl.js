@@ -1,7 +1,7 @@
 (function () {
     
-    PaCM.controllersModule.controller('detailsCtrl', function ($scope, $stateParams, $ionicTabsDelegate, dbSelects, dataContext) {
-        
+    PaCM.controllersModule.controller('detailsCtrl', function ($scope, $stateParams, $ionicTabsDelegate, dataContext) {
+
         $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? parseInt($stateParams.maintenanceId) : null,
             uniqueCode: null,
@@ -197,17 +197,18 @@
             $scope.maintenance.batteryId = batteryId;
             $scope.maintenance.chargerId = null;
             loadData();
-            $ionicTabsDelegate.select(1);
+            $ionicTabsDelegate.select($scope.tabs.items.indexOf('BatteryTab'));
         };
         $scope.onSelectCharger = function (customerId, chargerId) {
             $scope.maintenance.customerId = customerId;
             $scope.maintenance.batteryId = null;
             $scope.maintenance.chargerId = chargerId;
             loadData();
-            $ionicTabsDelegate.select(2);
+            $ionicTabsDelegate.select($scope.tabs.items.indexOf('ChargerTab'));
         };
 
         $scope.tabs = {
+            items: ['SearcherTab', 'BatteryTab', 'ChargerTab', 'MachineTab', 'WorkToBeDoneTab', 'PhysicalInspectionTab', 'CellInspectionTab', 'SuppliesTab', 'TechnicalReportTab'],
             hideSearcherTab: true,
             hideBatteryTab: true,
             hideChargerTab: true,
