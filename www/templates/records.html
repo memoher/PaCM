@@ -5,11 +5,8 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Cliente" readonly="readonly" ng-model="filters.customerName">
+                            <input type="text" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName">
                         </label>
-                        <button class="button button-small" ng-click="searchCustomer()">
-                            <i class="icon ion-search"></i>
-                        </button>
                         <button class="button button-small" ng-click="resetCustomer()">
                             <i class="icon ion-close"></i>
                         </button>
@@ -18,11 +15,8 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Realizado por" readonly="readonly" ng-model="filters.executedByUsername">
+                            <input type="text" placeholder="Realizado por" readonly="readonly" ng-focus="searchExecutedBy()" ng-model="filters.executedByUsername">
                         </label>
-                        <button class="button button-small" ng-click="searchExecutedBy()">
-                            <i class="icon ion-search"></i>
-                        </button>
                         <button class="button button-small" ng-click="resetExecutedBy()">
                             <i class="icon ion-close"></i>
                         </button>
@@ -33,11 +27,8 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Marca" readonly="readonly" ng-model="filters.objectTypeTrademarkName">
+                            <input type="text" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName">
                         </label>
-                        <button class="button button-small" ng-click="searchObjectTypeTrademark()">
-                            <i class="icon ion-search"></i>
-                        </button>
                         <button class="button button-small" ng-click="resetObjectTypeTrademark()">
                             <i class="icon ion-close"></i>
                         </button>
@@ -46,11 +37,8 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Modelo" readonly="readonly" ng-model="filters.objectTypeModelName">
+                            <input type="text" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName">
                         </label>
-                        <button class="button button-small" ng-click="searchObjectTypeModel()">
-                            <i class="icon ion-search"></i>
-                        </button>
                         <button class="button button-small" ng-click="resetObjectTypeModel()">
                             <i class="icon ion-close"></i>
                         </button>
@@ -59,11 +47,8 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Bateria / cargador" readonly="readonly" ng-model="filters.objectTypeDescription">
+                            <input type="text" placeholder="Bateria / cargador" readonly="readonly" ng-focus="searchObjectType()" ng-model="filters.objectTypeDescription">
                         </label>
-                        <button class="button button-small" ng-click="searchObjectType()">
-                            <i class="icon ion-search"></i>
-                        </button>
                         <button class="button button-small" ng-click="resetObjectType()">
                             <i class="icon ion-close"></i>
                         </button>

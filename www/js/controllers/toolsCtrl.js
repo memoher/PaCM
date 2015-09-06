@@ -2,7 +2,7 @@
     
     PaCM.controllersModule.controller('toolsCtrl', function ($scope, dbContext) {
 
-        var debugMode = 1;
+        var debugMode = 4;
         
         $scope.runningProcess = false;
 
@@ -34,6 +34,22 @@
                     $scope.runningProcess = false;
                     $scope.$apply();
                     PaCM.showError(err, 'Fails during data import');
+                },
+                debugMode);
+        };
+
+        $scope.exportData = function () {
+            $scope.runningProcess = true;
+            dbContext.exportData(
+                function () {
+                    $scope.runningProcess = false;
+                    $scope.$apply();
+                    alert('Data exported successfully');
+                },
+                function (err) {
+                    $scope.runningProcess = false;
+                    $scope.$apply();
+                    PaCM.showError(err, 'Fails during data export');
                 },
                 debugMode);
         };

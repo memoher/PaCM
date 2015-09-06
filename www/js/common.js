@@ -19,12 +19,22 @@
         isUndefined: function (vlr) {
             return typeof(vlr) === 'undefined';
         },
-        isNumber: function (vlr) {
-            return typeof(vlr) === 'number';
-        },
         isString: function (vlr) {
             var self = this;
             return typeof(vlr) === 'string';
+        },
+        isInteger: function (vlr) {
+            var self = this;
+            return self.isNumber(vlr) && (vlr % 1 === 0);
+        },
+        isNumber: function (vlr) {
+            return typeof(vlr) === 'number';
+        },
+        isDate: function (vlr) {
+            return vlr instanceof Date;
+        },
+        isBoolean: function (vlr) {
+            return (vlr === true || vlr === false);
         },
         isNullOrEmptyString: function (vlr) {
             var self = this;
@@ -203,7 +213,7 @@
                                     o[key] = true;
                                 } else if (o[key] == 'false') {
                                     o[key] = false;
-                                } else if (o[key].indexOf('GMT-') >= 0) {
+                                } else if (o[key].length = 24 && o[key].substring(4,5) == '-' && o[key].endsWith('Z')) {
                                     o[key] = new Date(o[key]);
                                 }
                             }

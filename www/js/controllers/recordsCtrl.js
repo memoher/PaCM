@@ -46,7 +46,7 @@
         // Create the login modal that we will use later
         $ionicModal.fromTemplateUrl('templates/searcher.html', {
             scope: $scope,
-            focusFirstInput: true
+            focusFirstInput: false
         }).then(function(modal) {
             $scope.modal = modal;
             $scope.searcher.open = function (type, title, data, onSelect) {

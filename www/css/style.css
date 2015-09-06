@@ -5,7 +5,7 @@
 }
 
 input, select, textarea {
-    width: 100%;
+    width: 65%;
 }
 
 .col .button.button-block, .col .button.button-full {

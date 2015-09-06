@@ -33,7 +33,7 @@
                 </ion-list>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Battery" icon="ion-battery-charging" hidden="{{ tabs.hideBatteryTab}}">
+        <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ tabs.hideBatteryTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -59,7 +59,7 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Charger" icon="ion-flash" hidden="{{ tabs.hideChargerTab}}">
+        <ion-tab title="Cargador" icon="ion-flash" hidden="{{ tabs.hideChargerTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -85,7 +85,7 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Machine" icon="ion-gear-a" hidden="{{ tabs.hideMachineTab}}">
+        <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ tabs.hideMachineTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -111,19 +111,14 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Work to be done" icon="ion-hammer" hidden="{{ tabs.hideWorkToBeDoneTab}}">
+        <ion-tab title="Trabajo a realizar" icon="ion-hammer" hidden="{{ tabs.hideWorkToBeDoneTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <ion-list>
-                        <label class="item item-input">
-                            <span class="input-label">Trabajo a realizar</span>
-                            <textarea ng-model="maintenance.workToBeDone"></textarea>
-                        </label>
-                    </ion-list>
+                    <textarea rows="30" ng-model="maintenance.workToBeDone"></textarea>
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Physical inspection" icon="ion-clipboard" hidden="{{ tabs.hidePhysicalInspectionTab}}">
+        <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ tabs.hidePhysicalInspectionTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -131,7 +126,7 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Cell inspection" icon="ion-battery-empty" hidden="{{ tabs.hideCellInspectionTab}}">
+        <ion-tab title="Inspección de celdas" icon="ion-battery-empty" hidden="{{ tabs.hideCellInspectionTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -139,7 +134,7 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Supplies" icon="ion-medkit" hidden="{{ tabs.hideSuppliesTab}}">
+        <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ tabs.hideSuppliesTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
                     <ion-list>
@@ -147,11 +142,10 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Technical report" icon="ion-compose" hidden="{{ tabs.hideTechnicalReportTab}}">
+        <ion-tab title="Reporte técnico" icon="ion-compose" hidden="{{ tabs.hideTechnicalReportTab}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <ion-list>
-                    </ion-list>
+                    <textarea rows="30" ng-model="maintenance.technicalReport"></textarea>
                 </form>
             </ion-content>
         </ion-tab>

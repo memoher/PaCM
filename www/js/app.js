@@ -39,7 +39,7 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
     .config(function($httpProvider) {
         
         // Set timeout for ajax actions
-        $httpProvider.defaults.timeout = 10000;
+        $httpProvider.defaults.timeout = 5000;
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
