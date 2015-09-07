@@ -10,16 +10,19 @@
             },
             sigIn: function (emailAddress, password) {
                 var self = this;
-                var user = dataContext.first('User', { EmailAddress: emailAddress, Enabled: true });
-                if (user == null)
-                    throw 'El usuario o la contraseña no es válido';
                 
-                var pass = dataContext.get('Key', user.PasswordId);
-                var hash = crytographySHA1.getHash(password, pass.Salt);
-                if (hash != pass.Hash)
-                    throw 'El usuario o la contraseña no es válido';
-                
-                self.user = user;
+                dataContext.first2('User', { EmailAddress: emailAddress, Enabled: true }, function (user) {
+                    if (user == null)
+                        throw 'El usuario o la contraseña no es válido';
+
+                    dataContext.get('Key', user.PasswordId, function (pass) {
+                        var hash = crytographySHA1.getHash(password, pass.Salt);
+                        if (hash != pass.Hash)
+                            throw 'El usuario o la contraseña no es válido';
+
+                        self.user = user;
+                    });
+                });
             },
             sigOut: function () {
                 var self = this;

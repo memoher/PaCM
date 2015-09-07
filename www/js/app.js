@@ -74,8 +74,8 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
                 url: '/new',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/details.html',
-                        controller: 'detailsCtrl'
+                        templateUrl: 'templates/new.html',
+                        controller: 'newCtrl'
                     }
                 }
             })
@@ -83,8 +83,8 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
                 url: '/new/:customerId',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/details.html',
-                        controller: 'detailsCtrl'
+                        templateUrl: 'templates/new.html',
+                        controller: 'newCtrl'
                     }
                 }
             })
@@ -92,8 +92,8 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
                 url: '/new/:customerId/:elmType/:elmId',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/details.html',
-                        controller: 'detailsCtrl'
+                        templateUrl: 'templates/new.html',
+                        controller: 'newCtrl'
                     }
                 }
             })
@@ -129,7 +129,7 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
             });
 
         // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/app/records');
+        $urlRouterProvider.otherwise('/app/tools');
 
     })
 

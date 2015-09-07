@@ -1,33 +1,156 @@
-<ion-view view-title="Nuevo">
-    <ion-content padding="true" class="has-header">
-        <form>
-            <label class="item item-input">
-                <i class="icon ion-search placeholder-icon"></i>
-                <input type="search" placeholder="Customer, battery, charger" ng-model="model.searcher">
-            </label>
-        </form>
-        <ion-list ng-show="showListPanel()">
-            <ion-item class="item-divider">Customers</ion-item>
-            <ion-item class="item-button-right" ng-repeat="r in model.customers| filter: { name: model.searcher }">
-                {{ r.name}}
-                <a class="button button-positive" href="#/app/new/{{ r.id}}">
-                    <i class="icon ion-checkmark"></i>
-                </a>
-            </ion-item>
-            <ion-item class="item-divider">Batteries</ion-item>
-            <ion-item class="item-button-right" ng-repeat="r in model.batteries| filter: { description: model.searcher }">
-                {{ r.description}}
-                <a class="button button-positive" href="#/app/new/{{ r.customerId}}/battery/{{ r.id}}">
-                    <i class="icon ion-checkmark"></i>
-                </a>
-            </ion-item>
-            <ion-item class="item-divider">Chargers</ion-item>
-            <ion-item class="item-button-right" ng-repeat="r in model.chargers| filter: { description: model.searcher }">
-                {{ r.description}}
-                <a class="button button-positive" href="#/app/new/{{ r.customerId}}/charger/{{ r.id}}">
-                    <i class="icon ion-checkmark"></i>
-                </a>
-            </ion-item>
-        </ion-list>
-    </ion-content>
+<ion-view title="Nuevo mantenimiento" cache-view="false">
+    <ion-tabs class="tabs-positive tabs-icon-top">
+        <ion-tab title="Inicio" icon="ion-search" hidden="{{ !(tabs.starterTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <label class="item item-input">
+                        <span class="input-label">Fecha</span>
+                        <input placeholder="" type="date" readonly="readonly" ng-model="maintenance.date">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Cliente</span>
+                        <span><button ng-click="searchCustomer()">A</button></span>
+                        <input placeholder="" type="text" readonly="readonly" ng-model="maintenance.customerName">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Realizado por</span>
+                        <input placeholder="" type="text" readonly="readonly" ng-model="maintenance.executedByUsername">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Estado</span>
+                        <input placeholder="" type="text" readonly="readonly" ng-model="maintenance.statusDescription">
+                    </label>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.preventive" ng-change="maintenance.preventive = true">Preventivo</ion-toggle>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="tabs.suppliesTab = maintenance.corrective">Correctivo</ion-toggle>
+                </form>
+                <div class="button-bar" ng-show="(newMaintenance && maintenance.customerId)">
+                    <button class="button button-block  icon ion-battery-charging" ng-click="newBatteryMaintenance()"> Mantenimiento de batería</button>
+                    <button class="button button-block  icon ion-flash" ng-click="newChargerMaintenance()"> Mantenimiento de cargador</button>
+                </div>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !(tabs.batteryTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <ion-list>
+                        <label class="item item-select">
+                            <span class="input-label">Marca</span>
+                            <select ng-options="t.Id as t.Name for t in batteryResources.trademarks" ng-model="battery.trademarkId">
+                            </select>
+                        </label>
+                        <label class="item item-select">
+                            <span class="input-label">Modelo</span>
+                            <select ng-options="m.Id as m.Name for m in batteryResources.models" ng-model="battery.modelId">
+                            </select>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Serial</span>
+                            <input placeholder="" type="text" ng-model="battery.serial">
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"># Interno</span>
+                            <input placeholder="" type="text" ng-model="battery.customerReference">
+                        </label>
+                    </ion-list>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !(tabs.chargerTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <label class="item item-input">
+                        <span class="input-label">Marca</span>
+                        <span><button ng-click="searchObjectTypeTrademark(false)">A</button></span>
+                        <input placeholder="" type="text" ng-model="charger.trademarkName">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Modelo</span>
+                        <span><button ng-click="searchObjectTypeModel(false)">A</button></span>
+                        <input placeholder="" type="text" ng-model="charger.modelName">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Serial</span>
+                        <input placeholder="" type="text" ng-model="charger.serial">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Nro Interno</span>
+                        <input placeholder="" type="text" ng-model="charger.customerReference">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Voltaje</span>
+                        <input placeholder="" type="text" ng-model="charger.voltage">
+                    </label>
+                    <label class="item item-input">
+                        <span class="input-label">Amperaje</span>
+                        <input placeholder="" type="text" ng-model="charger.amperage">
+                    </label>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ !(tabs.machineTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <ion-list>
+                        <label class="item item-select">
+                            <span class="input-label">Marca</span>
+                            <select ng-options="t.Id as t.Name for t in machineResources.trademarks" ng-model="machine.trademarkId">
+                            </select>
+                        </label>
+                        <label class="item item-select">
+                            <span class="input-label">Modelo</span>
+                            <select ng-options="m.Id as m.Name for m in machineResources.models" ng-model="machine.modelId">
+                            </select>
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label">Serial</span>
+                            <input placeholder="" type="text" ng-model="machine.serial">
+                        </label>
+                        <label class="item item-input">
+                            <span class="input-label"># Interno</span>
+                            <input placeholder="" type="text" ng-model="machine.customerReference">
+                        </label>
+                    </ion-list>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Trabajo a realizar" icon="ion-hammer" hidden="{{ !(tabs.workToBeDoneTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <textarea rows="30" ng-model="maintenance.workToBeDone"></textarea>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !(tabs.physicalInspectionTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Inspección de celdas" icon="ion-battery-empty" hidden="{{ !(tabs.cellInspectionTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !(tabs.suppliesTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <ion-list>
+                    </ion-list>
+                </form>
+            </ion-content>
+        </ion-tab>
+        <ion-tab title="Reporte técnico" icon="ion-compose" hidden="{{ !(tabs.technicalReportTab)}}">
+            <ion-content padding="true" class="has-header">
+                <form>
+                    <textarea rows="30" ng-model="maintenance.technicalReport"></textarea>
+                </form>
+            </ion-content>
+        </ion-tab>
+    </ion-tabs>
 </ion-view>
+

@@ -36,14 +36,16 @@
             if ($scope.filters.objectTypeId)
                 where.ObjectTypeId = $scope.filters.objectTypeId;
             
-            var assemblies = dataContext.find('Assembly', where);
-            var maintenances = dataContext.find('Maintenance', where);
-            PaCM.syncronizeArray(["Id"], $scope.history, assemblies, maintenances);
+            dataContext.find2('Assembly', where, function (assemblies) {
+                dataContext.find2('Maintenance', where, function (maintenances) {
+                    PaCM.syncronizeArray(["Id"], $scope.history, assemblies, maintenances);
+                    $scope.$digest();
+                });
+            });
         };
         
-        $scope.searcher = {};
-        
         // Create the login modal that we will use later
+        $scope.searcher = {};
         $ionicModal.fromTemplateUrl('templates/searcher.html', {
             scope: $scope,
             focusFirstInput: false
@@ -74,15 +76,17 @@
         });
         
         $scope.searchCustomer = function () {
-            $scope.searcher.open(
-                'Customer',
-                'Buscar cliente',
-                dataContext.list('Customer'),
-                function (r) {
-                    $scope.filters.customerId = r.Id;
-                    $scope.filters.customerName = r.Name;
-                    $scope.searcher.close();
-                });
+            dataContext.list('Customer', function (customers) {
+                $scope.searcher.open(
+                    'Customer',
+                    'Buscar cliente',
+                    customers,
+                    function (r) {
+                        $scope.filters.customerId = r.Id;
+                        $scope.filters.customerName = r.Name;
+                        $scope.searcher.close();
+                    });
+            });
         };
         $scope.resetCustomer = function () {
             $scope.filters.customerId = null;
@@ -91,15 +95,17 @@
         };
         
         $scope.searchExecutedBy = function () {
-            $scope.searcher.open(
-                'User',
-                'Buscar usuario',
-                dataContext.list('User'),
-                function (r) {
-                    $scope.filters.executedById = r.Id;
-                    $scope.filters.executedByUsername = r.Username;
-                    $scope.searcher.close();
-                });
+            dataContext.list('User', function (users) {
+                $scope.searcher.open(
+                    'User',
+                    'Buscar usuario',
+                    users,
+                    function (r) {
+                        $scope.filters.executedById = r.Id;
+                        $scope.filters.executedByUsername = r.Username;
+                        $scope.searcher.close();
+                    });
+            });
         };
         $scope.resetExecutedBy = function () {
             $scope.filters.executedById = null;
@@ -107,17 +113,19 @@
         };
         
         $scope.searchObjectTypeTrademark = function () {
-            $scope.searcher.open(
-                'ObjectTypeTrademark',
-                'Buscar marca',
-                dataContext.list('ObjectTypeTrademark'),
-                function (r) {
-                    $scope.filters.objectTypeTrademarkId = r.Id;
-                    $scope.filters.objectTypeTrademarkName = r.Name;
-                    $scope.filters.objectTypeModelId = null;
-                    $scope.filters.objectTypeModelName = null;
-                    $scope.searcher.close();
-                });
+            dataContext.list('ObjectTypeTrademark', function (trademarks) {
+                $scope.searcher.open(
+                    'ObjectTypeTrademark',
+                    'Buscar marca',
+                    trademarks,
+                    function (r) {
+                        $scope.filters.objectTypeTrademarkId = r.Id;
+                        $scope.filters.objectTypeTrademarkName = r.Name;
+                        $scope.filters.objectTypeModelId = null;
+                        $scope.filters.objectTypeModelName = null;
+                        $scope.searcher.close();
+                    }); 
+            });
         };
         $scope.resetObjectTypeTrademark = function () {
             $scope.filters.objectTypeTrademarkId = null;
@@ -131,18 +139,21 @@
             if ($scope.filters.objectTypeTrademarkId)
                 where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             
-            $scope.searcher.open(
-                'ObjectTypeModel',
-                'Buscar modelo',
-                dataContext.find('ObjectTypeModel', where),
-                function (r) {
-                    $scope.filters.objectTypeModelId = r.Id;
-                    $scope.filters.objectTypeModelName = r.Name;
-                    var t = dataContext.get('ObjectTypeTrademark', r.TrademarkId);
-                    $scope.filters.objectTypeTrademarkId = t.Id;
-                    $scope.filters.objectTypeTrademarkName = t.Name;
-                    $scope.searcher.close();
-                });
+            dataContext.find2('ObjectTypeModel', where, function (models) {
+                $scope.searcher.open(
+                    'ObjectTypeModel',
+                    'Buscar modelo',
+                    models,
+                    function (r) {
+                        $scope.filters.objectTypeModelId = r.Id;
+                        $scope.filters.objectTypeModelName = r.Name;
+                        var t = dataContext.get('ObjectTypeTrademark', r.TrademarkId);
+                        $scope.filters.objectTypeTrademarkId = t.Id;
+                        $scope.filters.objectTypeTrademarkName = t.Name;
+                        $scope.searcher.close();
+                    }); 
+            });
+            
         };
         $scope.resetObjectTypeModel = function () {
             $scope.filters.objectTypeModelId = null;
@@ -160,24 +171,26 @@
             if ($scope.filters.objectTypeModelId)
                 where.ModelId = $scope.filters.objectTypeModelId;
             
-            $scope.searcher.open(
-                'ObjectType',
-                'Buscar bateria / cargador',
-                dataContext.find('ObjectType', where),
-                function (r) {
-                    $scope.filters.objectTypeId = r.Id;
-                    $scope.filters.objectTypeDescription = r.Description;
-                    var c = dataContext.get('Customer', r.CustomerId);
-                    $scope.filters.customerId = c.Id;
-                    $scope.filters.customerName = c.Name;
-                    var m = dataContext.get('ObjectTypeModel', r.ModelId);
-                    $scope.filters.objectTypeModelId = m.Id;
-                    $scope.filters.objectTypeModelName = m.Name;
-                    var t = dataContext.get('ObjectTypeTrademark', m.TrademarkId);
-                    $scope.filters.objectTypeTrademarkId = t.Id;
-                    $scope.filters.objectTypeTrademarkName = t.Name;
-                    $scope.searcher.close();
-                });
+            dataContext.find2('ObjectType', where, function (objects) {
+                $scope.searcher.open(
+                    'ObjectType',
+                    'Buscar bateria / cargador',
+                    objects,
+                    function (r) {
+                        $scope.filters.objectTypeId = r.Id;
+                        $scope.filters.objectTypeDescription = r.Description;
+                        var c = dataContext.get('Customer', r.CustomerId);
+                        $scope.filters.customerId = c.Id;
+                        $scope.filters.customerName = c.Name;
+                        var m = dataContext.get('ObjectTypeModel', r.ModelId);
+                        $scope.filters.objectTypeModelId = m.Id;
+                        $scope.filters.objectTypeModelName = m.Name;
+                        var t = dataContext.get('ObjectTypeTrademark', m.TrademarkId);
+                        $scope.filters.objectTypeTrademarkId = t.Id;
+                        $scope.filters.objectTypeTrademarkName = t.Name;
+                        $scope.searcher.close();
+                    });
+            });
         };
         $scope.resetObjectType = function () {
             $scope.filters.objectTypeId = null;

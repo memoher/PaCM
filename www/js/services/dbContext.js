@@ -21,7 +21,7 @@
             'AppFiles',
             'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
-            //'MntAssemblies', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
+            'MntAssemblies', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
         ];
         var tablesInheritedOfMntObjects = [
             'MntBatteries', 'MntChargers'
@@ -176,7 +176,11 @@
                             var sqlCommand = 'SELECT * FROM ' + table;
                             if (options) {
                                 if (options.fields) {
-                                    sqlCommand = sqlCommand.replace('*', options.fields);
+                                    if (options.fields.indexOf(' FROM ') >= 0) {
+                                        sqlCommand = options.fields;
+                                    } else {
+                                        sqlCommand = sqlCommand.replace('SELECT * FROM', 'SELECT ' + options.fields + ' FROM');
+                                    }
                                 }
                                 if (options.where) {
                                     sqlCommand += ' WHERE ' + options.where.conditions;
@@ -200,7 +204,7 @@
                         first: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            options = options || {};
+                            options = (options) ? options : {};
                             options.limit = 1;
                             
                             self.select(table, options, onSuccessCommand, onErrorCommand);
@@ -210,10 +214,10 @@
                         insert: function (table, values, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            values.Id = values.Id || guidGenerator.new();
+                            values.Id = (values.Id) ? values.Id : guidGenerator.new();
                             if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
-                                values.CreatedOn = values.CreatedOn || new Date();
-                                values.LastModified = values.LastModified || new Date();
+                                values.CreatedOn = (values.CreatedOn) ? values.CreatedOn : new Date();
+                                values.LastModified = (values.LastModified) ? values.LastModified : new Date();
                                 if (PaCM.isUndefined(values.ReplicationStatus)) {
                                     values.ReplicationStatus = 0;
                                 }
@@ -248,9 +252,8 @@
                         update: function (table, values, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            values.Id = values.Id || guidGenerator.new();
                             if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
-                                values.LastModified = values.LastModified || new Date();
+                                values.LastModified = (values.LastModified) ? values.LastModified : new Date();
                                 if (PaCM.isUndefined(values.ReplicationStatus)) {
                                     values.ReplicationStatus = 0;
                                 }
@@ -460,7 +463,7 @@
                         if (tablesInheritedOfMntObjects.indexOf(t) >= 0) {
                             command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id WHERE p.ReplicationStatus = 0';
                         } else {
-                            command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t WHERE t.ReplicationStatus = 0';
+                            command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t '; //WHERE t.ReplicationStatus = 0';
                         }
                         sqlCommands.push(command);
                     });
