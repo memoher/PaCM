@@ -473,6 +473,7 @@
                             $scope.battery.trademarkName = t.Name;
                         });
                         getCheckList();
+                        getReviewOfCells();
                     }
                 });
             }
@@ -571,7 +572,9 @@
                 PaCM.eachArray(batteryTypes, function (inx, bt) {
                     $scope.resources.batteryTypes.push({
                         id: bt.Id,
-                        description: bt.Voltage + 'V (' + bt.NumberOfCells + ' Celdas)'
+                        description: bt.Voltage + 'V (' + bt.NumberOfCells + ' Celdas)',
+                        voltage: bt.Voltage,
+                        numberOfCells: bt.NumberOfCells
                     });
                 });
             });
@@ -812,41 +815,41 @@
         var getCheckList = function () {
             if ($scope.maintenance.id != null) {
                 dataContext.find2('MaintenanceCheck', { MaintenanceId: $scope.maintenance.id }, function (maintenanceChecks) {
-                        var arr1 = [];
-                        PaCM.eachArray(maintenanceChecks, function (inx, mc) {
-                            arr1.push({
-                                id: mc.Id,
-                                checkId: mc.CheckId,
-                                checkName: mc.CheckName,
-                                checkOrder: mc.CheckOrder,
-                                diagnosticTypeId: mc.DiagnosticTypeId,
-                                diagnosticId: mc.DiagnosticId,
-                                comments: mc.Comments
+                    var arr1 = [];
+                    PaCM.eachArray(maintenanceChecks, function (inx, mc) {
+                        arr1.push({
+                            id: mc.Id,
+                            checkId: mc.CheckId,
+                            checkName: mc.CheckName,
+                            checkOrder: mc.CheckOrder,
+                            diagnosticTypeId: mc.DiagnosticTypeId,
+                            diagnosticId: mc.DiagnosticId,
+                            comments: mc.Comments
+                        });
+                    });
+                    
+                    var where = { EnabledBatteries: false, EnabledChargers: false };
+                    if ($scope.battery.typeId != null) {
+                        where = { EnabledBatteries: true };
+                    }
+                    if ($scope.charger.voltage != null) {
+                        where = { EnabledChargers: true };
+                    }
+                    dataContext.find2('Check', where, function (checks) {
+                        var arr2 = [];
+                        PaCM.eachArray(checks, function (inx, c) {
+                            arr2.push({
+                                id: null,
+                                checkId: c.Id,
+                                checkName: c.Name,
+                                checkOrder: c.Order,
+                                diagnosticTypeId: c.DiagnosticTypeId,
+                                diagnosticId: null,
+                                comments: null
                             });
                         });
-                        
-                        var where = { EnabledBatteries: false, EnabledChargers: false };
-                        if ($scope.battery.typeId != null) {
-                            where = { EnabledBatteries: true };
-                        }
-                        if ($scope.charger.voltage != null) {
-                            where = { EnabledChargers: true };
-                        }
-                        dataContext.find2('Check', where, function (checks) {
-                            var arr2 = [];
-                            PaCM.eachArray(checks, function (inx, c) {
-                                arr2.push({
-                                    id: null,
-                                    checkId: c.Id,
-                                    checkName: c.Name,
-                                    checkOrder: c.Order,
-                                    diagnosticTypeId: c.DiagnosticTypeId,
-                                    diagnosticId: null,
-                                    comments: null
-                                });
-                            });
-                            PaCM.syncronizeArray(["checkId"], $scope.checkList, PaCM.mergeArray(["checkId"], arr2, arr1));
-                        });
+                        PaCM.syncronizeArray(["checkId"], $scope.checkList, PaCM.mergeArray(["checkId"], arr2, arr1));
+                    });
                 });
             } else {
                 var where = { EnabledBatteries: false, EnabledChargers: false };
@@ -885,7 +888,6 @@
                             DiagnosticId: c.diagnosticId,
                             Comments: c.comments
                         };
-                        console.debug(mc);
                         if (c.id == null) {
                             dataContext.insert('MaintenanceCheck', mc, function () {
                                 c.id = mc.Id;
@@ -914,23 +916,194 @@
         $scope.reviewOfCells = [];
         var getReviewOfCells = function () {
             if ($scope.maintenance.id != null) {
-                dataContext.find2('CellReview', { MaintenanceId: $scope.maintenance.id }, function (reviews) {
+                dataContext.find2('CellReview', { MaintenanceId: $scope.maintenance.id }, function (reviewOfCells) {
+                    var arr1 = [];
+                    PaCM.eachArray(reviewOfCells, function (inx, cr) {
+                        arr1.push({
+                            id: cr.Id,
+                            cellId: cr.CellId,
+                            cellOrder: cr.CellOrder,
+                            voltage: cr.Voltage,
+                            density: cr.Density,
+                            comments: cr.Comments
+                        });
+                    });
+                    if ($scope.maintenance.batteryId != null) {
+                        dataContext.find2('Cell', { BatteryId: $scope.maintenance.batteryId }, function (cells) {
+                            var arr2 = [];
+                            PaCM.eachArray(cells, function (inx, c) {
+                                arr2.push({
+                                    id: null,
+                                    cellId: c.Id,
+                                    cellOrder: c.Order,
+                                    voltage: null,
+                                        density: null,
+                                    comments: null
+                                });
+                            });
+                            
+                            var numberOfCells =
+                            PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
+                                if (bt.id === $scope.battery.typeId) {
+                                    return bt.numberOfCells;
+                                }
+                            });
 
+                            var arr3 = [];
+                            for (var i = 1; i <= numberOfCells; i++) {
+                                arr3.push({
+                                    id: null,
+                                    cellId: null,
+                                    cellOrder: i,
+                                    voltage: null,
+                                    density: null,
+                                    comments: null
+                                });
+                            }
+                            PaCM.syncronizeArray(["cellOrder"], $scope.reviewOfCells, PaCM.mergeArray(["cellOrder"], arr3, arr2, arr1));
+                        });
+                    } else {
+                        var numberOfCells =
+                        PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
+                            if (bt.id === $scope.battery.typeId) {
+                                return bt.numberOfCells;
+                            }
+                        });
+
+                        var arr3 = [];
+                        for (var i = 1; i <= numberOfCells; i++) {
+                            arr3.push({
+                                id: null,
+                                cellId: null,
+                                cellOrder: i,
+                                voltage: null,
+                                density: null,
+                                comments: null
+                            });
+                        }
+                        PaCM.syncronizeArray(["cellOrder"], $scope.reviewOfCells, PaCM.mergeArray(["cellOrder"], arr3, arr1));
+                    }
                 });
             } else {
-                PaCM.syncronizeArray(["Id"], $scope.reviewOfCells, []);
+                if ($scope.maintenance.batteryId != null) {
+                    dataContext.find2('Cell', { BatteryId: $scope.maintenance.batteryId }, function (cells) {
+                        var arr2 = [];
+                        PaCM.eachArray(cells, function (inx, c) {
+                            arr2.push({
+                                id: null,
+                                cellId: c.Id,
+                                cellOrder: c.Order,
+                                voltage: null,
+                                density: null,
+                                comments: null
+                            });
+                        });
+                        
+                        var numberOfCells =
+                        PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
+                            if (bt.id === $scope.battery.typeId) {
+                                return bt.numberOfCells;
+                            }
+                        });
+
+                        var arr3 = [];
+                        for (var i = 1; i <= numberOfCells; i++) {
+                            arr3.push({
+                                id: null,
+                                cellId: null,
+                                cellOrder: i,
+                                voltage: null,
+                                density: null,
+                                comments: null
+                            });
+                        }
+                        PaCM.syncronizeArray(["cellOrder"], $scope.reviewOfCells, PaCM.mergeArray(["cellOrder"], arr3, arr2));
+                    });
+                } else {
+                    var numberOfCells =
+                    PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
+                        if (bt.id === $scope.battery.typeId) {
+                            return bt.numberOfCells;
+                        }
+                    });
+
+                    var arr3 = [];
+                    for (var i = 1; i <= numberOfCells; i++) {
+                        arr3.push({
+                            id: null,
+                            cellId: null,
+                            cellOrder: i,
+                            voltage: null,
+                            density: null,
+                            comments: null
+                        });
+                    }
+                    PaCM.syncronizeArray(["cellOrder"], $scope.reviewOfCells, arr3);
+                }
             }
+        };
+        var saveReviewOfCells = function (onSuccess) {
+            var actions = [];
+
+            var _saveFnc01 = function (c) {
+                return function (onSuccess) {
+                    if (c.cellId == null) {
+                        var cr = {
+                            BatteryId: $scope.maintenance.batteryId,
+                            Order: c.cellOrder
+                        };
+                        dataContext.insert('Cell', cr, function () {
+                            c.cellId = cr.Id;
+                            onSuccess();
+                        });
+                    } else {
+                        onSuccess();
+                    }
+                };
+            };
+
+            var _saveFnc02 = function (c) {
+                return function (onSuccess) {
+                    if (c.voltage != null && c.density != null) {
+                        var cr = {
+                            MaintenanceId: $scope.maintenance.id,
+                            CellId: c.cellId,
+                            Voltage: c.voltage,
+                            Density: c.density,
+                            Comments: c.comments
+                        };
+                        if (c.id == null) {
+                            dataContext.insert('CellReview', cr, function () {
+                                c.id = cr.Id;
+                                onSuccess();
+                            });
+                        } else {
+                            dataContext.update('CellReview', cr, "[Id] = ?", [ c.id ], function () {
+                                onSuccess();
+                            });
+                        }
+                    } else {
+                        onSuccess();
+                    }
+                };
+            };
+
+            PaCM.eachArray($scope.reviewOfCells, function (inx, c) {
+                actions.push(_saveFnc01(c));
+                actions.push(_saveFnc02(c));
+            });
+
+            exec(actions, function () {
+                onSuccess();
+            });
         };
 
         $scope.articlesOutputs = [];
         var getArticlesOutpus = function () {
-            if ($scope.maintenance.id != null) {
-                dataContext.find2('ArticleOutput', { MaintenanceId: $scope.maintenance.id }, function (articles) {
-
-                });
-            } else {
-                PaCM.syncronizeArray(["Id"], $scope.articlesOutputs, []);
-            }
+            
+        };
+        var saveArticlesOutpus = function (onSuccess) {
+            
         };
 
         $scope.getMaintenanceInfo = function () {
@@ -968,6 +1141,7 @@
             }
             actions.push(saveMaintenance);
             actions.push(saveCheckList);
+            actions.push(saveReviewOfCells);
 
             exec(actions, function () {
                 alert('Registro guardado con éxito');
@@ -976,6 +1150,11 @@
         
 
         var exec = function (actions, onSuccess) {
+
+            if (actions.length == 0) {
+                onSuccess();
+                return;
+            }
             
             var _buildFnc = function (fnc01, fnc02) {
                 return function () {

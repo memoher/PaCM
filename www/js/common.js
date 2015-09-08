@@ -89,8 +89,8 @@
                                 return inx2;
                             }
                         });
-                        if (i) {
-                            result[i] = arr1[inx];
+                        if (i != null) {
+                            result[i] = e;
                         } else {
                             result.push(e);
                         }
@@ -112,8 +112,8 @@
                                 return inx2;
                             }
                         });
-                        if (i) {
-                            result[i] = arr2[inx];
+                        if (i != null) {
+                            result[i] = e;
                         } else {
                             result.push(e);
                         }
@@ -135,8 +135,8 @@
                                 return inx2;
                             }
                         });
-                        if (i) {
-                            result[i] = arr3[inx];
+                        if (i != null) {
+                            result[i] = e;
                         } else {
                             result.push(e);
                         }
@@ -171,7 +171,7 @@
                             return inx2;
                         }
                     });
-                    if (i) {
+                    if (i != null) {
                         arr0[inx] = arrT[i];
                         arrT.splice(i, 1);
                     } else {
