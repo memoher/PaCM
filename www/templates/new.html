@@ -84,7 +84,7 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Voltaje</span>
-                            <select ng-options="bt.id as bt.description for bt in batteryResources.batteryTypes" ng-model="battery.typeId" ng-disabled="(maintenance.batteryId)">
+                            <select ng-options="bt.id as bt.description for bt in resources.batteryTypes" ng-model="battery.typeId" ng-disabled="(maintenance.batteryId)" ng-change="getMaintenanceInfo()">
                             </select>
                         </label>
                     </div>
@@ -97,11 +97,11 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Conector</span>
-                            <select style="width:33%;" ng-options="ct.id as ct.name for ct in batteryResources.connectorTypes" ng-model="battery.connectorTypeId" ng-disabled="(maintenance.batteryId)">
+                            <select style="width:33%;" ng-options="ct.id as ct.name for ct in resources.connectorTypes" ng-model="battery.connectorTypeId" ng-disabled="(maintenance.batteryId)">
                             </select>
-                            <select style="width:33%;" ng-options="c.id as c.name for c in batteryResources.connectors | filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId" ng-disabled="(maintenance.batteryId)">
+                            <select style="width:33%;" ng-options="c.id as c.name for c in resources.connectors | filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId" ng-disabled="(maintenance.batteryId)">
                             </select>
-                            <select style="width:33%;" ng-options="cc.id as cc.name for cc in batteryResources.connectorColors" ng-model="battery.connectorColorId" ng-disabled="(maintenance.batteryId)" ng-show="showConnectorColorList()">
+                            <select style="width:33%;" ng-options="cc.id as cc.name for cc in resources.connectorColors" ng-model="battery.connectorColorId" ng-disabled="(maintenance.batteryId)" ng-show="showConnectorColorList()">
                             </select>
                         </label>
                     </div>
@@ -187,7 +187,7 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Voltaje</span>
-                            <input placeholder="" type="text" ng-model="charger.voltage" ng-readonly="(maintenance.chargerId)">
+                            <input placeholder="" type="text" ng-model="charger.voltage" ng-readonly="(maintenance.chargerId)" ng-change="getMaintenanceInfo()">
                         </label>
                     </div>
                     <div class="item item-input-inset">
@@ -266,8 +266,20 @@
         <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !(tabs.physicalInspectionTab())}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <ion-list>
-                    </ion-list>
+                    <div ng-repeat="cl in checkList| orderBy: checkOrder">
+                        <div class="item item-input-inset">
+                            <label class="item-input-wrapper">
+                                <span class="input-label">{{ cl.checkName}}</span>
+                                <select ng-options="d.id as d.name for d in resources.diagnostics | filter: { typeId: cl.diagnosticTypeId }" ng-model="cl.diagnosticId">
+                                </select>
+                            </label>
+                        </div>
+                        <div class="item item-input-inset">
+                            <label class="item-input-wrapper">
+                                <input placeholder="" type="text" ng-model="cl.comments">
+                            </label>
+                        </div>
+                    </div>
                 </form>
             </ion-content>
         </ion-tab>

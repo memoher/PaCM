@@ -337,9 +337,6 @@
             chargerId: $stateParams.elmType === 'charger' ? $stateParams.elmId : null,
             machineId: null,
             workToBeDone: null,
-            checkList: null,
-            reviewOfCells: null,
-            articleOutput: null,
             technicalReport: null,
             statusId: 'InCapture',
             statusDescription: null,
@@ -361,9 +358,6 @@
                         $scope.maintenance.chargerId = (r.Type.indexOf('Charger') >= 0 ? r.ObjectTypeId : null );
                         $scope.maintenance.machineId = r.MachineId;
                         $scope.maintenance.workToBeDone = r.WorkToBeDone;
-                        $scope.maintenance.checkList = [];
-                        $scope.maintenance.reviewOfCells = [];
-                        $scope.maintenance.articleOutput = [];
                         $scope.maintenance.technicalReport = r.TechnicalReport;
                         $scope.maintenance.statusId = r.StatusId;
                         $scope.maintenance.executedById = r.ExecutedById;
@@ -389,6 +383,33 @@
                             getMachine();
                         }
                     }
+                });
+            }
+        };
+        var saveMaintenance = function (onSuccess) {
+            var m = {
+                UniqueCode: $scope.maintenance.uniqueCode,
+                Date: $scope.maintenance.date,
+                Preventive: $scope.maintenance.preventive,
+                Corrective: $scope.maintenance.corrective,
+                CustomerId: $scope.maintenance.customerId,
+                Type: $scope.maintenance.batteryId != null ? 'BatteryMaintenance' : 'ChargerMaintenance',
+                ObjectTypeId: $scope.maintenance.batteryId != null ? $scope.maintenance.batteryId : $scope.maintenance.chargerId,
+                MachineId: $scope.maintenance.machineId,
+                WorkToBeDone: $scope.maintenance.workToBeDone,
+                TechnicalReport: $scope.maintenance.technicalReport,
+                ExecutedById: $scope.maintenance.executedById,
+                StatusId: $scope.maintenance.statusId,
+                AcceptedBy: $scope.maintenance.acceptedBy
+            };
+            if ($scope.maintenance.id == null) {
+                dataContext.insert('Maintenance', m, function () {
+                    $scope.maintenance.id = m.Id;
+                    onSuccess();
+                });
+            } else {
+                dataContext.update('Maintenance', m, "[Id] = ?", [ $scope.maintenance.id ], function () {
+                    onSuccess();
                 });
             }
         };
@@ -451,151 +472,11 @@
                         dataContext.get('ObjectTypeTrademark', $scope.battery.trademarkId, function (t) {
                             $scope.battery.trademarkName = t.Name;
                         });
+                        getCheckList();
                     }
                 });
             }
         };
-        $scope.batteryResources = {
-            batteryTypes: [],
-            connectorTypes: [],
-            connectors: [],
-            connectorColors: []
-        };
-        var getBatteryResources = function () {
-            dataContext.list('BatteryType', function (batteryTypes) {
-                PaCM.eachArray(batteryTypes, function (inx, bt) {
-                    $scope.batteryResources.batteryTypes.push({
-                        id: bt.Id,
-                        description: bt.Voltage + 'V (' + bt.NumberOfCells + ' Celdas)'
-                    });
-                });
-            });
-            dataContext.list('ConnectorType', function (connectorTypes) {
-                PaCM.eachArray(connectorTypes, function (inx, ct) {
-                    $scope.batteryResources.connectorTypes.push({
-                        id: ct.Id,
-                        name: ct.Name,
-                        colorRequired: ct.ColorRequired
-                    });
-                });
-            });
-            dataContext.list('Connector', function (connector) {
-                PaCM.eachArray(connector, function (inx, c) {
-                    $scope.batteryResources.connectors.push({
-                        id: c.Id,
-                        name: c.Name,
-                        typeId: c.TypeId
-                    });
-                });
-            });
-            dataContext.list('Color', function (connectorColors) {
-                PaCM.eachArray(connectorColors, function (inx, cc) {
-                    $scope.batteryResources.connectorColors.push({
-                        id: cc.Id,
-                        name: cc.Name
-                    });
-                });
-            });
-        }
-        $scope.showConnectorColorList = function () {
-            if ($scope.battery.connectorTypeId == null) {
-                return false;
-            }
-            var result = false;
-            PaCM.eachArray($scope.batteryResources.connectorTypes, function (inx, ct) {
-                if (ct.id === $scope.battery.connectorTypeId && ct.colorRequired === true) {
-                    result = true;
-                }
-            });
-            return result;
-        };
-        
-        $scope.charger = {
-            //id: null,
-            description: null,
-            trademarkId: null,
-            trademarkName: null,
-            modelId: null,
-            modelName: null,
-            serial: null,
-            //customerId: null,
-            customerReference: null,
-            voltage: null,
-            amperage: null
-        };
-        var getCharger = function () {
-            if ($scope.maintenance.chargerId != null) {
-                dataContext.get('Charger', $scope.maintenance.chargerId, function (r) {
-                    if (r) {
-                        //$scope.charger.id = r.Id;
-                        $scope.charger.description = r.Description;
-                        $scope.charger.trademarkId = r.TrademarkId;
-                        $scope.charger.modelId = r.ModelId;
-                        $scope.charger.serial = r.Serial;
-                        //$scope.charger.customerId = r.CustomerId;
-                        $scope.charger.customerReference = r.CustomerReference;
-                        $scope.charger.voltage = r.Voltage;
-                        $scope.charger.amperage = r.Amperage;
-                        dataContext.get('ObjectTypeModel', $scope.charger.modelId, function (m) {
-                            $scope.charger.modelName = m.Name;
-                        });
-                        dataContext.get('ObjectTypeTrademark', $scope.charger.trademarkId, function (t) {
-                            $scope.charger.trademarkName = t.Name;
-                        });
-                    }
-                });
-            }
-        };
-        
-        $scope.machine = {
-            //id: null,
-            description: null,
-            trademarkId: null,
-            trademarkName: null,
-            modelId: null,
-            modelName: null,
-            serial: null,
-            //customerId: null,
-            customerReference: null,
-            compartmentLength: null,
-            compartmentWidth: null,
-            compartmentHeight: null
-        };
-        var getMachine = function () {
-            if ($scope.maintenance.machineId != null) {
-                dataContext.get('Machine', $scope.maintenance.machineId, function (r) {
-                    if (r) {
-                        //$scope.machine.id = r.Id;
-                        $scope.machine.description = r.Description;
-                        $scope.machine.trademarkId = r.TrademarkId;
-                        $scope.machine.modelId = r.ModelId;
-                        $scope.machine.serial = r.Serial;
-                        //$scope.machine.customerId = r.CustomerId;
-                        $scope.machine.customerReference = r.CustomerReference;
-                        dataContext.get('MachineModel', $scope.machine.modelId, function (m) {
-                            $scope.machine.modelName = m.Name;
-                            $scope.machine.compartmentLength = m.CompartmentLength;
-                            $scope.machine.compartmentWidth = m.CompartmentWidth;
-                            $scope.machine.compartmentHeight = m.CompartmentHeight;
-                        });
-                        dataContext.get('MachineTrademark', $scope.machine.trademarkId, function (t) {
-                            $scope.machine.trademarkName = t.Name;
-                        });
-                    }
-                });
-            }
-        };
-        
-        $scope.newBatteryMaintenance = function () {
-            $scope.tabs.chargerTab = false;
-            $scope.selectTab('batteryTab');
-        };
-        $scope.newChargerMaintenance = function () {
-            $scope.tabs.batteryTab = false;
-            $scope.selectTab('chargerTab');
-        };
-        
-        
         var saveBatteryTrademark = function (onSuccess) {
             if ($scope.battery.trademarkId == null) {
                 var r = {
@@ -677,7 +558,109 @@
                 });
             }
         };
+
+        $scope.resources = {
+            batteryTypes: [],
+            connectorTypes: [],
+            connectors: [],
+            connectorColors: [],
+            diagnostics: []
+        };
+        var getResources = function () {
+            dataContext.list('BatteryType', function (batteryTypes) {
+                PaCM.eachArray(batteryTypes, function (inx, bt) {
+                    $scope.resources.batteryTypes.push({
+                        id: bt.Id,
+                        description: bt.Voltage + 'V (' + bt.NumberOfCells + ' Celdas)'
+                    });
+                });
+            });
+            dataContext.list('ConnectorType', function (connectorTypes) {
+                PaCM.eachArray(connectorTypes, function (inx, ct) {
+                    $scope.resources.connectorTypes.push({
+                        id: ct.Id,
+                        name: ct.Name,
+                        colorRequired: ct.ColorRequired
+                    });
+                });
+            });
+            dataContext.list('Connector', function (connector) {
+                PaCM.eachArray(connector, function (inx, c) {
+                    $scope.resources.connectors.push({
+                        id: c.Id,
+                        name: c.Name,
+                        typeId: c.TypeId
+                    });
+                });
+            });
+            dataContext.list('Color', function (connectorColors) {
+                PaCM.eachArray(connectorColors, function (inx, cc) {
+                    $scope.resources.connectorColors.push({
+                        id: cc.Id,
+                        name: cc.Name
+                    });
+                });
+            });
+            dataContext.list('Diagnostic', function (diagnostics) {
+                PaCM.eachArray(diagnostics, function (inx, d) {
+                    $scope.resources.diagnostics.push({
+                        id: d.Id,
+                        name: d.Name,
+                        typeId: d.TypeId
+                    });
+                });
+            });
+        }
+        $scope.showConnectorColorList = function () {
+            if ($scope.battery.connectorTypeId == null) {
+                return false;
+            }
+            var result = false;
+            PaCM.eachArray($scope.resources.connectorTypes, function (inx, ct) {
+                if (ct.id === $scope.battery.connectorTypeId && ct.colorRequired === true) {
+                    result = true;
+                }
+            });
+            return result;
+        };
         
+        $scope.charger = {
+            //id: null,
+            description: null,
+            trademarkId: null,
+            trademarkName: null,
+            modelId: null,
+            modelName: null,
+            serial: null,
+            //customerId: null,
+            customerReference: null,
+            voltage: null,
+            amperage: null
+        };
+        var getCharger = function () {
+            if ($scope.maintenance.chargerId != null) {
+                dataContext.get('Charger', $scope.maintenance.chargerId, function (r) {
+                    if (r) {
+                        //$scope.charger.id = r.Id;
+                        $scope.charger.description = r.Description;
+                        $scope.charger.trademarkId = r.TrademarkId;
+                        $scope.charger.modelId = r.ModelId;
+                        $scope.charger.serial = r.Serial;
+                        //$scope.charger.customerId = r.CustomerId;
+                        $scope.charger.customerReference = r.CustomerReference;
+                        $scope.charger.voltage = r.Voltage;
+                        $scope.charger.amperage = r.Amperage;
+                        dataContext.get('ObjectTypeModel', $scope.charger.modelId, function (m) {
+                            $scope.charger.modelName = m.Name;
+                        });
+                        dataContext.get('ObjectTypeTrademark', $scope.charger.trademarkId, function (t) {
+                            $scope.charger.trademarkName = t.Name;
+                        });
+                        getCheckList();
+                    }
+                });
+            }
+        };
         var saveChargerTrademark = function (onSuccess) {
             if ($scope.charger.trademarkId == null) {
                 var r = {
@@ -738,6 +721,44 @@
             }
         };
         
+        $scope.machine = {
+            //id: null,
+            description: null,
+            trademarkId: null,
+            trademarkName: null,
+            modelId: null,
+            modelName: null,
+            serial: null,
+            //customerId: null,
+            customerReference: null,
+            compartmentLength: null,
+            compartmentWidth: null,
+            compartmentHeight: null
+        };
+        var getMachine = function () {
+            if ($scope.maintenance.machineId != null) {
+                dataContext.get('Machine', $scope.maintenance.machineId, function (r) {
+                    if (r) {
+                        //$scope.machine.id = r.Id;
+                        $scope.machine.description = r.Description;
+                        $scope.machine.trademarkId = r.TrademarkId;
+                        $scope.machine.modelId = r.ModelId;
+                        $scope.machine.serial = r.Serial;
+                        //$scope.machine.customerId = r.CustomerId;
+                        $scope.machine.customerReference = r.CustomerReference;
+                        dataContext.get('MachineModel', $scope.machine.modelId, function (m) {
+                            $scope.machine.modelName = m.Name;
+                            $scope.machine.compartmentLength = m.CompartmentLength;
+                            $scope.machine.compartmentWidth = m.CompartmentWidth;
+                            $scope.machine.compartmentHeight = m.CompartmentHeight;
+                        });
+                        dataContext.get('MachineTrademark', $scope.machine.trademarkId, function (t) {
+                            $scope.machine.trademarkName = t.Name;
+                        });
+                    }
+                });
+            }
+        };
         var saveMachineTrademark = function (onSuccess) {
             if ($scope.machine.trademarkId == null) {
                 var r = {
@@ -786,34 +807,147 @@
                 });
             }
         };
-        
-        var saveMaintenance = function (onSuccess) {
-            var m = {
-                UniqueCode: $scope.maintenance.uniqueCode,
-                Date: $scope.maintenance.date,
-                Preventive: $scope.maintenance.preventive,
-                Corrective: $scope.maintenance.corrective,
-                CustomerId: $scope.maintenance.customerId,
-                Type: $scope.maintenance.batteryId != null ? 'BatteryMaintenance' : 'ChargerMaintenance',
-                ObjectTypeId: $scope.maintenance.batteryId != null ? $scope.maintenance.batteryId : $scope.maintenance.chargerId,
-                MachineId: $scope.maintenance.machineId,
-                WorkToBeDone: $scope.maintenance.workToBeDone,
-                TechnicalReport: $scope.maintenance.technicalReport,
-                ExecutedById: $scope.maintenance.executedById,
-                StatusId: $scope.maintenance.statusId,
-                AcceptedBy: $scope.maintenance.acceptedBy
-            };
-            if ($scope.maintenance.id == null) {
-                dataContext.insert('Maintenance', m, function () {
-                    $scope.maintenance.id = m.Id;
-                    onSuccess();
+
+        $scope.checkList = [];
+        var getCheckList = function () {
+            if ($scope.maintenance.id != null) {
+                dataContext.find2('MaintenanceCheck', { MaintenanceId: $scope.maintenance.id }, function (maintenanceChecks) {
+                        var arr1 = [];
+                        PaCM.eachArray(maintenanceChecks, function (inx, mc) {
+                            arr1.push({
+                                id: mc.Id,
+                                checkId: mc.CheckId,
+                                checkName: mc.CheckName,
+                                checkOrder: mc.CheckOrder,
+                                diagnosticTypeId: mc.DiagnosticTypeId,
+                                diagnosticId: mc.DiagnosticId,
+                                comments: mc.Comments
+                            });
+                        });
+                        
+                        var where = { EnabledBatteries: false, EnabledChargers: false };
+                        if ($scope.battery.typeId != null) {
+                            where = { EnabledBatteries: true };
+                        }
+                        if ($scope.charger.voltage != null) {
+                            where = { EnabledChargers: true };
+                        }
+                        dataContext.find2('Check', where, function (checks) {
+                            var arr2 = [];
+                            PaCM.eachArray(checks, function (inx, c) {
+                                arr2.push({
+                                    id: null,
+                                    checkId: c.Id,
+                                    checkName: c.Name,
+                                    checkOrder: c.Order,
+                                    diagnosticTypeId: c.DiagnosticTypeId,
+                                    diagnosticId: null,
+                                    comments: null
+                                });
+                            });
+                            PaCM.syncronizeArray(["checkId"], $scope.checkList, PaCM.mergeArray(["checkId"], arr2, arr1));
+                        });
                 });
             } else {
-                dataContext.update('Maintenance', m, "[Id] = ?", [ $scope.maintenance.id ], function () {
-                    onSuccess();
+                var where = { EnabledBatteries: false, EnabledChargers: false };
+                if ($scope.battery.typeId != null) {
+                    where = { EnabledBatteries: true };
+                }
+                if ($scope.charger.voltage != null) {
+                    where = { EnabledChargers: true };
+                }
+                dataContext.find2('Check', where, function (checks) {
+                    var arr3 = [];
+                    PaCM.eachArray(checks, function (inx, c) {
+                        arr3.push({
+                            id: null,
+                            checkId: c.Id,
+                            checkName: c.Name,
+                            checkOrder: c.Order,
+                            diagnosticTypeId: c.DiagnosticTypeId,
+                            diagnosticId: null,
+                            comments: null
+                        });
+                    });
+                    PaCM.syncronizeArray(["checkId"], $scope.checkList, arr3);
                 });
             }
         };
+        var saveCheckList = function (onSuccess) {
+            var actions = [];
+
+            var _saveFnc = function (c) {
+                return function (onSuccess) {
+                    if (c.diagnosticId != null) {
+                        var mc = {
+                            MaintenanceId: $scope.maintenance.id,
+                            CheckId: c.checkId,
+                            DiagnosticId: c.diagnosticId,
+                            Comments: c.comments
+                        };
+                        console.debug(mc);
+                        if (c.id == null) {
+                            dataContext.insert('MaintenanceCheck', mc, function () {
+                                c.id = mc.Id;
+                                onSuccess();
+                            });
+                        } else {
+                            dataContext.update('MaintenanceCheck', mc, "[Id] = ?", [ c.id ], function () {
+                                onSuccess();
+                            });
+                        }
+                    } else {
+                        onSuccess();
+                    }
+                };
+            };
+
+            PaCM.eachArray($scope.checkList, function (inx, c) {
+                actions.push(_saveFnc(c));
+            });
+
+            exec(actions, function () {
+                onSuccess();
+            });
+        };
+
+        $scope.reviewOfCells = [];
+        var getReviewOfCells = function () {
+            if ($scope.maintenance.id != null) {
+                dataContext.find2('CellReview', { MaintenanceId: $scope.maintenance.id }, function (reviews) {
+
+                });
+            } else {
+                PaCM.syncronizeArray(["Id"], $scope.reviewOfCells, []);
+            }
+        };
+
+        $scope.articlesOutputs = [];
+        var getArticlesOutpus = function () {
+            if ($scope.maintenance.id != null) {
+                dataContext.find2('ArticleOutput', { MaintenanceId: $scope.maintenance.id }, function (articles) {
+
+                });
+            } else {
+                PaCM.syncronizeArray(["Id"], $scope.articlesOutputs, []);
+            }
+        };
+
+        $scope.getMaintenanceInfo = function () {
+            getCheckList();
+            getReviewOfCells();
+        }
+
+        
+        $scope.newBatteryMaintenance = function () {
+            $scope.tabs.chargerTab = false;
+            $scope.selectTab('batteryTab');
+        };
+        $scope.newChargerMaintenance = function () {
+            $scope.tabs.batteryTab = false;
+            $scope.selectTab('chargerTab');
+        };
+
         
         $scope.saveMaintenance = function () {
             var actions = [];
@@ -833,11 +967,14 @@
                 actions.push(saveMachine);
             }
             actions.push(saveMaintenance);
+            actions.push(saveCheckList);
+
             exec(actions, function () {
-                alert('Bien');
+                alert('Registro guardado con éxito');
             });
         };
         
+
         var exec = function (actions, onSuccess) {
             
             var _buildFnc = function (fnc01, fnc02) {
@@ -866,6 +1003,9 @@
         
         if ($scope.maintenance.id != null) {
             getMaintenance();
+            setTimeout(function () {
+                $scope.$digest();
+            }, 500);
         } else {
             $scope.newMaintenance = true;
             if (userSession.isLogged()) {
@@ -875,14 +1015,8 @@
             dataContext.get('MaintenanceStatus', $scope.maintenance.statusId, function (ms) {
                 $scope.maintenance.statusDescription = ms.Description;
             });
-            getBattery();
-            getCharger();
-            getMachine();
         }
-        getBatteryResources();
-        setTimeout(function () {
-            $scope.$digest();
-        }, 500);
+        getResources();
         
     });
     

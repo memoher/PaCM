@@ -60,7 +60,7 @@
                 alert(msg);
             }
         },
-        mergeArray: function (arr1, arr2, arr3) {
+        mergeArray: function (key, arr1, arr2, arr3) {
             var self = this;
             
             var arr1Valid = self.eachArray(arr1, function (inx, e) { return true; });
@@ -70,20 +70,80 @@
             if (arr1Valid && !arr2Valid && !arr3Valid) {
                 return arr1;
             } else {
+
+                var validKey =
+                PaCM.eachProperties(key, function (k, v) {
+                    return true;
+                });
+
                 var result = [];
                 self.eachArray(arr1, function (inx, e) {
-                    if (result.indexOf(e) < 0) {
-                        result.push(e);
+                    if (validKey) {
+                        var i = self.eachArray(result, function (inx2, e2) {
+                            var valid = true;
+                            self.eachArray(key, function (inx3, v) {
+                                if (e[v] != e2[v])
+                                    valid = false;
+                            });
+                            if (valid === true) {
+                                return inx2;
+                            }
+                        });
+                        if (i) {
+                            result[i] = arr1[inx];
+                        } else {
+                            result.push(e);
+                        }
+                    } else {
+                        if (result.indexOf(e) < 0) {
+                            result.push(e);
+                        }   
                     }
                 });
                 self.eachArray(arr2, function (inx, e) {
-                    if (result.indexOf(e) < 0) {
-                        result.push(e);
+                    if (validKey) {
+                        var i = self.eachArray(result, function (inx2, e2) {
+                            var valid = true;
+                            self.eachArray(key, function (inx3, v) {
+                                if (e[v] != e2[v])
+                                    valid = false;
+                            });
+                            if (valid === true) {
+                                return inx2;
+                            }
+                        });
+                        if (i) {
+                            result[i] = arr2[inx];
+                        } else {
+                            result.push(e);
+                        }
+                    } else {
+                        if (result.indexOf(e) < 0) {
+                            result.push(e);
+                        }   
                     }
                 });
                 self.eachArray(arr3, function (inx, e) {
-                    if (result.indexOf(e) < 0) {
-                        result.push(e);
+                    if (validKey) {
+                        var i = self.eachArray(result, function (inx2, e2) {
+                            var valid = true;
+                            self.eachArray(key, function (inx3, v) {
+                                if (e[v] != e2[v])
+                                    valid = false;
+                            });
+                            if (valid === true) {
+                                return inx2;
+                            }
+                        });
+                        if (i) {
+                            result[i] = arr3[inx];
+                        } else {
+                            result.push(e);
+                        }
+                    } else {
+                        if (result.indexOf(e) < 0) {
+                            result.push(e);
+                        }   
                     }
                 });
                 return result;
@@ -97,7 +157,7 @@
                 return true;
             });
             
-            var arrT = self.mergeArray(arr1, arr2, arr3);
+            var arrT = self.mergeArray(key, arr1, arr2, arr3);
                 
             if (validKey) {
                 self.eachArrayInvert(arr0, function (inx, e) {

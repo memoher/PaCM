@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http, guidGenerator) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
