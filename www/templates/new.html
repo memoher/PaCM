@@ -84,7 +84,7 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Voltaje</span>
-			    <select ng-options="bt.id as bt.description for bt in batteryResources.batteryTypes" ng-model="battery.typeId" ng-readonly="(maintenance.batteryId)">
+                            <select ng-options="bt.id as bt.description for bt in batteryResources.batteryTypes" ng-model="battery.typeId" ng-disabled="(maintenance.batteryId)">
                             </select>
                         </label>
                     </div>
@@ -94,6 +94,57 @@
                             <input placeholder="" type="text" ng-model="battery.amperage" ng-readonly="(maintenance.batteryId)">
                         </label>
                     </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Conector</span>
+                            <select style="width:33%;" ng-options="ct.id as ct.name for ct in batteryResources.connectorTypes" ng-model="battery.connectorTypeId" ng-disabled="(maintenance.batteryId)">
+                            </select>
+                            <select style="width:33%;" ng-options="c.id as c.name for c in batteryResources.connectors | filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId" ng-disabled="(maintenance.batteryId)">
+                            </select>
+                            <select style="width:33%;" ng-options="cc.id as cc.name for cc in batteryResources.connectorColors" ng-model="battery.connectorColorId" ng-disabled="(maintenance.batteryId)" ng-show="showConnectorColorList()">
+                            </select>
+                        </label>
+                    </div>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="battery.standardBox" ng-change="battery.standardBox = (maintenance.batteryId) ? !battery.standardBox : battery.standardBox">Caja estandar</ion-toggle>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="battery.cover" ng-change="battery.cover = (maintenance.batteryId) ? !battery.cover : battery.cover">Tapa</ion-toggle>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="battery.drainHoles" ng-change="battery.drainHoles = (maintenance.batteryId) ? !battery.drainHoles : battery.drainHoles">Agujeros de drenaje</ion-toggle>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Peso mínimo (kg)</span>
+                            <input placeholder="" type="number" ng-model="battery.minimunWeight" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Peso máximo (kg)</span>
+                            <input placeholder="" type="number" ng-model="battery.maximunWeight" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Longitud (mm)</span>
+                            <input placeholder="" type="number" ng-model="battery.length" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Ancho (mm)</span>
+                            <input placeholder="" type="number" ng-model="battery.width" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Altura de los ojales (mm)</span>
+                            <input placeholder="" type="number" ng-model="battery.handleHeight" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Altura de la jarra (mm)</span>
+                            <input placeholder="" type="number" ng-model="battery.boxHeight" ng-readonly="(maintenance.batteryId)">
+                        </label>
+                    </div>
+
                 </form>
             </ion-content>
         </ion-tab>
@@ -154,7 +205,7 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Marca</span>
-                            <input placeholder="" type="text" ng-model="machine.trademarkName">
+                            <input placeholder="" type="text" ng-model="machine.trademarkName" ng-readonly="(maintenance.machineId)">
                         </label>
                         <button class="button button-small" ng-click="searchMachineTrademark(false)">
                             <i class="icon ion-search"></i>
@@ -163,7 +214,7 @@
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
                             <span class="input-label">Modelo</span>
-                            <input placeholder="" type="text" ng-model="machine.modelName">
+                            <input placeholder="" type="text" ng-model="machine.modelName" ng-readonly="(maintenance.machineId)">
                         </label>
                         <button class="button button-small" ng-click="searchMachineModel(false)">
                             <i class="icon ion-search"></i>
@@ -186,19 +237,19 @@
                     </div>
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <span class="input-label">Longitud compartimiento</span>
+                            <span class="input-label">Longitud compartimiento (mm)</span>
                             <input placeholder="" type="number" ng-model="machine.compartmentLength" ng-readonly="(machine.modelId)">
                         </label>
                     </div>
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <span class="input-label">Ancho compartimiento</span>
+                            <span class="input-label">Ancho compartimiento (mm)</span>
                             <input placeholder="" type="number" ng-model="machine.compartmentWidth" ng-readonly="(machine.modelId)">
                         </label>
                     </div>
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <span class="input-label">Altura compartimiento</span>
+                            <span class="input-label">Altura compartimiento (mm)</span>
                             <input placeholder="" type="number" ng-model="machine.compartmentHeight" ng-readonly="(machine.modelId)">
                         </label>
                     </div>
@@ -208,7 +259,7 @@
         <ion-tab title="Trabajo a realizar" icon="ion-hammer" hidden="{{ !(tabs.workToBeDoneTab())}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <textarea rows="30" ng-model="maintenance.workToBeDone"></textarea>
+                    <textarea rows="20" ng-model="maintenance.workToBeDone"></textarea>
                 </form>
             </ion-content>
         </ion-tab>
@@ -239,7 +290,7 @@
         <ion-tab title="Reporte técnico" icon="ion-compose" hidden="{{ !(tabs.technicalReportTab())}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <textarea rows="30" ng-model="maintenance.technicalReport"></textarea>
+                    <textarea rows="20" ng-model="maintenance.technicalReport"></textarea>
                 </form>
             </ion-content>
         </ion-tab>

@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http, guidGenerator) {
         
-        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //
+        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
@@ -48,7 +48,6 @@
                     if (debugMode >= 1)
                         console.error("Failed transaction", sqlError);
                     
-                    console.debug(onError);
                     if (PaCM.isFunction(onError)) {
                         onError(sqlError);
                     } else {

@@ -122,7 +122,7 @@
                 var fields = [];
                 var parameters = [];
                 PaCM.eachProperties(where, function (key, value) {
-                    fields.push('[' + key + '] = ?');
+                    fields.push(key + ' = ?');
                     parameters.push(value);
                 });
                 
@@ -162,7 +162,7 @@
                 var fields = [];
                 var parameters = [];
                 PaCM.eachProperties(where, function (key, value) {
-                    fields.push('[' + key + '] = ?');
+                    fields.push(key + ' = ?');
                     parameters.push(value);
                 });
                 

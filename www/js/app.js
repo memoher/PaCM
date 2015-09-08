@@ -112,8 +112,8 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
                 url: '/details/:maintenanceId',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/details.html',
-                        controller: 'detailsCtrl'
+                        templateUrl: 'templates/new.html',
+                        controller: 'newCtrl'
                     }
                 }
             })

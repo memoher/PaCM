@@ -4,46 +4,6 @@
 
         $scope.runningProcess = false;
         
-        $scope.filters = {
-            customerId: null,
-            customerName: null,
-            executedById: null,
-            executedByUsername: null,
-            objectTypeTrademarkId: null,
-            objectTypeTrademarkName: null,
-            objectTypeModelId: null,
-            objectTypeModelName: null,
-            objectTypeId: null,
-            objectTypeDescription: null
-        };
-        if (userSession.isLogged()) {
-            $scope.filters.executedById = userSession.user.Id;
-            $scope.filters.executedByUsername = userSession.user.Username;
-        }
-        
-        $scope.history = [];
-        $scope.searchHistory = function () {
-            
-            var where = {};
-            if ($scope.filters.customerId)
-                where.CustomerId = $scope.filters.customerId;
-            if ($scope.filters.executedById)
-                where.ExecutedById = $scope.filters.executedById;
-            if ($scope.filters.objectTypeTrademarkId)
-                where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
-            if ($scope.filters.objectTypeModelId)
-                where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
-            if ($scope.filters.objectTypeId)
-                where.ObjectTypeId = $scope.filters.objectTypeId;
-            
-            dataContext.find2('Assembly', where, function (assemblies) {
-                dataContext.find2('Maintenance', where, function (maintenances) {
-                    PaCM.syncronizeArray(["Id"], $scope.history, assemblies, maintenances);
-                    $scope.$digest();
-                });
-            });
-        };
-        
         // Create the login modal that we will use later
         $scope.searcher = {};
         $ionicModal.fromTemplateUrl('templates/searcher.html', {
@@ -74,6 +34,61 @@
                 $scope.modal.hide();
             };
         });
+        
+        $scope.filters = {
+            customerId: null,
+            customerName: null,
+            executedById: null,
+            executedByUsername: null,
+            objectTypeTrademarkId: null,
+            objectTypeTrademarkName: null,
+            objectTypeModelId: null,
+            objectTypeModelName: null,
+            objectTypeId: null,
+            objectTypeDescription: null,
+            applyForBattery: true,
+            applyForCharger: true
+        };
+        if (userSession.isLogged()) {
+            $scope.filters.executedById = userSession.user.Id;
+            $scope.filters.executedByUsername = userSession.user.Username;
+        }
+        
+        $scope.history = [];
+        $scope.searchHistory = function () {
+            
+            var where = {};
+            if ($scope.filters.customerId)
+                where['r.CustomerId'] = $scope.filters.customerId;
+            else {
+                PaCM.showError('Cliente es obligatorio');
+                return false;
+            }
+            if ($scope.filters.executedById)
+                where.ExecutedById = $scope.filters.executedById;
+            if ($scope.filters.objectTypeTrademarkId)
+                where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
+            if ($scope.filters.objectTypeModelId)
+                where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
+            if ($scope.filters.objectTypeId)
+                where.ObjectTypeId = $scope.filters.objectTypeId;
+            if ($scope.filters.applyForBattery === true && $scope.filters.applyForCharger === true) {
+                //Nothing
+            } else if ($scope.filters.applyForBattery === true) {
+                where.Type = 'BatteryMaintenance';
+            } else if ($scope.filters.applyForCharger === true) {
+                where.Type = 'ChargerMaintenance';
+            } else {
+                where.Type = '-1';
+            }
+            
+            //dataContext.find2('Assembly', where, function (assemblies) {
+                dataContext.find2('Maintenance', where, function (maintenances) {
+                    PaCM.syncronizeArray(["Id"], $scope.history, maintenances);
+                    $scope.$digest();
+                });
+            //});
+        };
         
         $scope.searchCustomer = function () {
             dataContext.list('Customer', function (customers) {
@@ -147,9 +162,10 @@
                     function (r) {
                         $scope.filters.objectTypeModelId = r.Id;
                         $scope.filters.objectTypeModelName = r.Name;
-                        var t = dataContext.get('ObjectTypeTrademark', r.TrademarkId);
-                        $scope.filters.objectTypeTrademarkId = t.Id;
-                        $scope.filters.objectTypeTrademarkName = t.Name;
+                        dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                            $scope.filters.objectTypeTrademarkId = t.Id;
+                            $scope.filters.objectTypeTrademarkName = t.Name;
+                        });
                         $scope.searcher.close();
                     }); 
             });
@@ -179,15 +195,18 @@
                     function (r) {
                         $scope.filters.objectTypeId = r.Id;
                         $scope.filters.objectTypeDescription = r.Description;
-                        var c = dataContext.get('Customer', r.CustomerId);
-                        $scope.filters.customerId = c.Id;
-                        $scope.filters.customerName = c.Name;
-                        var m = dataContext.get('ObjectTypeModel', r.ModelId);
-                        $scope.filters.objectTypeModelId = m.Id;
-                        $scope.filters.objectTypeModelName = m.Name;
-                        var t = dataContext.get('ObjectTypeTrademark', m.TrademarkId);
-                        $scope.filters.objectTypeTrademarkId = t.Id;
-                        $scope.filters.objectTypeTrademarkName = t.Name;
+                        dataContext.get('Customer', r.CustomerId, function (c) {
+                            $scope.filters.customerId = c.Id;
+                            $scope.filters.customerName = c.Name;
+                        });
+                        dataContext.get('ObjectTypeModel', r.ModelId, function (m) {
+                            $scope.filters.objectTypeModelId = m.Id;
+                            $scope.filters.objectTypeModelName = m.Name;
+                        });
+                        dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                            $scope.filters.objectTypeTrademarkId = t.Id;
+                            $scope.filters.objectTypeTrademarkName = t.Name;
+                        });
                         $scope.searcher.close();
                     });
             });

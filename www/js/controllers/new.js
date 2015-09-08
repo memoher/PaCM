@@ -214,10 +214,22 @@
         $scope.resetObjectType = function (applyForBattery) {
             if (applyForBattery === true) {
                 $scope.maintenance.batteryId = null;
-                $scope.machine.serial = null;
-                $scope.machine.customerReference = null;
-                $scope.machine.voltage = null;
-                $scope.machine.amperage = null;
+                $scope.battery.serial = null;
+                $scope.battery.customerReference = null;
+                $scope.battery.typeId = null;
+                $scope.battery.amperage = null;
+                $scope.battery.connectorTypeId = null;
+                $scope.battery.connectorId = null;
+                $scope.battery.connectorColorId = null;
+                $scope.battery.standarBox = false;
+                $scope.battery.cover = false;
+                $scope.battery.drainHoles = false;
+                $scope.battery.minimunWeight = null;
+                $scope.battery.maximunWeight = null;
+                $scope.battery.length = null;
+                $scope.battery.width = null;
+                $scope.battery.handleHeight = null;
+                $scope.battery.boxHeight = null;
             } else {
                 $scope.maintenance.chargerId = null;
                 $scope.charger.serial = null;
@@ -314,15 +326,15 @@
         
         $scope.newMaintenance = false;
         $scope.maintenance = {
-            id: ($stateParams.maintenanceId) ? parseInt($stateParams.maintenanceId) : null,
+            id: ($stateParams.maintenanceId) ? $stateParams.maintenanceId : null,
             uniqueCode: guidGenerator.new().substring(0,5),
             date: new Date(),
             preventive: true,
             corrective: false,
-            customerId: ($stateParams.customerId) ? parseInt($stateParams.customerId) : null,
+            customerId: ($stateParams.customerId) ? $stateParams.customerId : null,
             customerName: null,
-            batteryId: $stateParams.elmType === 'battery' ? parseInt($stateParams.elmId) : null,
-            chargerId: $stateParams.elmType === 'charger' ? parseInt($stateParams.elmId) : null,
+            batteryId: $stateParams.elmType === 'battery' ? $stateParams.elmId : null,
+            chargerId: $stateParams.elmType === 'charger' ? $stateParams.elmId : null,
             machineId: null,
             workToBeDone: null,
             checkList: null,
@@ -365,9 +377,17 @@
                         dataContext.get('User', $scope.maintenance.executedById, function (u) {
                             $scope.maintenance.executedByUsername = u.Username;
                         });
-                        getBattery();
-                        getCharger();
-                        getMachine();
+                        if ($scope.maintenance.batteryId != null) {
+                            $scope.tabs.batteryTab = true;
+                            getBattery();
+                        }
+                        if ($scope.maintenance.chargerId != null) {
+                            $scope.tabs.chargerTab = true;
+                            getCharger();
+                        }
+                        if ($scope.maintenance.machineId != null) {
+                            getMachine();
+                        }
                     }
                 });
             }
@@ -388,15 +408,15 @@
             connectorTypeId: null,
             connectorId: null,
             connectorColorId: null,
-            standardBox: null,
+            standardBox: false,
             minimunWeight: null,
             maximunWeight: null,
             length: null,
             width: null,
             boxHeight: null,
             handleHeight: null,
-            cover: null,
-            drainHoles: null            
+            cover: false,
+            drainHoles: false            
         };
         var getBattery = function () {
             if ($scope.maintenance.batteryId != null) {
@@ -411,7 +431,6 @@
                         $scope.battery.customerReference = r.CustomerReference;
                         $scope.battery.typeId = r.TypeId;
                         $scope.battery.amperage = r.Amperage;
-                        $scope.battery.connectorTypeId = r.ConnectorTypeId;
                         $scope.battery.connectorId = r.ConnectorId;
                         $scope.battery.connectorColorId = r.ConnectorColorId;
                         $scope.battery.standardBox = r.StandardBox;
@@ -423,6 +442,9 @@
                         $scope.battery.handleHeight = r.HandleHeight;
                         $scope.battery.cover = r.Cover;
                         $scope.battery.drainHoles = r.DrainHoles;
+                        dataContext.get('Connector', $scope.battery.connectorId, function (c) {
+                            $scope.battery.connectorTypeId = c.TypeId;
+                        });
                         dataContext.get('ObjectTypeModel', $scope.battery.modelId, function (m) {
                             $scope.battery.modelName = m.Name;
                         });
@@ -452,7 +474,8 @@
                 PaCM.eachArray(connectorTypes, function (inx, ct) {
                     $scope.batteryResources.connectorTypes.push({
                         id: ct.Id,
-                        name: ct.Name
+                        name: ct.Name,
+                        colorRequired: ct.ColorRequired
                     });
                 });
             });
@@ -474,6 +497,18 @@
                 });
             });
         }
+        $scope.showConnectorColorList = function () {
+            if ($scope.battery.connectorTypeId == null) {
+                return false;
+            }
+            var result = false;
+            PaCM.eachArray($scope.batteryResources.connectorTypes, function (inx, ct) {
+                if (ct.id === $scope.battery.connectorTypeId && ct.colorRequired === true) {
+                    result = true;
+                }
+            });
+            return result;
+        };
         
         $scope.charger = {
             //id: null,
@@ -589,7 +624,58 @@
             }
         };
         var saveBattery = function (onSuccess) {
-            onSuccess();
+            var ot = {
+                ModelId: $scope.battery.modelId,
+                Serial: $scope.battery.serial,
+                CustomerId: $scope.maintenance.customerId,
+                CustomerReference: $scope.battery.customerReference,
+                Enabled: true
+            };
+            if ($scope.maintenance.batteryId == null) {
+                dataContext.insert('ObjectType', ot, function () {
+                    var b = {
+                        Id: ot.Id,
+                        TypeId: $scope.battery.typeId,
+                        Amperage: $scope.battery.amperage,
+                        ConnectorId: $scope.battery.connectorId,
+                        ConnectorColorId: $scope.battery.connectorColorId,
+                        StandardBox: $scope.battery.standardBox,
+                        Cover: $scope.battery.cover,
+                        DrainHoles: $scope.battery.drainHoles,
+                        MinimunWeight: $scope.battery.minimunWeight,
+                        MaximunWeight: $scope.battery.maximunWeight,
+                        Length: $scope.battery.length,
+                        Width: $scope.battery.width,
+                        BoxHeight: $scope.battery.boxHeight,
+                        HandleHeight: $scope.battery.handleHeight
+                    };
+                    dataContext.insert('Battery', b, function () {
+                        $scope.maintenance.batteryId = b.Id;
+                        onSuccess();
+                    });
+                });
+            } else {
+                dataContext.update('ObjectType', ot, "[Id] = ?", [ $scope.maintenance.batteryId ], function () {
+                    var b = {
+                        TypeId: $scope.battery.typeId,
+                        Amperage: $scope.battery.amperage,
+                        ConnectorId: $scope.battery.connectorId,
+                        ConnectorColorId: $scope.battery.connectorColorId,
+                        StandardBox: $scope.battery.standardBox,
+                        Cover: $scope.battery.cover,
+                        DrainHoles: $scope.battery.drainHoles,
+                        MinimunWeight: $scope.battery.minimunWeight,
+                        MaximunWeight: $scope.battery.maximunWeight,
+                        Length: $scope.battery.length,
+                        Width: $scope.battery.width,
+                        BoxHeight: $scope.battery.boxHeight,
+                        HandleHeight: $scope.battery.handleHeight
+                    };
+                    dataContext.update('Battery', b, "[Id] = ?", [ $scope.maintenance.batteryId ], function () {
+                        onSuccess();
+                    });
+                });
+            }
         };
         
         var saveChargerTrademark = function (onSuccess) {
@@ -787,7 +873,6 @@
                 $scope.maintenance.executedByUsername = userSession.user.Username;
             }
             dataContext.get('MaintenanceStatus', $scope.maintenance.statusId, function (ms) {
-                console.debug(ms);
                 $scope.maintenance.statusDescription = ms.Description;
             });
             getBattery();
@@ -795,6 +880,9 @@
             getMachine();
         }
         getBatteryResources();
+        setTimeout(function () {
+            $scope.$digest();
+        }, 500);
         
     });
     
