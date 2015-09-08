@@ -59,7 +59,7 @@
             get: function (entity, id, onSuccess, onError) {
                 var options = {
                     where: {
-                        conditions: 'Id = ?',
+                        conditions: 'r.[Id] = ?',
                         parameters: [ id ]
                     }
                 };

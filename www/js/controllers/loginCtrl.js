@@ -9,29 +9,16 @@
             password: null
         };
         $scope.sigIn = function () {
-            $scope.runningProcess = true;
-            try {
-                userSession.sigIn($scope.login.emailAddress, $scope.login.password);
+            var fncOnSuccess = function () {
                 $state.go('app.records');
-            }
-            catch (err) {
+            };
+            var fncOnError = function (err) {
                 PaCM.showError(err);
-            }
-            finally {
-                $scope.runningProcess = false;
-            }
+            };
+            userSession.sigIn($scope.login.emailAddress, $scope.login.password, fncOnSuccess, fncOnError);
         };
         $scope.sigOut = function () {
-            $scope.runningProcess = true;
-            try {
-                userSession.sigOut();
-            }
-            catch (err) {
-                PaCM.showError(err);
-            }
-            finally {
-                $scope.runningProcess = false;
-            }
+            userSession.sigOut();
         };
     });
     

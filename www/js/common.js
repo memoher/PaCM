@@ -213,7 +213,7 @@
                                     o[key] = true;
                                 } else if (o[key] == 'false') {
                                     o[key] = false;
-                                } else if (o[key].length = 24 && o[key].substring(4,5) == '-' && o[key].endsWith('Z')) {
+                                } else if (o[key].length = 24 && o[key].substring(10,11) == 'T' && o[key].substring(23,24) == 'Z') {
                                     o[key] = new Date(o[key]);
                                 }
                             }

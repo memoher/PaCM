@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http, guidGenerator) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
@@ -48,6 +48,7 @@
                     if (debugMode >= 1)
                         console.error("Failed transaction", sqlError);
                     
+                    console.debug(onError);
                     if (PaCM.isFunction(onError)) {
                         onError(sqlError);
                     } else {
@@ -65,8 +66,18 @@
                                 if (debugMode >= 4)
                                     console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
                                 
-                                if (PaCM.isFunction(onSuccessCommand))
-                                    onSuccessCommand(self, sqlResultSet);
+                                if (PaCM.isFunction(onSuccessCommand)) {
+                                    try {
+                                        onSuccessCommand(self, sqlResultSet);
+                                    }
+                                    catch (err) {
+                                        _sqlError = null;
+                                        if (PaCM.isFunction(onErrorCommand))
+                                            onErrorCommand(self, err);
+                                        else
+                                            _sqlError = err; 
+                                    }
+                                }
                             };
                             var _onErrorCommand = function (tx1, sqlError) {
                                 if (debugMode >= 1)
@@ -93,8 +104,6 @@
                             var self = this;
 
                             if (sqlCommands && sqlCommands.length > 0) {
-                                var _sqlCommands = sqlCommands.reverse();
-                                
                                 var _buildFnc = null;
                                 if (PaCM.isFunction(onSuccessIterator)) {
                                     _buildFnc = function (sqlCommand, nextFnc) {
@@ -111,6 +120,7 @@
                                     }
                                 }
                                 
+                                var _sqlCommands = sqlCommands.reverse();
                                 var sqlFncs = [];
                                 for (var i = 0; i < _sqlCommands.length; i++) {
                                     var sqlCmd = _sqlCommands[i];
@@ -173,7 +183,7 @@
                             var self = this;
                             
                             var parameters = null;
-                            var sqlCommand = 'SELECT * FROM ' + table;
+                            var sqlCommand = 'SELECT * FROM ' + table + ' r ';
                             if (options) {
                                 if (options.fields) {
                                     if (options.fields.indexOf(' FROM ') >= 0) {
@@ -463,7 +473,7 @@
                         if (tablesInheritedOfMntObjects.indexOf(t) >= 0) {
                             command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id WHERE p.ReplicationStatus = 0';
                         } else {
-                            command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t '; //WHERE t.ReplicationStatus = 0';
+                            command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t WHERE t.ReplicationStatus = 0';
                         }
                         sqlCommands.push(command);
                     });

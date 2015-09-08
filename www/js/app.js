@@ -22,13 +22,13 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 
     })
     
-    .run(function ($timeout, userSession) {
-        
-        $timeout(function () {
-            userSession.sigIn("julian_her@hotmail.com", "123456");
-        }, 500);
-        
-    })
+//    .run(function ($timeout, userSession) {
+//        
+//        $timeout(function () {
+//            userSession.sigIn("julian_her@hotmail.com", "123456");
+//        }, 500);
+//        
+//    })
     
     .config(function($ionicConfigProvider) {
         

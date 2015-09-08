@@ -36,5 +36,13 @@
                 </a>
             </ion-item>
         </ion-list>
+        <ion-list ng-if="['BatteryType'].indexOf(searcher.type)>=0">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: searcher.search">
+                {{ r.Voltage }}V ({{ r.NumberOfCells }} Celdas)
+                <a class="button button-positive" ng-click="searcher.selectRecord(r)">
+                    <i class="icon ion-checkmark"></i>
+                </a>
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-modal-view>

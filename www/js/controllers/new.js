@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('newCtrl', function ($scope, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
+    PaCM.controllersModule.controller('newCtrl', function ($scope, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession, guidGenerator) {
 
         var debugMode = 4;
         
@@ -10,12 +10,27 @@
             starterTab: true,
             batteryTab: false,
             chargerTab: false,
-            machineTab: false,
-            workToBeDoneTab: false,
-            physicalInspectionTab: false,
-            cellInspectionTab: false,
-            suppliesTab: false,
-            technicalReportTab: false
+            machineTab: function () {
+                return (this.batteryTab === true || this.chargerTab === true) && ($scope.battery.typeId || $scope.charger.voltage);
+            },
+            workToBeDoneTab: function () {
+                return (this.batteryTab === true || this.chargerTab === true) && ($scope.battery.typeId || $scope.charger.voltage);
+            },
+            physicalInspectionTab: function () {
+                return (this.batteryTab === true || this.chargerTab === true) && ($scope.battery.typeId || $scope.charger.voltage);
+            },
+            cellInspectionTab: function () {
+                return this.batteryTab === true;
+            },
+            suppliesTab: function () {
+                return $scope.maintenance.corrective === true && (this.batteryTab === true || this.chargerTab === true);
+            },
+            technicalReportTab: function () {
+                return (this.batteryTab === true || this.chargerTab === true) && ($scope.battery.typeId || $scope.charger.voltage);
+            },
+            endingTab: function () {
+                return (this.batteryTab === true || this.chargerTab === true) && ($scope.battery.typeId || $scope.charger.voltage) && ($scope.maintenance.technicalReport);
+            }
         };
         $scope.selectTab = function (tabName) {
             var i = 0;
@@ -69,7 +84,8 @@
                     function (r) {
                         $scope.maintenance.customerId = r.Id;
                         $scope.maintenance.customerName = r.Name;
-                        //$scope.resetObjectType();
+                        $scope.resetObjectType(true);
+                        $scope.resetObjectType(false);
                         $scope.searcher.close();
                     });
             });
@@ -77,7 +93,8 @@
         $scope.resetCustomer = function () {
             $scope.maintenance.customerId = null;
             $scope.maintenance.customerName = null;
-            //$scope.resetObjectType();
+            $scope.resetObjectType(true);
+            $scope.resetObjectType(false);
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
@@ -94,7 +111,7 @@
                             $scope.charger.trademarkId = r.Id;
                             $scope.charger.trademarkName = r.Name;
                         }
-                        //$scope.resetObjectTypeModel(applyForBattery);
+                        $scope.resetObjectTypeModel(applyForBattery);
                         $scope.searcher.close();
                     }); 
             });
@@ -107,7 +124,7 @@
                 $scope.charger.trademarkId = r.Id;
                 $scope.charger.trademarkName = r.Name;
             }
-            //$scope.resetObjectTypeModel(applyForBattery);
+            $scope.resetObjectTypeModel(applyForBattery);
         };
         
         $scope.searchObjectTypeModel = function (applyForBattery) {
@@ -143,7 +160,7 @@
                                 $scope.charger.trademarkName = t.Name;
                             }
                         });
-                        //$scope.resetObjectType(applyForBattery);
+                        $scope.resetObjectType(applyForBattery);
                         $scope.searcher.close();
                     }); 
             });
@@ -157,14 +174,148 @@
                 $scope.charger.modelId = null;
                 $scope.charger.modelName = null;
             }
-            //$scope.resetObjectType(applyForBattery);
+            $scope.resetObjectType(applyForBattery);
+        };
+        
+        $scope.searchObjectType = function (applyForBattery) {
+
+            var where = {};
+            if ($scope.maintenance.customerId)
+                where.CustomerId = $scope.maintenance.customerId;
+            if (applyForBattery === true) {
+                if ($scope.battery.trademarkId)
+                    where.TrademarkId = $scope.battery.trademarkId;
+                if ($scope.battery.modelId)
+                    where.ModelId = $scope.battery.modelId;
+            } else {
+                if ($scope.charger.trademarkId)
+                    where.TrademarkId = $scope.charger.trademarkId;
+                if ($scope.charger.modelId)
+                    where.ModelId = $scope.charger.modelId;
+            }
+            
+            dataContext.find2(applyForBattery ? 'Battery' : 'Charger', where, function (objects) {
+                $scope.searcher.open(
+                    'ObjectType',
+                    applyForBattery ? 'Buscar bateria' : 'Buscar cargador',
+                    objects,
+                    function (r) {
+                        if (applyForBattery === true) {
+                            $scope.maintenance.batteryId = r.Id;
+                            getBattery();
+                        } else {
+                            $scope.maintenance.chargerId = r.Id;
+                            getCharger();
+                        }
+                        $scope.searcher.close();
+                    });
+            });
+        };
+        $scope.resetObjectType = function (applyForBattery) {
+            if (applyForBattery === true) {
+                $scope.maintenance.batteryId = null;
+                $scope.machine.serial = null;
+                $scope.machine.customerReference = null;
+                $scope.machine.voltage = null;
+                $scope.machine.amperage = null;
+            } else {
+                $scope.maintenance.chargerId = null;
+                $scope.charger.serial = null;
+                $scope.charger.customerReference = null;
+                $scope.charger.voltage = null;
+                $scope.charger.amperage = null;
+            }
+        };
+        
+        $scope.searchMachineTrademark = function () {
+            dataContext.list('MachineTrademark', function (trademarks) {
+                $scope.searcher.open(
+                    'MachineTrademark',
+                    'Buscar marca',
+                    trademarks,
+                    function (r) {
+                        $scope.machine.trademarkId = r.Id;
+                        $scope.machine.trademarkName = r.Name;
+                        $scope.resetMachineModel();
+                        $scope.searcher.close();
+                    }); 
+            });
+        };
+        $scope.resetMachineTrademark = function () {
+            $scope.machine.trademarkId = null;
+            $scope.machine.trademarkName = null;
+            $scope.resetMachineModel();
+        };
+        
+        $scope.searchMachineModel = function () {
+            
+            var where = {};
+            if ($scope.machine.trademarkId)
+                where.TrademarkId = $scope.machine.trademarkId;
+            
+            dataContext.find2('MachineModel', where, function (models) {
+                $scope.searcher.open(
+                    'MachineModel',
+                    'Buscar modelo',
+                    models,
+                    function (r) {
+                        $scope.machine.modelId = r.Id;
+                        $scope.machine.modelName = r.Name;
+                        $scope.machine.compartmentLength = r.CompartmentLength;
+                        $scope.machine.compartmentWidth = r.CompartmentWidth;
+                        $scope.machine.compartmentHeight = r.CompartmentHeight;
+                        dataContext.get('MachineTrademark', r.TrademarkId, function (t) {
+                            $scope.machine.trademarkId = t.Id;
+                            $scope.machine.trademarkName = t.Name;
+                        });
+                        $scope.resetMachine();
+                        $scope.searcher.close();
+                    }); 
+            });
+            
+        };
+        $scope.resetMachineModel = function () {
+            $scope.machine.modelId = null;
+            $scope.machine.modelName = null;
+            $scope.machine.compartmentLength = null;
+            $scope.machine.compartmentWidth = null;
+            $scope.machine.compartmentHeight = null;
+            $scope.resetMachine();
+        };
+        
+        $scope.searchMachine = function () {
+            
+            var where = {};
+            if ($scope.maintenance.customerId)
+                where.CustomerId = $scope.maintenance.customerId;
+            if ($scope.machine.trademarkId)
+                where.TrademarkId = $scope.machine.trademarkId;
+            if ($scope.machine.modelId)
+                where.ModelId = $scope.machine.modelId;
+            
+            dataContext.find2('Machine', where, function (objects) {
+                $scope.searcher.open(
+                    'Machine',
+                    'Buscar bateria / cargador',
+                    objects,
+                    function (r) {
+                        $scope.maintenance.machineId = r.Id;
+                        getMachine();
+                        $scope.searcher.close();
+                    });
+            });
+        };
+        $scope.resetMachine = function () {
+            $scope.maintenance.machineId = null;
+            $scope.machine.serial = null;
+            $scope.machine.customerReference = null;
         };
         
         
         $scope.newMaintenance = false;
         $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? parseInt($stateParams.maintenanceId) : null,
-            uniqueCode: null,
+            uniqueCode: guidGenerator.new().substring(0,5),
             date: new Date(),
             preventive: true,
             corrective: false,
@@ -182,7 +333,7 @@
             statusDescription: null,
             executedById: null,
             executedByUsername: null,
-            acceptedBy: null
+            acceptedBy: '.'
         };
         var getMaintenance = function () {
             if ($scope.maintenance.id != null) {
@@ -221,24 +372,18 @@
                 });
             }
         };
-        var saveMaintenance = function () {
-            
-        };
-        var finalizeMaintenance = function () {
-            
-        };
         
         $scope.battery = {
-            id: null,
+            //id: null,
             description: null,
             trademarkId: null,
             trademarkName: null,
             modelId: null,
             modelName: null,
             serial: null,
-            customerId: null,
+            //customerId: null,
             customerReference: null,
-            voltage: null,
+            typeId: null,
             amperage: null,
             connectorTypeId: null,
             connectorId: null,
@@ -257,14 +402,14 @@
             if ($scope.maintenance.batteryId != null) {
                 dataContext.get('Battery', $scope.maintenance.batteryId, function (r) {
                     if (r) {
-                        $scope.battery.id = r.Id;
+                        //$scope.battery.id = r.Id;
                         $scope.battery.description = r.Description;
                         $scope.battery.trademarkId = r.TrademarkId;
                         $scope.battery.modelId = r.ModelId;
                         $scope.battery.serial = r.Serial;
-                        $scope.battery.customerId = r.CustomerId;
+                        //$scope.battery.customerId = r.CustomerId;
                         $scope.battery.customerReference = r.CustomerReference;
-                        $scope.battery.voltage = null;
+                        $scope.battery.typeId = r.TypeId;
                         $scope.battery.amperage = r.Amperage;
                         $scope.battery.connectorTypeId = r.ConnectorTypeId;
                         $scope.battery.connectorId = r.ConnectorId;
@@ -288,19 +433,57 @@
                 });
             }
         };
-        var saveBattery = function () {
-            
+        $scope.batteryResources = {
+            batteryTypes: [],
+            connectorTypes: [],
+            connectors: [],
+            connectorColors: []
         };
+        var getBatteryResources = function () {
+            dataContext.list('BatteryType', function (batteryTypes) {
+                PaCM.eachArray(batteryTypes, function (inx, bt) {
+                    $scope.batteryResources.batteryTypes.push({
+                        id: bt.Id,
+                        description: bt.Voltage + 'V (' + bt.NumberOfCells + ' Celdas)'
+                    });
+                });
+            });
+            dataContext.list('ConnectorType', function (connectorTypes) {
+                PaCM.eachArray(connectorTypes, function (inx, ct) {
+                    $scope.batteryResources.connectorTypes.push({
+                        id: ct.Id,
+                        name: ct.Name
+                    });
+                });
+            });
+            dataContext.list('Connector', function (connector) {
+                PaCM.eachArray(connector, function (inx, c) {
+                    $scope.batteryResources.connectors.push({
+                        id: c.Id,
+                        name: c.Name,
+                        typeId: c.TypeId
+                    });
+                });
+            });
+            dataContext.list('Color', function (connectorColors) {
+                PaCM.eachArray(connectorColors, function (inx, cc) {
+                    $scope.batteryResources.connectorColors.push({
+                        id: cc.Id,
+                        name: cc.Name
+                    });
+                });
+            });
+        }
         
         $scope.charger = {
-            id: null,
+            //id: null,
             description: null,
             trademarkId: null,
             trademarkName: null,
             modelId: null,
             modelName: null,
             serial: null,
-            customerId: null,
+            //customerId: null,
             customerReference: null,
             voltage: null,
             amperage: null
@@ -309,12 +492,12 @@
             if ($scope.maintenance.chargerId != null) {
                 dataContext.get('Charger', $scope.maintenance.chargerId, function (r) {
                     if (r) {
-                        $scope.charger.id = r.Id;
+                        //$scope.charger.id = r.Id;
                         $scope.charger.description = r.Description;
                         $scope.charger.trademarkId = r.TrademarkId;
                         $scope.charger.modelId = r.ModelId;
                         $scope.charger.serial = r.Serial;
-                        $scope.charger.customerId = r.CustomerId;
+                        //$scope.charger.customerId = r.CustomerId;
                         $scope.charger.customerReference = r.CustomerReference;
                         $scope.charger.voltage = r.Voltage;
                         $scope.charger.amperage = r.Amperage;
@@ -328,19 +511,16 @@
                 });
             }
         };
-        var saveCharger = function () {
-            
-        };
         
         $scope.machine = {
-            id: null,
+            //id: null,
             description: null,
             trademarkId: null,
             trademarkName: null,
             modelId: null,
             modelName: null,
             serial: null,
-            customerId: null,
+            //customerId: null,
             customerReference: null,
             compartmentLength: null,
             compartmentWidth: null,
@@ -350,12 +530,12 @@
             if ($scope.maintenance.machineId != null) {
                 dataContext.get('Machine', $scope.maintenance.machineId, function (r) {
                     if (r) {
-                        $scope.machine.id = r.Id;
+                        //$scope.machine.id = r.Id;
                         $scope.machine.description = r.Description;
                         $scope.machine.trademarkId = r.TrademarkId;
                         $scope.machine.modelId = r.ModelId;
                         $scope.machine.serial = r.Serial;
-                        $scope.machine.customerId = r.CustomerId;
+                        //$scope.machine.customerId = r.CustomerId;
                         $scope.machine.customerReference = r.CustomerReference;
                         dataContext.get('MachineModel', $scope.machine.modelId, function (m) {
                             $scope.machine.modelName = m.Name;
@@ -370,9 +550,6 @@
                 });
             }
         };
-        var saveMachine = function () {
-            
-        };
         
         $scope.newBatteryMaintenance = function () {
             $scope.tabs.chargerTab = false;
@@ -380,9 +557,226 @@
         };
         $scope.newChargerMaintenance = function () {
             $scope.tabs.batteryTab = false;
-            $scope.tabs.cellInspectionTab = false;
             $scope.selectTab('chargerTab');
         };
+        
+        
+        var saveBatteryTrademark = function (onSuccess) {
+            if ($scope.battery.trademarkId == null) {
+                var r = {
+                    Name: $scope.battery.trademarkName
+                };
+                dataContext.insert('ObjectypeTrademark', r, function () {
+                    $scope.battery.trademarkId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveBatteryModel = function (onSuccess) {
+            if ($scope.battery.modelId == null) {
+                var r = {
+                    Name: $scope.battery.modelName,
+                    TrademarkId: $scope.battery.trademarkId
+                };
+                dataContext.insert('ObjectypeModel', r, function () {
+                    $scope.battery.modelId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveBattery = function (onSuccess) {
+            onSuccess();
+        };
+        
+        var saveChargerTrademark = function (onSuccess) {
+            if ($scope.charger.trademarkId == null) {
+                var r = {
+                    Name: $scope.charger.trademarkName
+                };
+                dataContext.insert('ObjectypeTrademark', r, function () {
+                    $scope.charger.trademarkId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveChargerModel = function (onSuccess) {
+            if ($scope.charger.modelId == null) {
+                var r = {
+                    Name: $scope.charger.modelName,
+                    TrademarkId: $scope.charger.trademarkId
+                };
+                dataContext.insert('ObjectypeModel', r, function () {
+                    $scope.charger.modelId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveCharger = function (onSuccess) {
+            var ot = {
+                ModelId: $scope.charger.modelId,
+                Serial: $scope.charger.serial,
+                CustomerId: $scope.maintenance.customerId,
+                CustomerReference: $scope.charger.customerReference,
+                Enabled: true
+            };
+            if ($scope.maintenance.chargerId == null) {
+                dataContext.insert('ObjectType', ot, function () {
+                    var c = {
+                        Id: ot.Id,
+                        Voltage: $scope.charger.voltage,
+                        Amperage: $scope.charger.amperage,
+                    };
+                    dataContext.insert('Charger', c, function () {
+                        $scope.maintenance.chargerId = c.Id;
+                        onSuccess();
+                    });
+                });
+            } else {
+                dataContext.update('ObjectType', ot, "[Id] = ?", [ $scope.maintenance.chargerId ], function () {
+                    var c = {
+                        Voltage: $scope.charger.voltage,
+                        Amperage: $scope.charger.amperage
+                    };
+                    dataContext.update('Charger', c, "[Id] = ?", [ $scope.maintenance.chargerId ], function () {
+                        onSuccess();
+                    });
+                });
+            }
+        };
+        
+        var saveMachineTrademark = function (onSuccess) {
+            if ($scope.machine.trademarkId == null) {
+                var r = {
+                    Name: $scope.machine.trademarkName
+                };
+                dataContext.insert('MachineTrademark', r, function () {
+                    $scope.machine.trademarkId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveMachineModel = function (onSuccess) {
+            if ($scope.machine.modelId == null) {
+                var r = {
+                    Name: $scope.machine.modelName,
+                    TrademarkId: $scope.machine.trademarkId,
+                    CompartmentLength: $scope.machine.compartmentLength,
+                    CompartmentWidth: $scope.machine.compartmentWidth,
+                    CompartmentHeight: $scope.machine.compartmentHeight
+                };
+                dataContext.insert('MachineModel', r, function () {
+                    $scope.machine.modelId = r.Id;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        };
+        var saveMachine = function (onSuccess) {
+            var m = {
+                ModelId: $scope.machine.modelId,
+                Serial: $scope.machine.serial,
+                CustomerId: $scope.maintenance.customerId,
+                CustomerReference: $scope.machine.customerReference
+            };
+            if ($scope.maintenance.machineId == null) {
+                dataContext.insert('Machine', m, function () {
+                    $scope.maintenance.machineId = m.Id;
+                    onSuccess();
+                });
+            } else {
+                dataContext.update('Machine', m, "[Id] = ?", [ $scope.maintenance.machineId ], function () {
+                    onSuccess();
+                });
+            }
+        };
+        
+        var saveMaintenance = function (onSuccess) {
+            var m = {
+                UniqueCode: $scope.maintenance.uniqueCode,
+                Date: $scope.maintenance.date,
+                Preventive: $scope.maintenance.preventive,
+                Corrective: $scope.maintenance.corrective,
+                CustomerId: $scope.maintenance.customerId,
+                Type: $scope.maintenance.batteryId != null ? 'BatteryMaintenance' : 'ChargerMaintenance',
+                ObjectTypeId: $scope.maintenance.batteryId != null ? $scope.maintenance.batteryId : $scope.maintenance.chargerId,
+                MachineId: $scope.maintenance.machineId,
+                WorkToBeDone: $scope.maintenance.workToBeDone,
+                TechnicalReport: $scope.maintenance.technicalReport,
+                ExecutedById: $scope.maintenance.executedById,
+                StatusId: $scope.maintenance.statusId,
+                AcceptedBy: $scope.maintenance.acceptedBy
+            };
+            if ($scope.maintenance.id == null) {
+                dataContext.insert('Maintenance', m, function () {
+                    $scope.maintenance.id = m.Id;
+                    onSuccess();
+                });
+            } else {
+                dataContext.update('Maintenance', m, "[Id] = ?", [ $scope.maintenance.id ], function () {
+                    onSuccess();
+                });
+            }
+        };
+        
+        $scope.saveMaintenance = function () {
+            var actions = [];
+            if ($scope.battery.typeId) {
+                actions.push(saveBatteryTrademark);
+                actions.push(saveBatteryModel);
+                actions.push(saveBattery);
+            }
+            if ($scope.charger.voltage) {
+                actions.push(saveChargerTrademark);
+                actions.push(saveChargerModel);
+                actions.push(saveCharger);
+            }
+            if ($scope.machine.serial || $scope.machine.customerReference) {
+                actions.push(saveMachineTrademark);
+                actions.push(saveMachineModel);
+                actions.push(saveMachine);
+            }
+            actions.push(saveMaintenance);
+            exec(actions, function () {
+                alert('Bien');
+            });
+        };
+        
+        var exec = function (actions, onSuccess) {
+            
+            var _buildFnc = function (fnc01, fnc02) {
+                return function () {
+                    fnc01(fnc02);
+                };
+            };
+            
+            var _actions = actions.reverse();
+            var fncs = [];
+            for (var i = 0; i < _actions.length; i++) {
+                var fnc = _actions[i];
+
+                if (i > 0 && i < _actions.length - 1) {
+                    fncs.push(_buildFnc(fnc, fncs[i - 1]));
+                }
+                else if (i == (_actions.length - 1)) {
+                    fnc(fncs[i - 1]);
+                }
+                else if (i == 0) {
+                    fncs.push(_buildFnc(fnc, onSuccess));
+                }
+            }
+        };
+        
         
         if ($scope.maintenance.id != null) {
             getMaintenance();
@@ -400,6 +794,7 @@
             getCharger();
             getMachine();
         }
+        getBatteryResources();
         
     });
     
