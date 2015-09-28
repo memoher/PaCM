@@ -1,7 +1,6 @@
 
-// Este servicio provee todos los datos, se encarga de mantenerlos en memoria para
-// un rápido acceso, y se mantiene en contacto con el servicio dbContext, para refrescar
-// la información cuando esta ha cambiado
+// Este servicio provee todos métodos para consultar, insertar, editar y eliminar
+// registros, de una manera mas comoda que permite usar el nombre de las entidades
 
 (function () {
 
@@ -69,9 +68,9 @@
                     options.fields = queries[entity];
                 }
                 
-                var result = null;
                 dbContext.beginTransaction(function (tx) {
                     tx.first(entities[entity], options, function (tx1, sqlResultSet1) {
+                        var result = null;
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             result = r;
                         });
@@ -85,9 +84,9 @@
                     options.fields = queries[entity];
                 }
                 
-                var results = [];
                 dbContext.beginTransaction(function (tx) {
                     tx.select(entities[entity], options, function (tx1, sqlResultSet1) {
+                        var results = [];
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             results.push(r);
                         });
@@ -96,10 +95,11 @@
                 }, null, onError, debugMode);
             },
             first: function (entity, where, parameters, onSuccess, onError) {
-                var options = { };
+                var options = {};
                 if (where) {
-                    options.where = {};
-                    options.where.conditions = where;
+                    options.where = {
+                        conditions: where
+                    };
                 }
                 if (parameters) {
                     options.where.parameters = parameters;
@@ -108,9 +108,9 @@
                     options.fields = queries[entity];
                 }
                 
-                var result = null;
                 dbContext.beginTransaction(function (tx) {
                     tx.first(entities[entity], options, function (tx1, sqlResultSet1) {
+                        var result = null;
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             result = r;
                         });
@@ -135,10 +135,11 @@
                 }
             },
             find: function (entity, where, parameters, onSuccess, onError) {
-                var options = { };
+                var options = {};
                 if (where) {
-                    options.where = {};
-                    options.where.conditions = where;
+                    options.where = {
+                        conditions: where
+                    };
                 }
                 if (parameters) {
                     options.where.parameters = parameters;
@@ -147,9 +148,9 @@
                     options.fields = queries[entity];
                 }
                 
-                var results = [];
                 dbContext.beginTransaction(function (tx) {
                     tx.select(entities[entity], options, function (tx1, sqlResultSet1) {
+                        var results = [];
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             results.push(r);
                         });

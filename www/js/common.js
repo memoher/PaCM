@@ -1,6 +1,11 @@
 (function () {
 
+    var stringEmpty = '';
+
     window.PaCM = {
+        getStrEmpty: function () {
+            return stringEmpty;
+        },
         isArray: function (vlr) {
             var self = this;
             return (vlr && self.isDefined(vlr.length) && self.isDefined(vlr.push));
@@ -38,7 +43,7 @@
         },
         isNullOrEmptyString: function (vlr) {
             var self = this;
-            return (self.isUndefined(vlr) || vlr === null || vlr === '');
+            return (self.isUndefined(vlr) || vlr === null || vlr === self.getStrEmpty());
         },
         showError: function (err, msg) {
             var self = this;
@@ -60,155 +65,91 @@
                 alert(msg);
             }
         },
-        mergeArray: function (key, arr1, arr2, arr3) {
+        mergeArray: function (key, arr0, arr1, arr2, arr3, arr4, arr5) {
             var self = this;
             
-            var arr1Valid = self.eachArray(arr1, function (inx, e) { return true; });
-            var arr2Valid = self.eachArray(arr2, function (inx, e) { return true; });
-            var arr3Valid = self.eachArray(arr3, function (inx, e) { return true; });
-            
-            if (arr1Valid && !arr2Valid && !arr3Valid) {
-                return arr1;
-            } else {
-
-                var validKey =
-                PaCM.eachProperties(key, function (k, v) {
-                    return true;
-                });
-
-                var result = [];
-                self.eachArray(arr1, function (inx, e) {
-                    if (validKey) {
-                        var i = self.eachArray(result, function (inx2, e2) {
-                            var valid = true;
-                            self.eachArray(key, function (inx3, v) {
-                                if (e[v] != e2[v])
-                                    valid = false;
-                            });
-                            if (valid === true) {
-                                return inx2;
-                            }
-                        });
-                        if (i != null) {
-                            result[i] = e;
-                        } else {
-                            result.push(e);
-                        }
-                    } else {
-                        if (result.indexOf(e) < 0) {
-                            result.push(e);
-                        }   
-                    }
-                });
-                self.eachArray(arr2, function (inx, e) {
-                    if (validKey) {
-                        var i = self.eachArray(result, function (inx2, e2) {
-                            var valid = true;
-                            self.eachArray(key, function (inx3, v) {
-                                if (e[v] != e2[v])
-                                    valid = false;
-                            });
-                            if (valid === true) {
-                                return inx2;
-                            }
-                        });
-                        if (i != null) {
-                            result[i] = e;
-                        } else {
-                            result.push(e);
-                        }
-                    } else {
-                        if (result.indexOf(e) < 0) {
-                            result.push(e);
-                        }   
-                    }
-                });
-                self.eachArray(arr3, function (inx, e) {
-                    if (validKey) {
-                        var i = self.eachArray(result, function (inx2, e2) {
-                            var valid = true;
-                            self.eachArray(key, function (inx3, v) {
-                                if (e[v] != e2[v])
-                                    valid = false;
-                            });
-                            if (valid === true) {
-                                return inx2;
-                            }
-                        });
-                        if (i != null) {
-                            result[i] = e;
-                        } else {
-                            result.push(e);
-                        }
-                    } else {
-                        if (result.indexOf(e) < 0) {
-                            result.push(e);
-                        }   
-                    }
-                });
-                return result;
+            if (!self.isArray(arr0) || !self.isArray(arr1)) {
+                return;
             }
-        },
-        syncronizeArray: function (key, arr0, arr1, arr2, arr3) {
-            var self = this;
-            
-            var validKey =
-            PaCM.eachProperties(key, function (k, v) {
-                return true;
-            });
-            
-            var arrT = self.mergeArray(key, arr1, arr2, arr3);
-                
-            if (validKey) {
-                self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = self.eachArray(arrT, function (inx2, e2) {
-                        var valid = true;
-                        self.eachArray(key, function (inx3, v) {
-                            if (e[v] != e2[v])
-                                valid = false;
-                        });
-                        if (valid === true) {
-                            return inx2;
-                        }
-                    });
-                    if (i != null) {
-                        arr0[inx] = arrT[i];
-                        arrT.splice(i, 1);
-                    } else {
-                        arr0.splice(inx, 1);
-                    }
-                });
-                self.eachArrayInvert(arrT, function (inx, e) {
+
+            if (self.isArray(key)) {
+                self.eachArray(arr1, function (inx, e) {
                     var i = self.eachArray(arr0, function (inx2, e2) {
                         var valid = true;
-                        self.eachArray(key, function (inx3, v) {
-                            if (e[v] != e2[v])
+                        self.eachArray(key, function (inx3, k) {
+                            if (e[k] != e2[k])
                                 valid = false;
                         });
                         if (valid === true) {
                             return inx2;
                         }
                     });
-                    if (!(i)) {
+                    if (self.isNumber(i)) {
+                        arr0[i] = e;
+                    } else {
                         arr0.push(e);
                     }
-                    arrT.splice(inx, 1);
                 });
             } else {
+                self.eachArray(arr1, function (inx, e) {
+                    if (arr0.indexOf(e) < 0) {
+                        arr0.push(e);
+                    }
+                });
+            }
+            if (self.isArray(arr2)) {
+                self.mergeArray(key, arr0, arr2);
+            }
+            if (self.isArray(arr3)) {
+                self.mergeArray(key, arr0, arr3);
+            }
+            if (self.isArray(arr4)) {
+                self.mergeArray(key, arr0, arr4);
+            }
+            if (self.isArray(arr5)) {
+                self.mergeArray(key, arr0, arr5);
+            }
+        },
+        syncronizeArray: function (key, arr0, arr1) {
+            var self = this;
+
+            if (!self.isArray(arr0) || !self.isArray(arr1)) {
+                return;
+            }
+
+            if (self.isArray(key)) {
                 self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = arrT.indexOf(e);
-                    if (i >= 0) {
-                        arrT.splice(i, 1);
+                    var i = self.eachArray(arr1, function (inx2, e2) {
+                        var valid = true;
+                        self.eachArray(key, function (inx3, k) {
+                            if (e[k] != e2[k])
+                                valid = false;
+                        });
+                        if (valid === true) {
+                            return inx2;
+                        }
+                    });
+                    if (self.isNumber(i)) {
+                        arr0[inx] = arr1[i];
+                        arr1.splice(i, 1);
                     } else {
                         arr0.splice(inx, 1);
                     }
                 });
-                self.eachArrayInvert(arrT, function (inx, e) {
-                    var i = arr0.indexOf(e);
-                    if (i < 0) {
-                        arr0.push(e);
+                self.eachArray(arr1, function (inx, e) {
+                    arr0.push(e);
+                });
+            } else {
+                self.eachArrayInvert(arr0, function (inx, e) {
+                    var i = arr1.indexOf(e);
+                    if (i >= 0) {
+                        arr1.splice(i, 1);
+                    } else {
+                        arr0.splice(inx, 1);
                     }
-                    arrT.splice(inx, 1);
+                });
+                self.eachArray(arr1, function (inx, e) {
+                    arr0.push(e);
                 });
             }
         },

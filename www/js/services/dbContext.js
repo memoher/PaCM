@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http, guidGenerator) {
         
-        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //'http://192.168.0.12:57080/'; //
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
@@ -19,6 +19,8 @@
         ];
         var tablesForExport = [
             'AppFiles',
+            'CfgCountries', 'CfgStates', 'CfgCities',
+            'CfgCustomers', 'CfgCustomerBranches', 
             'MntMachineTrademarks', 'MntMachineModels', 'MntMachines',
             'MntObjectTrademarks', 'MntObjectModels', 'MntObjects', 'MntBatteries', 'MntChargers', 'MntCells',
             'MntAssemblies', 'MntMaintenances', 'MntMaintenanceCheckList', 'MntCellsReviews', 'MntArticlesOutputs'
@@ -55,7 +57,7 @@
                     }
                 };
                 
-                var db = window.openDatabase('mydb', '1.0', 'Test DB', 10 * 1024 * 1024);
+                var db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 10 * 1024 * 1024);
                 db.transaction(function (tx) {
                     scope({
                         executeSql: function (sqlCommand, sqlParameters, onSuccessCommand, onErrorCommand) {
@@ -106,41 +108,41 @@
                                 var _buildFnc = null;
                                 if (PaCM.isFunction(onSuccessIterator)) {
                                     _buildFnc = function (sqlCommand, nextFnc) {
-                                        return function (tx1, sqlResultSet1) {
-                                            onSuccessIterator(tx1, sqlResultSet1);
-                                            tx1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
+                                        return function (tx1) {
+                                            tx1.executeSql(sqlCommand, null, function (tx2, sqlResultSet2) {
+                                                onSuccessIterator(tx2, sqlResultSet2);
+                                                nextFnc(tx2);
+                                            }, onErrorCommands);
                                         };
                                     }
                                 } else {
                                     _buildFnc = function (sqlCommand, nextFnc) {
-                                        return function (tx1, sqlResultSet1) {
+                                        return function (tx1) {
                                             tx1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
                                         };
                                     }
                                 }
-                                
-                                var _sqlCommands = sqlCommands.reverse();
-                                var sqlFncs = [];
-                                for (var i = 0; i < _sqlCommands.length; i++) {
-                                    var sqlCmd = _sqlCommands[i];
 
-                                    if (i > 0 && i < _sqlCommands.length - 1) {
-                                        sqlFncs.push(_buildFnc(sqlCmd, sqlFncs[i - 1]));
+                                var sqlFncs = [];
+                                PaCM.eachArrayInvert(sqlCommands, function (inx, c) {
+                                    // Todos menos el último
+                                    if (inx < (sqlCommands.length - 1)) {
+                                        sqlFncs.push(_buildFnc(c, sqlFncs[sqlFncs.length - 1]));
                                     }
-                                    else if (i == (_sqlCommands.length - 1)) {
-                                        self.executeSql(sqlCmd, null, sqlFncs[i - 1], onErrorCommands);
-                                    }
-                                    else if (i == 0) {
-                                        sqlFncs.push(_buildFnc(sqlCmd, function (tx1, sqlResultSet1) {
-                                            if (PaCM.isFunction(onSuccessIterator))
-                                                onSuccessIterator(tx1, sqlResultSet1);
+                                    //Último (primera función en la pila, última en ejecutarse)
+                                    else {
+                                        sqlFncs.push(_buildFnc(c, function (tx1) {
                                             if (PaCM.isFunction(onSuccellCommands))
                                                 onSuccellCommands(tx1);
                                         }));
                                     }
-                                }
+                                });
+                                
+                                self.executeSql('SELECT 1', null, sqlFncs[sqlFncs.length - 1], onErrorCommands);
+                                delete sqlFncs;
+
                             } else {
-                                self.executeSql("SELECT 1", null, onSuccellCommands, onErrorCommands);
+                                throw 'sqlCommands: Argument is not valid';
                             }
                             
                             return self;
@@ -151,18 +153,16 @@
                             var arrFields = [];
                             PaCM.eachArray(fields, function (inx, f) {
                                 var s = '[' + f.name + ']'
-                                    + (f.type ? ' ' + f.type : '')
+                                    + (f.type ? ' ' + f.type : PaCM.getStrEmpty())
                                     + (f.required ? ' NOT NULL' : ' NULL')
-                                    + (f.primaryKey ? ' PRIMARY KEY' : '')
-                                    + (f.autoIncrement ? ' AUTOINCREMENT' : '')
-                                    + (f.unique ? ' UNIQUE' : '')
-                                    + (f.default ? ' ' + f.default : '');
+                                    + (f.primaryKey ? ' PRIMARY KEY' : PaCM.getStrEmpty())
+                                    + (f.autoIncrement ? ' AUTOINCREMENT' : PaCM.getStrEmpty())
+                                    + (f.unique ? ' UNIQUE' : PaCM.getStrEmpty())
+                                    + (f.default ? ' ' + f.default : PaCM.getStrEmpty());
                                 arrFields.push(s);
                             });
 
-                            var sqlCommand = 'CREATE TABLE ' + table + ' (@fields)'
-                                .replace('@fields', arrFields.join(', '));
-
+                            var sqlCommand = 'CREATE IF NOT EXISTS TABLE ' + table + ' (' + arrFields.join(', ') + ')';
                             delete arrFields;
 
                             self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
@@ -223,8 +223,8 @@
                         insert: function (table, values, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            values.Id = (values.Id) ? values.Id : guidGenerator.new();
                             if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
+                                values.Id = (values.Id) ? values.Id : guidGenerator.new();
                                 values.CreatedOn = (values.CreatedOn) ? values.CreatedOn : new Date();
                                 values.LastModified = (values.LastModified) ? values.LastModified : new Date();
                                 if (PaCM.isUndefined(values.ReplicationStatus)) {
@@ -235,22 +235,17 @@
                             var parameters = [];
                             var arrFields = [];
                             var parFields = [];
-                            for (var val in values) {
-                                if (values.hasOwnProperty(val)) {
-                                    arrFields.push(val);
-                                    parFields.push('?');
-                                    if (typeof(values[val]) === 'string' && values[val].indexOf('/Date(') >= 0) {
-                                        parameters.push(new Date(parseInt(values[val].replace('/Date(', '').replace(')/', ''))));
-                                    } else {
-                                        parameters.push(values[val]);
-                                    }
+                            PaCM.eachProperties(values, function (key, val) {
+                                arrFields.push(key);
+                                parFields.push('?');
+                                if (PaCM.isString(val) && val.indexOf('/Date(') >= 0) {
+                                    parameters.push(new Date(parseInt(val.replace('/Date(', PaCM.getStrEmpty()).replace(')/', PaCM.getStrEmpty()))));
+                                } else {
+                                    parameters.push(val);
                                 }
-                            }
+                            });
 
-                            var sqlStatement = 'INSERT INTO ' + table + ' ([@fields]) VALUES (@values)'
-                                .replace('@fields', arrFields.join('], ['))
-                                .replace('@values', parFields.join(', '));
-
+                            var sqlStatement = 'INSERT INTO ' + table + ' ([' + arrFields.join('], [') + ']) VALUES (' + parFields.join(', ') + ')';
                             delete arrFields;
                             delete parFields;
 
@@ -270,27 +265,24 @@
 
                             var _parameters = [];
                             var arrFields = [];
-                            for (var val in values) {
-                                if (values.hasOwnProperty(val)) {
-                                    arrFields.push('[' + val + ']=?');
-                                    if (typeof(values[val]) === 'string' && values[val].indexOf('/Date(') >= 0) {
-                                        _parameters.push(new Date(parseInt(values[val].replace('/Date(', '').replace(')/', ''))));
-                                    } else {
-                                        _parameters.push(values[val]);
-                                    }
+                            PaCM.eachProperties(values, function (key, val) {
+                                arrFields.push('[' + key + ']=?');
+                                if (PaCM.isString(val) && val.indexOf('/Date(') >= 0) {
+                                    parameters.push(new Date(parseInt(val.replace('/Date(', PaCM.getStrEmpty()).replace(')/', PaCM.getStrEmpty()))));
+                                } else {
+                                    parameters.push(val);
                                 }
-                            }
+                            });
 
                             var sqlStatement = 'UPDATE ' + table + ' SET ' + arrFields.join(', ');
                             if (where) {
                                 sqlStatement += ' WHERE ' + where;
                             }
+                            delete arrFields;
                             
                             PaCM.eachArray(parameters, function (inx, p) {
                                 _parameters.push(p);
                             });
-
-                            delete arrFields;
 
                             self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
                             
@@ -299,17 +291,12 @@
                         delete: function (table, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
 
-                            var _parameters = [];
                             var sqlStatement = 'DELETE FROM ' + table;
                             if (where) {
                                 sqlStatement += ' WHERE ' + where;
                             }
-                            
-                            PaCM.eachArray(parameters, function (inx, p) {
-                                _parameters.push(p);
-                            });
 
-                            self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
+                            self.executeSql(sqlStatement, parameters, onSuccessCommand, onErrorCommand);
                             
                             return self;
                         }
@@ -368,15 +355,16 @@
     'create table MntCellsReviews ( Id TEXT not null, Voltage NUMERIC not null, Density NUMERIC not null, Comments TEXT, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, CellId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_CellReview_CellId foreign key (CellId) references MntCells, constraint FK_CellReview_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_CellReview_AssemblyId foreign key (AssemblyId) references MntAssemblies )',
     'create table MntArticlesOutputs ( Id TEXT not null, Quantity NUMERIC not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, ArticleId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_ArticleOutput_ArticleId foreign key (ArticleId) references MntArticles, constraint FK_ArticleOutput_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_ArticleOutput_AssemblyId foreign key (AssemblyId) references MntAssemblies )'
                     ];
-                    tx.executeMultiSql(sqlCommands, null, fnc04);
+                    tx.executeMultiSql(sqlCommands);
                 };
                 var fnc04 = function () {
+                    onSuccess();
                     PaCM.eachArray(eventsOnDataChanged, function (inx, fnc) {
                         fnc();
                     });
                 };
                 
-                self.beginTransaction(fnc01, onSuccess, onError, debugMode);
+                self.beginTransaction(fnc01, fnc04, onError, debugMode);
             },
             importData: function (onSuccess, onError, debugMode) {
                 var self = this;
@@ -384,7 +372,8 @@
                 var localData = [];
                 var hasNewData = false;
                 
-                //Obtiene todos los registros con fecha mas reciente en el servidor
+                //Obtiene todos los registros con fecha mas reciente en el servidor, o que aún no
+                //existen localmente
                 
                 var fnc01 = function (tx) {
                     var sqlCommands = [];
@@ -408,16 +397,18 @@
                     });
                 };
                 var fnc02 = function () {
-                    $http.post(addressServer + 'SyncronizeData/GetData', {
-                        tables: tablesForImport,
-                        records: localData
-                    })
-                    .success(function (response) {
-                        fnc03(response);
-                    })
-                    .error(function (err) {
-                        onError(err);
-                    });
+                    if (tablesForImport.length > 0) {
+                        $http.post(addressServer + 'SyncronizeData/GetData', {
+                            tables: tablesForImport,
+                            records: localData
+                        })
+                        .success(function (response) {
+                            fnc03(response);
+                        })
+                        .error(onError);
+                    } else {
+                        success();
+                    }
                 };
                 var fnc03 = function (response) {
                     self.beginTransaction(function (tx) {
@@ -448,12 +439,12 @@
                     }, fnc04, onError, debugMode);
                 };
                 var fnc04 = function () {
+                    onSuccess();
                     if (hasNewData === true) {
                         PaCM.eachArray(eventsOnDataChanged, function (inx, fnc) {
                             fnc();
                         });
                     }
-                    onSuccess();
                 };
                 
                 self.beginTransaction(fnc01, fnc02, onError, debugMode);
@@ -463,7 +454,8 @@
                 
                 var localData = [];
                 
-                //Obtiene todos los registros donde ReplicationStatus sea igual a 0
+                //Obtiene todos los registros donde ReplicationStatus sea igual a 0 para 
+                //enviar la nueva información al servidor
                 
                 var fnc01 = function (tx) {
                     var sqlCommands = [];
@@ -480,9 +472,6 @@
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             var dt = { Tb: r.Tb, FS: {}, FI: {}, FN: {}, FD: {}, FB: {}, FO: {} };
                             delete r.Tb;
-                            if (tablesInheritedOfMntObjects.indexOf(r.Tb) < 0) {
-                                delete r.ReplicationStatus;
-                            }
                             PaCM.eachProperties(r, function (key, val) {
                                 if (PaCM.isString(val)) {
                                     dt.FS[key] = val;
@@ -494,7 +483,7 @@
                                     dt.FD[key] = val;
                                 } else if (PaCM.isBoolean(val)) {
                                     dt.FB[key] = val;
-                                } else if (val == null) {
+                                } else {
                                     dt.FO[key] = val;
                                 }
                             });
@@ -510,9 +499,7 @@
                         .success(function (response) {
                             fnc03(response);
                         })
-                        .error(function (err) {
-                            onError(err);
-                        });
+                        .error(onError);
                     } else {
                         onSuccess();
                     }
