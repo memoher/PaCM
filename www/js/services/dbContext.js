@@ -153,12 +153,12 @@
                             var arrFields = [];
                             PaCM.eachArray(fields, function (inx, f) {
                                 var s = '[' + f.name + ']'
-                                    + (f.type ? ' ' + f.type : PaCM.getStrEmpty())
+                                    + (f.type ? ' ' + f.type : PaCM.getStringEmpty())
                                     + (f.required ? ' NOT NULL' : ' NULL')
-                                    + (f.primaryKey ? ' PRIMARY KEY' : PaCM.getStrEmpty())
-                                    + (f.autoIncrement ? ' AUTOINCREMENT' : PaCM.getStrEmpty())
-                                    + (f.unique ? ' UNIQUE' : PaCM.getStrEmpty())
-                                    + (f.default ? ' ' + f.default : PaCM.getStrEmpty());
+                                    + (f.primaryKey ? ' PRIMARY KEY' : PaCM.getStringEmpty())
+                                    + (f.autoIncrement ? ' AUTOINCREMENT' : PaCM.getStringEmpty())
+                                    + (f.unique ? ' UNIQUE' : PaCM.getStringEmpty())
+                                    + (f.default ? ' ' + f.default : PaCM.getStringEmpty());
                                 arrFields.push(s);
                             });
 
@@ -238,8 +238,9 @@
                             PaCM.eachProperties(values, function (key, val) {
                                 arrFields.push(key);
                                 parFields.push('?');
-                                if (PaCM.isString(val) && val.indexOf('/Date(') >= 0) {
-                                    parameters.push(new Date(parseInt(val.replace('/Date(', PaCM.getStrEmpty()).replace(')/', PaCM.getStrEmpty()))));
+                                var date = PaCM.parseDateString(val);
+                                if (date) {
+                                    parameters.push(date);
                                 } else {
                                     parameters.push(val);
                                 }
@@ -267,8 +268,9 @@
                             var arrFields = [];
                             PaCM.eachProperties(values, function (key, val) {
                                 arrFields.push('[' + key + ']=?');
-                                if (PaCM.isString(val) && val.indexOf('/Date(') >= 0) {
-                                    parameters.push(new Date(parseInt(val.replace('/Date(', PaCM.getStrEmpty()).replace(')/', PaCM.getStrEmpty()))));
+                                var date = PaCM.parseDateString(val);
+                                if (date) {
+                                    parameters.push(date);
                                 } else {
                                     parameters.push(val);
                                 }

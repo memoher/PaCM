@@ -178,7 +178,7 @@
             hideList: true
         };
         $scope.searcherOnChange = function () {
-            if (PaCM.isNullOrEmptyString($scope.searcher.search)) {
+            if (PaCM.isStringIsNullOrEmpty($scope.searcher.search)) {
                 if ($scope.searcher.hideList != true)
                     $scope.searcher.hideList = true;
             } else {

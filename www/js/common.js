@@ -1,52 +1,70 @@
 (function () {
 
-    var stringEmpty = '';
+    var STRING_EMPTY = '';
 
     window.PaCM = {
-        getStrEmpty: function () {
-            return stringEmpty;
-        },
-        isArray: function (vlr) {
-            var self = this;
-            return (vlr && self.isDefined(vlr.length) && self.isDefined(vlr.push));
-        },
-        isFunction: function (vlr) {
-            return typeof(vlr) === 'function';
-        },
-        isObject: function (vlr) {
-            var self = this;
-            return (vlr && self.isDefined(vlr.hasOwnProperty));
-        },
         isDefined: function (vlr) {
             var self = this;
             return !self.isUndefined(vlr);
         },
         isUndefined: function (vlr) {
-            return typeof(vlr) === 'undefined';
+            return typeof vlr === 'undefined';
         },
-        isString: function (vlr) {
-            var self = this;
-            return typeof(vlr) === 'string';
+        isNull: function (vlr) {
+            return vlr === null;
+        },
+        isArray: function (vlr) {
+            return (vlr && (vlr instanceof Array));
+        },
+        isFunction: function (vlr) {
+            return (vlr && (typeof vlr === 'function'));
+        },
+        isObject: function (vlr) {
+            return (vlr && (typeof vlr === 'object'));
         },
         isInteger: function (vlr) {
             var self = this;
-            return self.isNumber(vlr) && (vlr % 1 === 0);
+            return (vlr && self.isNumber(vlr) && (vlr % 1 === 0));
         },
         isNumber: function (vlr) {
-            return typeof(vlr) === 'number';
+            return (vlr && (typeof vlr === 'number'));
         },
         isDate: function (vlr) {
-            return vlr instanceof Date;
+            return (vlr && (vlr instanceof Date));
+        },
+        parseDateString: function (vlr) {
+            var self = this;
+            if (self.isDate(vlr))
+                return vlr;
+            if (self.isString(vlr)) {
+                if (vlr.length = 24 && vlr.substring(4,5) == '-' && vlr.substring(7,8) == '-' && vlr.substring(10,11) == 'T') {
+                    return new Date(vlr);
+                }
+                if (vlr.indexOf('/Date(') >= 0 && vlr.indexOf(')/') >= 0) {
+                    return new Date(parseInt(vlr.replace('/Date(', STRING_EMPTY).replace(')/', STRING_EMPTY)));
+                }
+                if (vlr.indexOf(' GMT') >= 0) {
+                    return new Date(vlr);
+                }
+            }
+            return null;
         },
         isBoolean: function (vlr) {
-            return (vlr === true || vlr === false);
+            return (vlr && (typeof vlr === 'boolean'));
         },
-        isNullOrEmptyString: function (vlr) {
+        isString: function (vlr) {
+            return (vlr && (typeof vlr === 'string'));
+        },
+        isStringIsNullOrEmpty: function (vlr) {
             var self = this;
-            return (self.isUndefined(vlr) || vlr === null || vlr === self.getStrEmpty());
+            return (self.isUndefined(vlr) || self.isNull(vlr) || vlr === STRING_EMPTY);
+        },
+        getStringEmpty: function () {
+            return STRING_EMPTY;
         },
         showError: function (err, msg) {
             var self = this;
+
             if (err) {
                 if (self.isDefined(err.DATABASE_ERR)) {
                     if (self.isString(msg)) {
@@ -155,6 +173,7 @@
         },
         eachArray: function (arr, iterator) {
             var self = this;
+
             if (arr) {
                 if (self.isArray(arr)) {
                     for (var i = 0; i < arr.length; i++) {
@@ -170,6 +189,7 @@
         },
         eachArrayInvert: function (arr, iterator) {
             var self = this;
+
             if (arr) {
                 if (self.isArray(arr)) {
                     for (var i = arr.length - 1; i >= 0; i--) {
@@ -185,6 +205,7 @@
         },
         eachProperties: function (obj, iterator) {
             var self = this;
+
             if (obj) {
                 if (self.isObject(obj)) {
                     for (var p in obj) {
@@ -202,6 +223,7 @@
         },
         eachSqlRS: function (sqlRS, iterator) {
             var self = this;
+
             if (sqlRS) {
                 if (self.isDefined(sqlRS.rows)) {
                     for (var i = 0; i < sqlRS.rows.length; i++) {
@@ -209,13 +231,16 @@
                         var o = {};
                         self.eachProperties(r, function (key, val) {
                             o[key] = val;
-                            if (self.isString(o[key])) {
-                                if (o[key] == 'true') {
+                            if (self.isString(val)) {
+                                if (val === 'true') {
                                     o[key] = true;
-                                } else if (o[key] == 'false') {
+                                } else if (val === 'false') {
                                     o[key] = false;
-                                } else if (o[key].length = 24 && o[key].substring(10,11) == 'T' && o[key].substring(23,24) == 'Z') {
-                                    o[key] = new Date(o[key]);
+                                } else {
+                                    var date = self.parseDateString(val);
+                                    if (date) {
+                                        o[key] = date;
+                                    }
                                 }
                             }
                         });
@@ -231,6 +256,7 @@
         },
         eachSqlRSInvert: function (sqlRS, iterator) {
             var self = this;
+
             if (sqlRS) {
                 if (self.isDefined(sqlRS.rows)) {
                     for (var i = sqlRS.rows.length - 1; i >= 0; i--) {
@@ -238,13 +264,16 @@
                         var o = {};
                         self.eachProperties(r, function (key, val) {
                             o[key] = val;
-                            if (self.isString(o[key])) {
-                                if (o[key] == 'true') {
+                            if (self.isString(val)) {
+                                if (val === 'true') {
                                     o[key] = true;
-                                } else if (o[key] == 'false') {
+                                } else if (val === 'false') {
                                     o[key] = false;
-                                } else if (o[key].indexOf('GMT-') >= 0) {
-                                    o[key] = new Date(o[key]);
+                                } else {
+                                    var date = self.parseDateString(val);
+                                    if (date) {
+                                        o[key] = date;
+                                    }
                                 }
                             }
                         });
