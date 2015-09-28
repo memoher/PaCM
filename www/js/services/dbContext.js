@@ -4,7 +4,7 @@
 
 (function () {
     
-    PaCM.servicesModule.factory('dbContext', function ($http, guidGenerator) {
+    PaCM.servicesModule.factory('dbContext', function ($http) {
         
         var addressServer = 'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //'http://192.168.0.12:57080/'; //
         var tablesForImport = [
@@ -40,7 +40,7 @@
                         _onError(_sqlError);
                     } else {
                         if (debugMode >= 4)
-                            console.info("Successful transaction");
+                            console.info('Successful transaction');
                         
                         if (PaCM.isFunction(onSuccess))
                             onSuccess();
@@ -48,7 +48,7 @@
                 };
                 var _onError = function (sqlError) {
                     if (debugMode >= 1)
-                        console.error("Failed transaction", sqlError);
+                        console.error('Failed transaction', sqlError);
                     
                     if (PaCM.isFunction(onError)) {
                         onError(sqlError);
@@ -224,7 +224,7 @@
                             var self = this;
                             
                             if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
-                                values.Id = (values.Id) ? values.Id : guidGenerator.new();
+                                values.Id = (values.Id) ? values.Id : PaCM.newGuid();
                                 values.CreatedOn = (values.CreatedOn) ? values.CreatedOn : new Date();
                                 values.LastModified = (values.LastModified) ? values.LastModified : new Date();
                                 if (PaCM.isUndefined(values.ReplicationStatus)) {

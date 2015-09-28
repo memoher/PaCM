@@ -6,7 +6,7 @@
 
     PaCM.servicesModule.factory('dataContext', function (dbContext) {
 
-        var debugMode = 4;
+        var debugMode = 1;
 
         var entities = {
             Settings: 'AppSettings',
@@ -184,6 +184,15 @@
                 dbContext.beginTransaction(function (tx) {
                     tx.update(entities[entity], values, where, parameters);
                 }, onSuccess, onError, debugMode);
+            },
+            save: function (entity, id, values, onSuccess, onError) {
+                var self = this;
+
+                if (id) {
+                    self.update(entity, values, 'r.[Id] = ?', [ id ], onSuccess, onError);
+                } else {
+                    self.insert(entity, values, onSuccess, onError);
+                }
             },
             delete: function (entity, where, parameters, onSuccess, onError) {
                 dbContext.beginTransaction(function (tx) {

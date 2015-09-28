@@ -2,35 +2,39 @@
 
     var STRING_EMPTY = '';
 
+    var _newGuid_s4 = function () {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+
     window.PaCM = {
         isDefined: function (vlr) {
             var self = this;
             return !self.isUndefined(vlr);
         },
         isUndefined: function (vlr) {
-            return typeof vlr === 'undefined';
+            return (typeof vlr === 'undefined');
         },
         isNull: function (vlr) {
-            return vlr === null;
+            return (vlr === null);
         },
         isArray: function (vlr) {
-            return (vlr && (vlr instanceof Array));
+            return (vlr instanceof Array);
         },
         isFunction: function (vlr) {
-            return (vlr && (typeof vlr === 'function'));
+            return (typeof vlr === 'function');
         },
         isObject: function (vlr) {
-            return (vlr && (typeof vlr === 'object'));
+            return (typeof vlr === 'object');
         },
         isInteger: function (vlr) {
             var self = this;
-            return (vlr && self.isNumber(vlr) && (vlr % 1 === 0));
+            return (self.isNumber(vlr) && (vlr % 1 === 0));
         },
         isNumber: function (vlr) {
-            return (vlr && (typeof vlr === 'number'));
+            return (typeof vlr === 'number');
         },
         isDate: function (vlr) {
-            return (vlr && (vlr instanceof Date));
+            return (vlr instanceof Date);
         },
         parseDateString: function (vlr) {
             var self = this;
@@ -50,10 +54,10 @@
             return null;
         },
         isBoolean: function (vlr) {
-            return (vlr && (typeof vlr === 'boolean'));
+            return (typeof vlr === 'boolean');
         },
         isString: function (vlr) {
-            return (vlr && (typeof vlr === 'string'));
+            return (typeof vlr === 'string');
         },
         isStringIsNullOrEmpty: function (vlr) {
             var self = this;
@@ -61,6 +65,36 @@
         },
         getStringEmpty: function () {
             return STRING_EMPTY;
+        },
+        newGuid: function () {
+            return _newGuid_s4() + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + _newGuid_s4() + _newGuid_s4();
+        },
+        execute: function (actions, onSuccess) {
+            var self = this;
+
+            if (actions.length == 0) {
+                onSuccess();
+                return;
+            }
+            
+            var _buildFnc = function (fnc01, fnc02) {
+                return function () {
+                    fnc01(fnc02);
+                };
+            };
+
+            var fncs = [];
+            self.eachArrayInvert(actions, function (inx, f) {
+                // Todos menos el último
+                if (inx < (actions.length - 1)) {
+                    fncs.push(_buildFnc(f, fncs[fncs.length - 1]));
+                }
+                //Último (primera función en la pila, última en ejecutarse)
+                else {
+                    fncs.push(_buildFnc(f, onSuccess));
+                }
+            });
+            fncs[fncs.length - 1]();
         },
         showError: function (err, msg) {
             var self = this;

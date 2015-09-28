@@ -1,10 +1,10 @@
 (function () {
     
-    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
+    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $ionicModal, dataContext) {
 
         $scope.runningProcess = false;
         
-        // Create the login modal that we will use later
+        // Create the modal popup searcher
         $scope.searcher = {};
         $ionicModal.fromTemplateUrl('templates/searcher.html', {
             scope: $scope,
@@ -15,10 +15,10 @@
                 var self = this;
                 
                 self.type = type;
-                self.data = data;
                 self.title = title;
-                self.search = '';
+                self.data = data;
                 self.selectRecord = onSelect;
+                self.search = '';
                 
                 $scope.modal.show();
             };
@@ -26,10 +26,10 @@
                 var self = this;
                 
                 self.type = null;
-                self.data = null;
                 self.title = null;
-                self.search = null;
+                self.data = null;
                 self.selectRecord = null;
+                self.search = null;
                 
                 $scope.modal.hide();
             };
@@ -49,10 +49,6 @@
             applyForBattery: true,
             applyForCharger: true
         };
-        if (userSession.isLogged()) {
-            $scope.filters.executedById = userSession.user.Id;
-            $scope.filters.executedByUsername = userSession.user.Username;
-        }
         
         $scope.history = [];
         $scope.searchHistory = function () {
@@ -82,12 +78,16 @@
                 where.Type = '-1';
             }
             
-            //dataContext.find2('Assembly', where, function (assemblies) {
+            $scope.runningProcess = true;
+            dataContext.find2('Assembly', where, function (assemblies) {
                 dataContext.find2('Maintenance', where, function (maintenances) {
-                    PaCM.syncronizeArray(["Id"], $scope.history, maintenances);
+                    var records = [];
+                    PaCM.mergeArray(['Id'], records, assemblies, maintenances);
+                    PaCM.syncronizeArray(['Id'], $scope.history, records);
+                    $scope.runningProcess = false;
                     $scope.$digest();
                 });
-            //});
+            });
         };
         
         $scope.searchCustomer = function () {

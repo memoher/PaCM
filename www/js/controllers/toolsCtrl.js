@@ -2,7 +2,7 @@
     
     PaCM.controllersModule.controller('toolsCtrl', function ($scope, dbContext) {
 
-        var debugMode = 4;
+        var debugMode = 1;
         
         $scope.runningProcess = false;
 
@@ -11,12 +11,12 @@
             dbContext.installDatabase(
                 function () {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     alert('Database installed successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     PaCM.showError(err, 'Failure during installation of the database');
                 },
                 debugMode);
@@ -27,12 +27,12 @@
             dbContext.importData(
                 function () {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     alert('Data imported successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     PaCM.showError(err, 'Fails during data import');
                 },
                 debugMode);
@@ -43,12 +43,12 @@
             dbContext.exportData(
                 function () {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     alert('Data exported successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
-                    $scope.$apply();
+                    $scope.$digest();
                     PaCM.showError(err, 'Fails during data export');
                 },
                 debugMode);
