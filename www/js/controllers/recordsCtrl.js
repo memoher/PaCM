@@ -57,7 +57,7 @@
             if ($scope.filters.customerId)
                 where['r.CustomerId'] = $scope.filters.customerId;
             else {
-                PaCM.showError('Cliente es obligatorio');
+                PaCM.showErrorMessage('Cliente es obligatorio');
                 return false;
             }
             if ($scope.filters.executedById)

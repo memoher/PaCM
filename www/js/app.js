@@ -1,136 +1,147 @@
 (function () {
 
-// PaCM App
+    // PaCM Services
 
-angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
+    PaCM.servicesModule = angular.module('pacmApp.services', []);
 
-    .run(function ($ionicPlatform) {
 
-        $ionicPlatform.ready(function () {
-            // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-            // for form inputs)
-            if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-                cordova.plugins.Keyboard.disableScroll(true);
+    // PaCM Controllers
 
-            }
-            if (window.StatusBar) {
-                // org.apache.cordova.statusbar required
-                StatusBar.styleLightContent();
-            }
+    PaCM.controllersModule = angular.module('pacmApp.controllers', [])
+
+        .controller('appCtrl', function ($scope) {
         });
-
-    })
-    
-//    .run(function ($timeout, userSession) {
-//        
-//        $timeout(function () {
-//            userSession.sigIn('julian_her@hotmail.com', '123456');
-//        }, 100);
-//        
-//    })
-    
-    .config(function($ionicConfigProvider) {
         
-        // Set the tabs in the bottom position
-        $ionicConfigProvider.tabs.position('bottom');
-    })
-    
-    .config(function($httpProvider) {
-        
-        // Set timeout for ajax actions
-        $httpProvider.defaults.timeout = 5000;
-    })
 
-    .config(function ($stateProvider, $urlRouterProvider) {
+    // PaCM App
 
-        // Ionic uses AngularUI Router which uses the concept of states
-        // Learn more here: https://github.com/angular-ui/ui-router
-        // Set up the various states which the app can be in.
-        // Each state's controller can be found in controllers.js
-        $stateProvider
+    angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 
-            // setup an abstract state for the tabs directive
-            .state('app', {
-                url: '/app',
-                abstract: true,
-                templateUrl: 'templates/menu.html',
-                controller: 'appCtrl'
-            })
+        .run(function ($ionicPlatform) {
 
-            // Each tab has its own nav history stack:
-            
-            .state('app.login', {
-                url: '/login',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/login.html',
-                        controller: 'loginCtrl'
-                    }
+            $ionicPlatform.ready(function () {
+                // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+                // for form inputs)
+                if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+                    cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+                    cordova.plugins.Keyboard.disableScroll(true);
+
                 }
-            })
-
-            .state('app.new', {
-                url: '/new',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/new.html',
-                        controller: 'newCtrl'
-                    }
-                }
-            })
-            .state('app.newByCustomer', {
-                url: '/new/:customerId',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/new.html',
-                        controller: 'newCtrl'
-                    }
-                }
-            })
-            .state('app.newByElm', {
-                url: '/new/:customerId/:elmType/:elmId',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/new.html',
-                        controller: 'newCtrl'
-                    }
-                }
-            })
-
-            .state('app.records', {
-                url: '/records',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/records.html',
-                        controller: 'recordsCtrl'
-                    }
-                }
-            })
-
-            .state('app.details', {
-                url: '/details/:maintenanceId',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/new.html',
-                        controller: 'newCtrl'
-                    }
-                }
-            })
-
-            .state('app.tools', {
-                url: '/tools',
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/tools.html',
-                        controller: 'toolsCtrl'
-                    }
+                if (window.StatusBar) {
+                    // org.apache.cordova.statusbar required
+                    StatusBar.styleLightContent();
                 }
             });
 
-        // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/app/tools');
+        })
+        
+        .run(function (synchronizer) {
+            
+            synchronizer.start();
+            
+        })
+        
+        .config(function($ionicConfigProvider) {
+            
+            // Set the tabs in the bottom position
+            $ionicConfigProvider.tabs.position('bottom');
+        })
+        
+        .config(function($httpProvider) {
+            
+            // Set timeout for ajax actions
+            $httpProvider.defaults.timeout = 5000;
+        })
 
-    })
+        .config(function ($stateProvider, $urlRouterProvider) {
+
+            // Ionic uses AngularUI Router which uses the concept of states
+            // Learn more here: https://github.com/angular-ui/ui-router
+            // Set up the various states which the app can be in.
+            // Each state's controller can be found in controllers.js
+            $stateProvider
+
+                // setup an abstract state for the tabs directive
+                .state('app', {
+                    url: '/app',
+                    abstract: true,
+                    templateUrl: 'templates/menu.html',
+                    controller: 'appCtrl'
+                })
+
+                // Each tab has its own nav history stack:
+                
+                .state('app.login', {
+                    url: '/login',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/login.html',
+                            controller: 'loginCtrl'
+                        }
+                    }
+                })
+
+                .state('app.new', {
+                    url: '/new',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/new.html',
+                            controller: 'newCtrl'
+                        }
+                    }
+                })
+                .state('app.newByCustomer', {
+                    url: '/new/:customerId',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/new.html',
+                            controller: 'newCtrl'
+                        }
+                    }
+                })
+                .state('app.newByElm', {
+                    url: '/new/:customerId/:elmType/:elmId',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/new.html',
+                            controller: 'newCtrl'
+                        }
+                    }
+                })
+
+                .state('app.records', {
+                    url: '/records',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/records.html',
+                            controller: 'recordsCtrl'
+                        }
+                    }
+                })
+
+                .state('app.details', {
+                    url: '/details/:maintenanceId',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/new.html',
+                            controller: 'newCtrl'
+                        }
+                    }
+                })
+
+                .state('app.tools', {
+                    url: '/tools',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/tools.html',
+                            controller: 'toolsCtrl'
+                        }
+                    }
+                });
+
+            // if none of the above states are matched, use this as the fallback
+            $urlRouterProvider.otherwise('/app/tools');
+
+        });
 
 })();

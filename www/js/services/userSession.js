@@ -1,3 +1,5 @@
+//Este servicio permite mantener la sesión de los usuarios activa
+
 (function () {
     
     PaCM.servicesModule.factory('userSession', function ($rootScope, crytographySHA1, dataContext) {
@@ -30,7 +32,7 @@
                 self.user = null;
             }
         };
-    
+
         return userSession;
         
     });

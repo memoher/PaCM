@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
@@ -30,6 +30,11 @@
         ];
         
         var eventsOnDataChanged = [];
+        var onDataChangedFnc = function () {
+            PaCM.eachArray(eventsOnDataChanged, function (inx, fnc) {
+                fnc();
+            });
+        }
         
         return {
             beginTransaction: function (scope, onSuccess, onError, debugMode) {
@@ -39,7 +44,7 @@
                     if (_sqlError) {
                         _onError(_sqlError);
                     } else {
-                        if (debugMode >= 4)
+                        if (debugMode >= 3)
                             console.info('Successful transaction');
                         
                         if (PaCM.isFunction(onSuccess))
@@ -64,7 +69,7 @@
                             var self = this;
                             
                             var _onSuccessCommand = function (tx1, sqlResultSet) {
-                                if (debugMode >= 4)
+                                if (debugMode >= 3)
                                     console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
                                 
                                 if (PaCM.isFunction(onSuccessCommand)) {
@@ -361,9 +366,7 @@
                 };
                 var fnc04 = function () {
                     onSuccess();
-                    PaCM.eachArray(eventsOnDataChanged, function (inx, fnc) {
-                        fnc();
-                    });
+                    onDataChangedFnc();
                 };
                 
                 self.beginTransaction(fnc01, fnc04, onError, debugMode);
@@ -409,7 +412,7 @@
                         })
                         .error(onError);
                     } else {
-                        success();
+                        success(false);
                     }
                 };
                 var fnc03 = function (response) {
@@ -441,11 +444,11 @@
                     }, fnc04, onError, debugMode);
                 };
                 var fnc04 = function () {
-                    onSuccess();
                     if (hasNewData === true) {
-                        PaCM.eachArray(eventsOnDataChanged, function (inx, fnc) {
-                            fnc();
-                        });
+                        onSuccess(true);
+                        onDataChangedFnc();
+                    } else {
+                        onSuccess(false);
                     }
                 };
                 
@@ -503,7 +506,7 @@
                         })
                         .error(onError);
                     } else {
-                        onSuccess();
+                        onSuccess(false);
                     }
                 };
                 var fnc03 = function (response) {
@@ -513,14 +516,22 @@
                                 tx.update(r.Tb, { ReplicationStatus: 1 }, 'Id="' + r.FS.Id + '"');
                             }
                         });
-                    }, onSuccess, onError, debugMode);
+                    },
+                    function () {
+                        onSuccess(true);
+                    }, onError, debugMode);
                 };
                 
                 self.beginTransaction(fnc01, fnc02, onError, debugMode);
             },
-            onDataChanged: function (fnc) {
+            addEventOnDataChanged: function (fnc) {
                 if (PaCM.isFunction(fnc))
                     eventsOnDataChanged.push(fnc);
+            },
+            removeEventOnDataChanged: function (fnc) {
+                var i = eventsOnDataChanged.indexOf(fnc);
+                if (i >= 0)
+                    eventsOnDataChanged.splice(i, 1);
             }
         };
     });

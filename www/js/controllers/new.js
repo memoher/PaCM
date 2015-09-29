@@ -1037,7 +1037,6 @@ var firma = function () {
     var isDrawing;
 
     el.onmousedown = function(e) {
-        console.debug(el);
       isDrawing = true;
       ctx.moveTo(e.clientX, e.clientY);
     };

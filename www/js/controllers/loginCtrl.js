@@ -19,7 +19,7 @@
                 function (err) {
                     $scope.runningProcess = false;
                     $scope.$digest();
-                    PaCM.showError(err);
+                    PaCM.showErrorMessage(err);
                 });
         };
         $scope.sigOut = function () {

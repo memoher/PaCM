@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('toolsCtrl', function ($scope, dbContext) {
+    PaCM.controllersModule.controller('toolsCtrl', function ($scope, dbContext, synchronizer) {
 
         var debugMode = 1;
         
@@ -17,42 +17,42 @@
                 function (err) {
                     $scope.runningProcess = false;
                     $scope.$digest();
-                    PaCM.showError(err, 'Failure during installation of the database');
+                    PaCM.showErrorMessage(err, 'Failure during installation of the database');
                 },
                 debugMode);
         };
 
-        $scope.importData = function () {
+        $scope.synchronizeData = function () {
             $scope.runningProcess = true;
-            dbContext.importData(
+            synchronizer.run(
                 function () {
                     $scope.runningProcess = false;
                     $scope.$digest();
-                    alert('Data imported successfully');
+                    alert('Data synchronized successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
                     $scope.$digest();
-                    PaCM.showError(err, 'Fails during data import');
-                },
-                debugMode);
+                    PaCM.showErrorMessage(err, 'Fails during data synchronize');
+                });
         };
 
-        $scope.exportData = function () {
-            $scope.runningProcess = true;
-            dbContext.exportData(
-                function () {
-                    $scope.runningProcess = false;
-                    $scope.$digest();
-                    alert('Data exported successfully');
-                },
-                function (err) {
-                    $scope.runningProcess = false;
-                    $scope.$digest();
-                    PaCM.showError(err, 'Fails during data export');
-                },
-                debugMode);
-        };
+        $scope.entriesConsoleLog = [];
+        var refreshConsoleLog = function (level, msg) {
+            while ($scope.entriesConsoleLog.length > 10) {
+                $scope.entriesConsoleLog.splice(1, 1);
+            }
+            $scope.entriesConsoleLog.push({
+                dateTime: new Date().toLocaleString(),
+                level: level,
+                message: msg
+            });
+            if ($scope.runningProcess === false) {
+                $scope.$digest();
+            }
+        }
+
+        synchronizer.addEventOnRuning(refreshConsoleLog);
     });
     
 })();

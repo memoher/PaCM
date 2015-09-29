@@ -96,26 +96,30 @@
             });
             fncs[fncs.length - 1]();
         },
-        showError: function (err, msg) {
+        prepareErrorMessage: function (err, msg) {
             var self = this;
 
             if (err) {
                 if (self.isDefined(err.DATABASE_ERR)) {
                     if (self.isString(msg)) {
-                        alert(msg + '\r\nSQL ERROR: [' + err.code + '] ' + err.message);
+                        return msg + '\r\nSQL ERROR: [' + err.code + '] ' + err.message;
                     } else {
-                        alert('SQL ERROR: [' + err.code + '] ' + err.message);
+                        return 'SQL ERROR: [' + err.code + '] ' + err.message;
                     }
                 } else {
                     if (self.isString(msg)) {
-                        alert(msg + '\r\nERROR: ' + err.toString());
+                        return msg + '\r\nERROR: ' + err.toString();
                     } else {
-                        alert('ERROR: ' + err.toString());
+                        return 'ERROR: ' + err.toString();
                     }                    
                 }
             } else {
-                alert(msg);
+                return msg;
             }
+        },
+        showErrorMessage: function (err, msg) {
+            var self = this;
+            alert(self.prepareErrorMessage(err, msg));
         },
         mergeArray: function (key, arr0, arr1, arr2, arr3, arr4, arr5) {
             var self = this;
