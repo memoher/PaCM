@@ -1058,20 +1058,90 @@ var firma = function () {
             getMaintenance();
         } else {
             $scope.newMaintenance = true;
-            $scope.uniqueCode = PaCM.newGuid().substring(0,5);
-            $scope.date = new Date();
-            $scope.preventive = true;
-            $scope.corrective = false;
+            $scope.maintenance.uniqueCode = PaCM.newGuid().substring(0,5);
+            $scope.maintenance.date = new Date();
+            $scope.maintenance.preventive = true;
+            $scope.maintenance.corrective = false;
             $scope.maintenance.statusId = 'InCapture';
             dataContext.get('MaintenanceStatus', $scope.maintenance.statusId, function (ms) {
                 $scope.maintenance.statusDescription = ms.Description;
             });
             $scope.maintenance.executedById = userSession.user.Id;
             $scope.maintenance.executedByUsername = userSession.user.Username;
-            $scope.acceptedBy = null;
+            $scope.maintenance.acceptedBy = null;
         }
         getResources();
         refreshUI();
+
+        $scope.$on('$destroy', function() {
+            delete refreshUI;
+            if (_timeoutRefreshUI != null) {
+                clearTimeout(_timeoutRefreshUI);
+                _timeoutRefreshUI = null;
+            }
+            delete _timeoutRefreshUI;
+            delete getResources;
+            delete $scope.resources.batteryTypes;
+            delete $scope.resources.connectorTypes;
+            delete $scope.resources.connectors;
+            delete $scope.resources.connectorColors;
+            delete $scope.resources.diagnostics;
+            delete $scope.resources;
+            delete $scope.saveMaintenance;
+            delete $scope.newChargerMaintenance;
+            delete $scope.newBatteryMaintenance;
+            delete $scope.getMaintenanceInfo;
+            delete saveArticlesOutpus;
+            delete getArticlesOutpus;
+            delete $scope.articlesOutputs;
+            delete saveReviewOfCells;
+            delete getReviewOfCells;
+            delete $scope.reviewOfCells;
+            delete saveCheckList;
+            delete getCheckList;
+            delete $scope.checkList;
+            delete saveMachine;
+            delete saveMachineModel;
+            delete saveMachineTrademark;
+            delete getMachine;
+            delete $scope.machine;
+            delete saveCharger;
+            delete saveChargerModel;
+            delete saveChargerTrademark;
+            delete getCharger;
+            delete $scope.charger;
+            delete $scope.showConnectorColorList;
+            delete saveBattery;
+            delete saveBatteryModel;
+            delete saveBatteryTrademark;
+            delete getBattery;
+            delete $scope.battery;
+            delete saveMaintenance;
+            delete getMaintenance;
+            delete $scope.maintenance;
+            delete $scope.newMaintenance;
+            delete $scope.resetMachine;
+            delete $scope.searchMachine;
+            delete $scope.resetMachineModel;
+            delete $scope.searchMachineModel;
+            delete $scope.resetMachineTrademark;
+            delete $scope.searchMachineTrademark;
+            delete $scope.resetObjectType;
+            delete $scope.searchObjectType;
+            delete $scope.resetObjectTypeModel;
+            delete $scope.searchObjectTypeModel;
+            delete $scope.resetObjectTypeTrademark;
+            delete $scope.searchObjectTypeTrademark;
+            delete $scope.resetCustomer;
+            delete $scope.searchCustomer;
+            $scope.modal.remove();
+            delete $scope.modal.scope;
+            delete $scope.modal;
+            delete $scope.searcher;
+            delete $scope.runningProcess;
+            delete $scope.selectTab;
+            delete $scope.tabs;
+        });
         
     });
     

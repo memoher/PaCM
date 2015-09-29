@@ -53,6 +53,16 @@
         }
 
         synchronizer.addEventOnRuning(refreshConsoleLog);
+
+        $scope.$on('$destroy', function() {
+            synchronizer.removeEventOnRuning(refreshConsoleLog);
+            delete refreshConsoleLog;
+            delete $scope.entriesConsoleLog;
+            delete $scope.synchronizeData;
+            delete $scope.installDatabase;
+            delete $scope.runningProcess;
+            delete debugMode;
+        });
     });
     
 })();

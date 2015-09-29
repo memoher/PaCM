@@ -25,6 +25,14 @@
         $scope.sigOut = function () {
             userSession.sigOut();
         };
+
+        $scope.$on('$destroy', function() {
+            delete $scope.sigOut;
+            delete $scope.sigIn;
+            delete $scope.login;
+            delete $scope.runningProcess;
+        });
+
     });
     
 })();

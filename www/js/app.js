@@ -17,7 +17,7 @@
 
     angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 
-        .run(function ($ionicPlatform) {
+        .run(function ($ionicPlatform, dbContext, synchronizer) {
 
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -31,14 +31,13 @@
                     // org.apache.cordova.statusbar required
                     StatusBar.styleLightContent();
                 }
+                // Check if database installed, update otherwise
+                dbContext.checkDatabase(function () {
+                    // Initialize synchronizer service
+                    synchronizer.start();
+                });
             });
 
-        })
-        
-        .run(function (synchronizer) {
-            
-            synchronizer.start();
-            
         })
         
         .config(function($ionicConfigProvider) {

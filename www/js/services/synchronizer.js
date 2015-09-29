@@ -5,49 +5,43 @@
 
 	PaCM.servicesModule.factory('synchronizer', function (dbContext) {
 
-		var debugMode = 3;
+		var debugMode = 1;
 
 		var _synchronizerInterval = null;
 		var onLineFnc = function () {
-			if (_synchronizerInterval != null) {
-				clearInterval(_synchronizerInterval);
-				_synchronizerInterval = null;
+
+			if (_synchronizerInterval == null) {
+				_synchronizerInterval = setInterval(synchronizeFnc, 1000 /*seg*/ * 60 /*min*/ * 5);
 			}
-			_synchronizerInterval = setInterval(synchronizeFnc, 1000 /*seg*/ * 60 /*min*/ * 5);
+			
+			onRuningFnc(3, 'En linea');
 			synchronizeFnc();
 		};
 
 		var offLineFnc = function () {
+			
 			if (_synchronizerInterval != null) {
 				clearInterval(_synchronizerInterval);
 				_synchronizerInterval = null;
 			}
+
+			onRuningFnc(3, 'Fuera de linea');
 		};
 
-		var eventsOnRuning = [];
-		var onRuningFnc = function (level, msg) {
-			switch (level) {
-				case 1:
-					if (debugMode >= 1)
-						console.error(msg);
-				break;
-				case 2:
-					if (debugMode >= 2)
-						console.warn(msg);
-				break;
-				case 3:
-					if (debugMode >= 3)
-						console.info(msg);
-				break;
-				default:
-				break;
-			}
-			PaCM.eachArray(eventsOnRuning, function (inx, fnc) {
-				fnc(level, msg);
-			});
-		}
-
 		var synchronizeFnc = function (onSucess, onError) {
+
+			if (_synchronizerInterval != null) {
+				clearInterval(_synchronizerInterval);
+				_synchronizerInterval = setInterval(synchronizeFnc, 1000 /*seg*/ * 60 /*min*/ * 5);
+			}
+
+			if (!PaCM.isNetworkOnline()) {
+				onRuningFnc(3, 'Sin conexión con el servidor');
+				if (PaCM.isFunction(onSucess))
+            		onSucess();
+				return;
+			}
+
 			onRuningFnc(3, 'Inicia proceso de sincronización con el servidor');
 			onRuningFnc(3, 'Subiendo datos nuevos al servidor');
 			dbContext.exportData(
@@ -100,6 +94,29 @@
                 },
                 debugMode);
 		};
+
+		var eventsOnRuning = [];
+		var onRuningFnc = function (level, msg) {
+			switch (level) {
+				case 1:
+					if (debugMode >= 1)
+						console.error(msg);
+				break;
+				case 2:
+					if (debugMode >= 2)
+						console.warn(msg);
+				break;
+				case 3:
+					if (debugMode >= 3)
+						console.info(msg);
+				break;
+				default:
+				break;
+			}
+			PaCM.eachArray(eventsOnRuning, function (inx, fnc) {
+				fnc(level, msg);
+			});
+		}
 
 		return {
 			start: function () {

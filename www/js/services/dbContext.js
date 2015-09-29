@@ -7,6 +7,9 @@
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
         var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //
+
+        var dbVersion = '1.0.0.0';
+
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
             'CfgCountries', 'CfgStates', 'CfgCities', 'CfgColors', 'CfgIdentityTypes', 
@@ -62,7 +65,7 @@
                     }
                 };
                 
-                var db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 10 * 1024 * 1024);
+                var db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 25 * 1024 * 1024 /* 25Mb */);
                 db.transaction(function (tx) {
                     scope({
                         executeSql: function (sqlCommand, sqlParameters, onSuccessCommand, onErrorCommand) {
@@ -310,6 +313,39 @@
                     });
                 }, _onError, _onSuccess);
             },
+            checkDatabase: function (onSuccess, onError, debugMode) {
+                var self = this;
+
+                var dbInstalled = false;
+                var fnc01 = function (tx) {
+                    tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and name = "AppVersion" LIMIT 1', null, fnc02);
+                }
+                var fnc02 = function (tx, sqlResultSet) {
+                    dbInstalled = 
+                    PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
+                        return true;
+                    });
+                    if (dbInstalled === true) {
+                        tx.executeSql('SELECT DbVersion FROM AppVersion LIMIT 1', null, fnc03);
+                    }
+                }
+                var fnc03 = function (tx, sqlResultSet) {
+                    dbInstalled = 
+                    PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
+                        return r.DbVersion === dbVersion;
+                    });
+                }
+                var fnc04 = function () {
+                    if (dbInstalled === true) {
+                        if (PaCM.isFunction(onSuccess))
+                            onSuccess();
+                    } else {
+                        self.installDatabase(onSuccess, onError, debugMode);
+                    }
+                }
+
+                self.beginTransaction(fnc01, fnc04, onError, debugMode);
+            },
             installDatabase: function (onSuccess, onError, debugMode) {
                 var self = this;
                 
@@ -321,10 +357,15 @@
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
                         sqlCommands.push('DROP TABLE ' + r.name);
                     });
-                    tx.executeMultiSql(sqlCommands, null, fnc03);
+                    if (sqlCommands.length > 0) {
+                        tx.executeMultiSql(sqlCommands, null, fnc03);
+                    } else {
+                        fnc03(tx);
+                    }
                 };
                 var fnc03 = function (tx) {
                     var sqlCommands = [
+    'create table AppVersion ( Id TEXT not null, DbVersion TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppSettings ( Id TEXT not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppFiles ( Id TEXT not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT not null, MIMEType TEXT, Encoding TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppKeys ( Id TEXT not null, Salt TEXT not null, Hash TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
@@ -362,14 +403,18 @@
     'create table MntCellsReviews ( Id TEXT not null, Voltage NUMERIC not null, Density NUMERIC not null, Comments TEXT, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, CellId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_CellReview_CellId foreign key (CellId) references MntCells, constraint FK_CellReview_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_CellReview_AssemblyId foreign key (AssemblyId) references MntAssemblies )',
     'create table MntArticlesOutputs ( Id TEXT not null, Quantity NUMERIC not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, ArticleId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_ArticleOutput_ArticleId foreign key (ArticleId) references MntArticles, constraint FK_ArticleOutput_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_ArticleOutput_AssemblyId foreign key (AssemblyId) references MntAssemblies )'
                     ];
-                    tx.executeMultiSql(sqlCommands);
+                    tx.executeMultiSql(sqlCommands, null, fnc04);
                 };
-                var fnc04 = function () {
-                    onSuccess();
+                var fnc04 = function (tx) {
+                    tx.insert('AppVersion', { DbVersion: dbVersion });
+                };
+                var fnc05 = function () {
+                    if (PaCM.isFunction(onSuccess))
+                        onSuccess();
                     onDataChangedFnc();
                 };
                 
-                self.beginTransaction(fnc01, fnc04, onError, debugMode);
+                self.beginTransaction(fnc01, fnc05, onError, debugMode);
             },
             importData: function (onSuccess, onError, debugMode) {
                 var self = this;
@@ -444,11 +489,10 @@
                     }, fnc04, onError, debugMode);
                 };
                 var fnc04 = function () {
+                    if (PaCM.isFunction(onSuccess))
+                        onSuccess(hasNewData === true);
                     if (hasNewData === true) {
-                        onSuccess(true);
                         onDataChangedFnc();
-                    } else {
-                        onSuccess(false);
                     }
                 };
                 

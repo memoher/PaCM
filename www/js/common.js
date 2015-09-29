@@ -324,6 +324,15 @@
                     throw 'SQLResultSet is not valid';
                 }
             }
+        },
+        isNetworkOnline: function () {
+            var self = this;
+            if (self.isDefined(navigator.connection)) {
+                var networkState = navigator.connection.type;
+                return !(networkState === Connection.NONE);
+            } else {
+                return true;
+            }
         }
     };
 

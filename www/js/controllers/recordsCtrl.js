@@ -215,6 +215,27 @@
             $scope.filters.objectTypeId = null;
             $scope.filters.objectTypeDescription = null;
         };
+
+        $scope.$on('$destroy', function() {
+            delete $scope.resetObjectType;
+            delete $scope.searchObjectType;
+            delete $scope.resetObjectTypeModel;
+            delete $scope.searchObjectTypeModel;
+            delete $scope.resetObjectTypeTrademark;
+            delete $scope.searchObjectTypeTrademark;
+            delete $scope.resetExecutedBy;
+            delete $scope.searchExecutedBy;
+            delete $scope.resetCustomer;
+            delete $scope.searchCustomer;
+            delete $scope.searchHistory;
+            delete $scope.history;
+            delete $scope.filters;
+            $scope.modal.remove();
+            delete $scope.modal.scope;
+            delete $scope.modal;
+            delete $scope.searcher;
+            delete $scope.runningProcess;
+        });
         
     });
     
