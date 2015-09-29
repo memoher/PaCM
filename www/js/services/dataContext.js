@@ -189,7 +189,7 @@
                 var self = this;
 
                 if (id) {
-                    self.update(entity, values, 'r.[Id] = ?', [ id ], onSuccess, onError);
+                    self.update(entity, values, '[Id] = ?', [ id ], onSuccess, onError);
                 } else {
                     self.insert(entity, values, onSuccess, onError);
                 }

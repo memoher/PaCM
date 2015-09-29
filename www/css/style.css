@@ -24,9 +24,21 @@ input, select, textarea {
 .item-input-inset .item-input-wrapper select,
 textarea {
     background-color: #e4e5e7;
+
+}
+.item-input-inset .item-input-wrapper input,
+.item-input-inset .item-input-wrapper select {
+	height: 29px;
 }
 .item-input-inset .item-input-wrapper input[readonly],
 .item-input-inset .item-input-wrapper select[readonly],
-.item-input-inset .item-input-wrapper textarea[readonly] {
+textarea[readonly] {
     background-color: #f8f8f8;
+}
+.firma {
+	width: 500px;
+	height: 300px;
+	border: 1px solid blue;
+	z-index: 1000;
+	position: absolute;
 }

@@ -266,18 +266,24 @@
         <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !(tabs.physicalInspectionTab())}}">
             <ion-content padding="true" class="has-header">
                 <form>
-                    <div ng-repeat="cl in checkList| orderBy: 'checkOrder'">
-                        <div class="item item-input-inset">
-                            <label class="item-input-wrapper">
-                                <span class="input-label">{{ cl.checkName}}</span>
-                                <select ng-options="d.id as d.name for d in resources.diagnostics | filter: { typeId: cl.diagnosticTypeId }" ng-model="cl.diagnosticId">
-                                </select>
-                            </label>
+                    <div class="row" ng-repeat="cl in checkList| orderBy: 'checkOrder'">
+                        <div class="col col-20">
+                            {{ cl.checkName}}
                         </div>
-                        <div class="item item-input-inset">
-                            <label class="item-input-wrapper">
-                                <input placeholder="" type="text" ng-model="cl.comments">
-                            </label>
+                        <div class="col col-20">
+                            <div class="item item-input-inset">
+                                <label class="item-input-wrapper">
+                                    <select ng-options="d.id as d.name for d in resources.diagnostics | filter: { typeId: cl.diagnosticTypeId }" ng-model="cl.diagnosticId">
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="item item-input-inset">
+                                <label class="item-input-wrapper">
+                                    <input placeholder="" type="text" ng-model="cl.comments">
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -342,4 +348,3 @@
         </ion-tab>
     </ion-tabs>
 </ion-view>
-

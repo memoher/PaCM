@@ -26,7 +26,7 @@ angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 //        
 //        $timeout(function () {
 //            userSession.sigIn('julian_her@hotmail.com', '123456');
-//        }, 500);
+//        }, 100);
 //        
 //    })
     

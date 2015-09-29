@@ -386,6 +386,7 @@
                     if ($scope.maintenance.machineId != null) {
                         getMachine();
                     }
+                    refreshUI();
                 });
             }
         };
@@ -468,6 +469,7 @@
                     dataContext.get('ObjectTypeTrademark', $scope.battery.trademarkId, function (t) {
                         $scope.battery.trademarkName = t.Name;
                     });
+                    refreshUI();
                     getCheckList();
                     getReviewOfCells();
                 });
@@ -573,6 +575,7 @@
                     dataContext.get('ObjectTypeTrademark', $scope.charger.trademarkId, function (t) {
                         $scope.charger.trademarkName = t.Name;
                     });
+                    refreshUI();
                     getCheckList();
                 });
             }
@@ -658,6 +661,7 @@
                     dataContext.get('MachineTrademark', $scope.machine.trademarkId, function (t) {
                         $scope.machine.trademarkName = t.Name;
                     });
+                    refreshUI();
                 });
             }
         };
@@ -757,6 +761,7 @@
                 var arrDef = [];
                 PaCM.mergeArray(['checkId'], arrDef, arr1, arr2);
                 PaCM.syncronizeArray(['checkId'], $scope.checkList, arrDef);
+                refreshUI();
             });
         };
         var saveCheckList = function (onSuccess) {
@@ -856,6 +861,7 @@
                 var arrDef = [];
                 PaCM.mergeArray(['cellOrder'], arrDef, arr1, arr2, arr3);
                 PaCM.syncronizeArray(['cellOrder'], $scope.reviewOfCells, arrDef);
+                refreshUI();
             });
         };
         var saveReviewOfCells = function (onSuccess) {
@@ -1011,6 +1017,41 @@
                 });
             });
         }
+
+        var _timeoutRefreshUI = null;
+        var refreshUI = function () {
+            if (_timeoutRefreshUI != null) {
+                clearTimeout(_timeoutRefreshUI);
+                _timeoutRefreshUI = null;
+            }
+            _timeoutRefreshUI = setTimeout(function () {
+                _timeoutRefreshUI = null;
+                $scope.$digest();
+            }, 100);
+        }
+
+var firma = function () {
+    var el = document.getElementById('c');
+    
+    var ctx = el.getContext('2d');
+    var isDrawing;
+
+    el.onmousedown = function(e) {
+        console.debug(el);
+      isDrawing = true;
+      ctx.moveTo(e.clientX, e.clientY);
+    };
+    el.onmousemove = function(e) {
+      if (isDrawing) {
+        ctx.lineTo(e.clientX, e.clientY);
+        ctx.stroke();
+      }
+    };
+    el.onmouseup = function() {
+      isDrawing = false;
+    };
+}
+//firma();
         
 
         if ($scope.maintenance.id != null) {
@@ -1031,10 +1072,7 @@
             $scope.acceptedBy = null;
         }
         getResources();
-
-        setTimeout(function () {
-            $scope.$digest();
-        }, 500);
+        refreshUI();
         
     });
     
