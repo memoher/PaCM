@@ -47,9 +47,6 @@
                 level: level,
                 message: msg
             });
-            if ($scope.runningProcess === false) {
-                $scope.$digest();
-            }
         }
 
         synchronizer.addEventOnRuning(refreshConsoleLog);

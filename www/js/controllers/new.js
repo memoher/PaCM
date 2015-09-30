@@ -1135,7 +1135,7 @@ var firma = function () {
             delete $scope.resetCustomer;
             delete $scope.searchCustomer;
             $scope.modal.remove();
-            delete $scope.modal.scope;
+            //delete $scope.modal.scope;
             delete $scope.modal;
             delete $scope.searcher;
             delete $scope.runningProcess;

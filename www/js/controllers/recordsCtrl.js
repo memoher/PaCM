@@ -231,7 +231,7 @@
             delete $scope.history;
             delete $scope.filters;
             $scope.modal.remove();
-            delete $scope.modal.scope;
+            //delete $scope.modal.scope;
             delete $scope.modal;
             delete $scope.searcher;
             delete $scope.runningProcess;

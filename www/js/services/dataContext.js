@@ -55,6 +55,10 @@
             MaintenanceCheck: "SELECT r.*, cl.[Name] [CheckName], cl.[Order] [CheckOrder], cl.[DiagnosticTypeId] FROM MntMaintenanceCheckList r INNER JOIN MntCheckList cl ON cl.Id = r.CheckId",
             CellReview: "SELECT r.*, c.[Id] [CellId], c.[Order] [CellOrder], c.BatteryId FROM MntCellsReviews r INNER JOIN MntCells c ON c.Id = r.CellId"
         };
+
+        var onErrorFnc = function (err) {
+            PaCM.showErrorMessage(err);
+        }
         
         return {
             get: function (entity, id, onSuccess, onError) {
@@ -77,7 +81,7 @@
                         });
                         onSuccess(result);
                     });
-                }, null, onError, debugMode);
+                }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
             list: function (entity, orderBy, onSuccess, onError) {
                 var options = {};
@@ -96,7 +100,7 @@
                         });
                         onSuccess(results);
                     });
-                }, null, onError, debugMode);
+                }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
             first: function (entity, where, parameters, onSuccess, onError) {
                 var options = {};
@@ -120,7 +124,7 @@
                         });
                         onSuccess(result);
                     });
-                }, null, onError, debugMode);
+                }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
             first2: function (entity, where, onSuccess, onError) {
                 var self = this;
@@ -133,9 +137,9 @@
                 });
                 
                 if (fields.length > 0) {
-                    self.first(entity, fields.join(' AND '), parameters, onSuccess, onError);
+                    self.first(entity, fields.join(' AND '), parameters, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 } else {
-                    self.first(entity, null, null, onSuccess, onError);
+                    self.first(entity, null, null, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 }
             },
             find: function (entity, where, parameters, onSuccess, onError) {
@@ -160,7 +164,7 @@
                         });
                         onSuccess(results);
                     });
-                }, null, onError, debugMode);
+                }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
                 
             },
             find2: function (entity, where, onSuccess, onError) {
@@ -174,35 +178,35 @@
                 });
                 
                 if (fields.length > 0) {
-                    self.find(entity, fields.join(' AND '), parameters, onSuccess, onError);
+                    self.find(entity, fields.join(' AND '), parameters, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 } else {
-                    self.list(entity, null, onSuccess, onError);
+                    self.list(entity, null, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 }
             },
             insert: function (entity, values, onSuccess, onError) {
                 dbContext.beginTransaction(function (tx) {
                     tx.insert(entities[entity], values);
-                }, onSuccess, onError, debugMode);
+                }, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
             update: function (entity, values, where, parameters, onSuccess, onError) {
                 dbContext.beginTransaction(function (tx) {
                     tx.update(entities[entity], values, where, parameters);
-                }, onSuccess, onError, debugMode);
+                }, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
             save: function (entity, id, values, onSuccess, onError) {
                 var self = this;
 
                 if (id) {
                     values.Id = id;
-                    self.update(entity, values, 'Id = ?', [ id ], onSuccess, onError);
+                    self.update(entity, values, 'Id = ?', [ id ], onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 } else {
-                    self.insert(entity, values, onSuccess, onError);
+                    self.insert(entity, values, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 }
             },
             delete: function (entity, where, parameters, onSuccess, onError) {
                 dbContext.beginTransaction(function (tx) {
                     tx.delete(entities[entity], where, parameters);
-                }, onSuccess, onError, debugMode);
+                }, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             }
         };
     });

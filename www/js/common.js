@@ -106,6 +106,12 @@
                     } else {
                         return 'SQL ERROR: [' + err.code + '] ' + err.message;
                     }
+                } else if (self.isDefined(err.status) && self.isDefined(err.statusText)) {
+                    if (self.isString(msg)) {
+                        return msg + '\r\nHTTP ERROR: [' + err.status + '] ' + err.statusText;
+                    } else {
+                        return 'HTTP ERROR: [' + err.status + '] ' + err.statusText;
+                    }
                 } else {
                     if (self.isString(msg)) {
                         return msg + '\r\nERROR: ' + err.toString();

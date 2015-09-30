@@ -339,6 +339,12 @@
         <ion-tab title="Finalizar" icon="ion-checkmark" hidden="{{ !(tabs.endingTab())}}">
             <ion-content padding="true" class="has-header">
                 <form>
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Aceptado por</span>
+                            <input placeholder="" type="text" ng-model="maintenance.acceptedBy">
+                        </label>
+                    </div>
                     <button class="button" ng-click="saveMaintenance()">
                         <i class="icon ion-checkmark"></i>
                         Guardar todos los cambios realizados

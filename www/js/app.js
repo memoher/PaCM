@@ -45,12 +45,6 @@
             // Set the tabs in the bottom position
             $ionicConfigProvider.tabs.position('bottom');
         })
-        
-        .config(function($httpProvider) {
-            
-            // Set timeout for ajax actions
-            $httpProvider.defaults.timeout = 5000;
-        })
 
         .config(function ($stateProvider, $urlRouterProvider) {
 

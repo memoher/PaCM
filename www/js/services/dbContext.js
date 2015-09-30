@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //
+        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //'http://eccmant.emhesolutions.com/'; //
 
         var dbVersion = '1.0.0.0';
 
@@ -451,11 +451,10 @@
                         $http.post(addressServer + 'SyncronizeData/GetData', {
                             tables: tablesForImport,
                             records: localData
-                        })
-                        .success(function (response) {
-                            fnc03(response);
-                        })
-                        .error(onError);
+                        }).then(function (response) {
+                            fnc03(response.data);
+                        }, onError)
+                        .catch(onError);
                     } else {
                         success(false);
                     }
@@ -545,11 +544,10 @@
                     if (localData.length > 0) {
                         $http.post(addressServer + 'SyncronizeData/SetData', {
                             records: localData
-                        })
-                        .success(function (response) {
-                            fnc03(response);
-                        })
-                        .error(onError);
+                        }).then(function (response) {
+                            fnc03(response.data);
+                        }, onError)
+                        .catch(onError);;
                     } else {
                         onSuccess(false);
                     }
