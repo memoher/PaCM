@@ -1,11 +1,11 @@
 <ion-view view-title="Historial">
     <ion-content padding="true" class="has-header">
-        <form>
+        <form name="recordsForm">
             <div class="row">
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName">
+                            <input type="text" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName" required="required">
                         </label>
                         <button class="button button-small" ng-click="resetCustomer()">
                             <i class="icon ion-close"></i>
@@ -27,7 +27,7 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName">
+                            <input type="text" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName" required="required">
                         </label>
                         <button class="button button-small" ng-click="resetObjectTypeTrademark()">
                             <i class="icon ion-close"></i>
@@ -37,7 +37,7 @@
                 <div class="col">
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName">
+                            <input type="text" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName" required="required">
                         </label>
                         <button class="button button-small" ng-click="resetObjectTypeModel()">
                             <i class="icon ion-close"></i>
@@ -86,7 +86,7 @@
             </div>
         </form>
         <ion-list>
-            <ion-item class="item-button-right" ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
+            <ion-item ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
                 {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble '}}
                 {{ r.Type.indexOf('Battery') >= 0 ? 'bateria ' : 'cargador '}}
                 {{ r.ObjectTypeDescription}}

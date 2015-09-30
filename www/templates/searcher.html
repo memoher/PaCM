@@ -13,33 +13,33 @@
             </label>
         </form>
         <ion-list ng-if="['Customer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(searcher.type)>=0">
-            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Name: searcher.search }">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Name: searcher.search }" ng-click="searcher.selectRecord(r)">
                 {{ r.Name}}
-                <a class="button button-positive" ng-click="searcher.selectRecord(r)">
+                <a class="button button-positive" ng-show="(r.Selected === true)">
                     <i class="icon ion-checkmark"></i>
                 </a>
             </ion-item>
         </ion-list>
         <ion-list ng-if="['ObjectType', 'Battery', 'Charger', 'Machine'].indexOf(searcher.type)>=0">
-            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Description: searcher.search }">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Description: searcher.search }" ng-click="searcher.selectRecord(r)">
                 {{ r.Description}}
-                <a class="button button-positive" ng-click="searcher.selectRecord(r)">
+                <a class="button button-positive" ng-show="(r.Selected === true)">
                     <i class="icon ion-checkmark"></i>
                 </a>
             </ion-item>
         </ion-list>
         <ion-list ng-if="['User'].indexOf(searcher.type)>=0">
-            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Username: searcher.search, FirstName: searcher.search, LastName: searcher.search }">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: searcher.search" ng-click="searcher.selectRecord(r)">
                 {{ r.Username}} ({{ r.FirstName }} {{ r.LastName }})
-                <a class="button button-positive" ng-click="searcher.selectRecord(r)">
+                <a class="button button-positive" ng-show="(r.Selected === true)">
                     <i class="icon ion-checkmark"></i>
                 </a>
             </ion-item>
         </ion-list>
         <ion-list ng-if="['BatteryType'].indexOf(searcher.type)>=0">
-            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: searcher.search">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: searcher.search" ng-click="searcher.selectRecord(r)">
                 {{ r.Voltage }}V ({{ r.NumberOfCells }} Celdas)
-                <a class="button button-positive" ng-click="searcher.selectRecord(r)">
+                <a class="button button-positive" ng-show="(r.Selected === true)">
                     <i class="icon ion-checkmark"></i>
                 </a>
             </ion-item>

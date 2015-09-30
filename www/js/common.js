@@ -215,6 +215,35 @@
                 });
             }
         },
+//        filterArray: function (arr, where) {
+//            var self = this;
+//
+//            if (!self.isArray(arr)) {
+//                return arr;
+//            }
+//
+//            var validWhere = 
+//            self.eachProperties(where, function (key, value) {
+//                return true;
+//            });
+//
+//            if (!(validWhere === true)) {
+//                return arr;
+//            }
+//
+//            var results = [];
+//            self.eachArray(arr, function (inx, e) {
+//                var valid = true;
+//                self.eachProperties(where, function (key, value) {
+//                    if (e[key] != value)
+//                        valid = false;
+//                });
+//                if (valid === true) {
+//                    results.push(e);
+//                }
+//            });
+//            return results;
+//        },
         eachArray: function (arr, iterator) {
             var self = this;
 

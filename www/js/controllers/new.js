@@ -67,11 +67,11 @@
             $scope.searcher.close = function () {
                 var self = this;
                 
-                self.type = null;
-                self.title = null;
-                self.data = null;
-                self.selectRecord = null;
-                self.search = null;
+                delete self.type;
+                delete self.title;
+                delete self.data;
+                delete self.selectRecord;
+                delete self.search;
                 
                 $scope.modal.hide();
             };
@@ -1134,6 +1134,7 @@ var firma = function () {
             delete $scope.searchObjectTypeTrademark;
             delete $scope.resetCustomer;
             delete $scope.searchCustomer;
+            $scope.searcher.close();
             $scope.modal.remove();
             //delete $scope.modal.scope;
             delete $scope.modal;
