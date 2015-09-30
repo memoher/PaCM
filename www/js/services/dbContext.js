@@ -275,12 +275,12 @@
                             var _parameters = [];
                             var arrFields = [];
                             PaCM.eachProperties(values, function (key, val) {
-                                arrFields.push('[' + key + ']=?');
+                                arrFields.push('[' + key + '] = ?');
                                 var date = PaCM.parseDateString(val);
                                 if (date) {
-                                    parameters.push(date);
+                                    _parameters.push(date);
                                 } else {
-                                    parameters.push(val);
+                                    _parameters.push(val);
                                 }
                             });
 
@@ -511,7 +511,7 @@
                     PaCM.eachArray(tablesForExport, function (inx, t) {
                         var command = null;
                         if (tablesInheritedOfMntObjects.indexOf(t) >= 0) {
-                            command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id WHERE p.ReplicationStatus = 0';
+                            command = 'SELECT "' + t + '" Tb, t.*, p.ReplicationStatus FROM ' + t + ' t INNER JOIN MntObjects p ON p.Id = t.Id WHERE p.ReplicationStatus = 0';
                         } else {
                             command = 'SELECT "' + t + '" Tb, t.* FROM ' + t + ' t WHERE t.ReplicationStatus = 0';
                         }
@@ -521,6 +521,7 @@
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             var dt = { Tb: r.Tb, FS: {}, FI: {}, FN: {}, FD: {}, FB: {}, FO: {} };
                             delete r.Tb;
+                            delete r.ReplicationStatus;
                             PaCM.eachProperties(r, function (key, val) {
                                 if (PaCM.isString(val)) {
                                     dt.FS[key] = val;

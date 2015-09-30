@@ -78,7 +78,7 @@
         });
         
         $scope.searchCustomer = function () {
-            dataContext.list('Customer', function (customers) {
+            dataContext.list('Customer', 'r.Name', function (customers) {
                 $scope.searcher.open(
                     'Customer',
                     'Buscar cliente',
@@ -100,7 +100,7 @@
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
-            dataContext.list('ObjectTypeTrademark', function (trademarks) {
+            dataContext.list('ObjectTypeTrademark', 'r.Name', function (trademarks) {
                 $scope.searcher.open(
                     'ObjectTypeTrademark',
                     'Buscar marca',
@@ -242,7 +242,7 @@
         };
         
         $scope.searchMachineTrademark = function () {
-            dataContext.list('MachineTrademark', function (trademarks) {
+            dataContext.list('MachineTrademark', 'r.Name', function (trademarks) {
                 $scope.searcher.open(
                     'MachineTrademark',
                     'Buscar marca',
@@ -971,7 +971,7 @@
             diagnostics: []
         };
         var getResources = function () {
-            dataContext.list('BatteryType', function (batteryTypes) {
+            dataContext.list('BatteryType', 'r.Voltage, r.NumberOfCells', function (batteryTypes) {
                 PaCM.eachArray(batteryTypes, function (inx, bt) {
                     $scope.resources.batteryTypes.push({
                         id: bt.Id,
@@ -981,7 +981,7 @@
                     });
                 });
             });
-            dataContext.list('ConnectorType', function (connectorTypes) {
+            dataContext.list('ConnectorType', 'r.Name', function (connectorTypes) {
                 PaCM.eachArray(connectorTypes, function (inx, ct) {
                     $scope.resources.connectorTypes.push({
                         id: ct.Id,
@@ -990,7 +990,7 @@
                     });
                 });
             });
-            dataContext.list('Connector', function (connector) {
+            dataContext.list('Connector', 'r.Name', function (connector) {
                 PaCM.eachArray(connector, function (inx, c) {
                     $scope.resources.connectors.push({
                         id: c.Id,
@@ -999,7 +999,7 @@
                     });
                 });
             });
-            dataContext.list('Color', function (connectorColors) {
+            dataContext.list('Color', 'r.Name', function (connectorColors) {
                 PaCM.eachArray(connectorColors, function (inx, cc) {
                     $scope.resources.connectorColors.push({
                         id: cc.Id,
@@ -1007,7 +1007,7 @@
                     });
                 });
             });
-            dataContext.list('Diagnostic', function (diagnostics) {
+            dataContext.list('Diagnostic', 'r.Name' , function (diagnostics) {
                 PaCM.eachArray(diagnostics, function (inx, d) {
                     $scope.resources.diagnostics.push({
                         id: d.Id,

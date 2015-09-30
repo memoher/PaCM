@@ -60,9 +60,10 @@
             get: function (entity, id, onSuccess, onError) {
                 var options = {
                     where: {
-                        conditions: 'r.[Id] = ?',
+                        conditions: 'r.Id = ?',
                         parameters: [ id ]
-                    }
+                    },
+                    orderBy: 'r.Id ASC'
                 };
                 if (PaCM.isDefined(queries[entity])) {
                     options.fields = queries[entity];
@@ -78,10 +79,13 @@
                     });
                 }, null, onError, debugMode);
             },
-            list: function (entity, onSuccess, onError) {
+            list: function (entity, orderBy, onSuccess, onError) {
                 var options = {};
                 if (PaCM.isDefined(queries[entity])) {
                     options.fields = queries[entity];
+                }
+                if (PaCM.isString(orderBy)) {
+                    options.orderBy = orderBy;
                 }
                 
                 dbContext.beginTransaction(function (tx) {
@@ -172,7 +176,7 @@
                 if (fields.length > 0) {
                     self.find(entity, fields.join(' AND '), parameters, onSuccess, onError);
                 } else {
-                    self.list(entity, onSuccess, onError);
+                    self.list(entity, null, onSuccess, onError);
                 }
             },
             insert: function (entity, values, onSuccess, onError) {
@@ -189,7 +193,8 @@
                 var self = this;
 
                 if (id) {
-                    self.update(entity, values, '[Id] = ?', [ id ], onSuccess, onError);
+                    values.Id = id;
+                    self.update(entity, values, 'Id = ?', [ id ], onSuccess, onError);
                 } else {
                     self.insert(entity, values, onSuccess, onError);
                 }

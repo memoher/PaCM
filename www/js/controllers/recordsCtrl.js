@@ -91,7 +91,7 @@
         };
         
         $scope.searchCustomer = function () {
-            dataContext.list('Customer', function (customers) {
+            dataContext.list('Customer', 'r.Name', function (customers) {
                 $scope.searcher.open(
                     'Customer',
                     'Buscar cliente',
@@ -110,7 +110,7 @@
         };
         
         $scope.searchExecutedBy = function () {
-            dataContext.list('User', function (users) {
+            dataContext.list('User', 'r.Username', function (users) {
                 $scope.searcher.open(
                     'User',
                     'Buscar usuario',
@@ -128,7 +128,7 @@
         };
         
         $scope.searchObjectTypeTrademark = function () {
-            dataContext.list('ObjectTypeTrademark', function (trademarks) {
+            dataContext.list('ObjectTypeTrademark', 'r.Name', function (trademarks) {
                 $scope.searcher.open(
                     'ObjectTypeTrademark',
                     'Buscar marca',
