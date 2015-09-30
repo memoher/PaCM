@@ -1,8 +1,10 @@
 (function () {
     
-    PaCM.controllersModule.controller('newCtrl', function ($scope, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
+    PaCM.controllersModule.controller('newCtrl', function ($window, $scope, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
 
         $scope.runningProcess = false;
+        $scope.dev_width = $window.innerWidth;
+        $scope.dev_height = $window.innerHeight;        
         
         $scope.tabs = {
             starterTab: true,
@@ -53,14 +55,14 @@
             focusFirstInput: false
         }).then(function(modal) {
             $scope.modal = modal;
-            $scope.searcher.open = function (type, title, data, onSelect) {
+            $scope.searcher.open = function (type, title, data, search, onSelect) {
                 var self = this;
                 
                 self.type = type;
                 self.title = title;
                 self.data = data;
+                self.search = search ? search : '';
                 self.selectRecord = onSelect;
-                self.search = '';
                 
                 $scope.modal.show();
             };
@@ -70,22 +72,42 @@
                 delete self.type;
                 delete self.title;
                 delete self.data;
-                delete self.selectRecord;
                 delete self.search;
+                delete self.selectRecord;
                 
                 $scope.modal.hide();
             };
         });
         
+        $scope.filters = {
+            customerSearch: null,
+            objectTypeTrademarkSearch: null,
+            objectTypeModelSearch: null,
+            objectTypeSearch: null,
+            machineTrademarkSearch: null,
+            machineModelSearch: null,
+            machineSearch: null
+        };
+        
         $scope.searchCustomer = function () {
             dataContext.list('Customer', 'r.Name', function (customers) {
+                if ($scope.maintenance.customerId != null) {
+                    PaCM.eachArray(customers, function (inx, c) {
+                        if (c.Id == $scope.maintenance.customerId) {
+                            c.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'Customer',
                     'Buscar cliente',
                     customers,
+                    $scope.filters.customerSearch,
                     function (r) {
                         $scope.maintenance.customerId = r.Id;
                         $scope.maintenance.customerName = r.Name;
+                        $scope.filters.customerSearch = $scope.searcher.search;
                         $scope.resetObjectType(true);
                         $scope.resetObjectType(false);
                         $scope.searcher.close();
@@ -95,16 +117,26 @@
         $scope.resetCustomer = function () {
             $scope.maintenance.customerId = null;
             $scope.maintenance.customerName = null;
+            $scope.filters.customerSearch = null;
             $scope.resetObjectType(true);
             $scope.resetObjectType(false);
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
             dataContext.list('ObjectTypeTrademark', 'r.Name', function (trademarks) {
+                if ($scope.battery.trademarkId != null || $scope.charger.trademarkId != null) {
+                    PaCM.eachArray(trademarks, function (inx, t) {
+                        if (t.Id == (applyForBattery === true ? $scope.battery.trademarkId : $scope.charger.trademarkId)) {
+                            t.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'ObjectTypeTrademark',
                     'Buscar marca',
                     trademarks,
+                    $scope.filters.objectTypeTrademarkSearch,
                     function (r) {
                         if (applyForBattery === true) {
                             $scope.battery.trademarkId = r.Id;
@@ -113,6 +145,7 @@
                             $scope.charger.trademarkId = r.Id;
                             $scope.charger.trademarkName = r.Name;
                         }
+                        $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
                         $scope.resetObjectTypeModel(applyForBattery);
                         $scope.searcher.close();
                     }); 
@@ -126,6 +159,7 @@
                 $scope.charger.trademarkId = r.Id;
                 $scope.charger.trademarkName = r.Name;
             }
+            $scope.filters.objectTypeTrademarkSearch = null;
             $scope.resetObjectTypeModel(applyForBattery);
         };
         
@@ -141,10 +175,19 @@
             }
             
             dataContext.find2('ObjectTypeModel', where, function (models) {
+                if ($scope.battery.modelId != null || $scope.charger.modelId != null) {
+                    PaCM.eachArray(models, function (inx, m) {
+                        if (m.Id == (applyForBattery === true ? $scope.battery.modelId : $scope.charger.modelId)) {
+                            m.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'ObjectTypeModel',
                     'Buscar modelo',
                     models,
+                    $scope.filters.objectTypeModelSearch,
                     function (r) {
                         if (applyForBattery === true) {
                             $scope.battery.modelId = r.Id;
@@ -153,6 +196,7 @@
                             $scope.charger.modelId = r.Id;
                             $scope.charger.modelName = r.Name;
                         }
+                        $scope.filters.objectTypeModelSearch = $scope.searcher.search;
                         dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
                             if (applyForBattery === true) {
                                 $scope.battery.trademarkId = t.Id;
@@ -176,6 +220,7 @@
                 $scope.charger.modelId = null;
                 $scope.charger.modelName = null;
             }
+            $scope.filters.objectTypeModelSearch = null;
             $scope.resetObjectType(applyForBattery);
         };
         
@@ -197,10 +242,19 @@
             }
             
             dataContext.find2(applyForBattery ? 'Battery' : 'Charger', where, function (objects) {
+                if ($scope.maintenance.batteryId != null || $scope.maintenance.chargerId != null) {
+                    PaCM.eachArray(objects, function (inx, ot) {
+                        if (ot.Id == (applyForBattery === true ? $scope.maintenance.batteryId : $scope.maintenance.chargerId)) {
+                            ot.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'ObjectType',
                     applyForBattery ? 'Buscar bateria' : 'Buscar cargador',
                     objects,
+                    $scope.filters.objectTypeSearch,
                     function (r) {
                         if (applyForBattery === true) {
                             $scope.maintenance.batteryId = r.Id;
@@ -209,6 +263,7 @@
                             $scope.maintenance.chargerId = r.Id;
                             getCharger();
                         }
+                        $scope.filters.objectTypeSearch = $scope.searcher.search;
                         $scope.searcher.close();
                     });
             });
@@ -239,17 +294,28 @@
                 $scope.charger.voltage = null;
                 $scope.charger.amperage = null;
             }
+            $scope.filters.objectTypeSearch = null;
         };
         
         $scope.searchMachineTrademark = function () {
             dataContext.list('MachineTrademark', 'r.Name', function (trademarks) {
+                if ($scope.machine.trademarkId != null) {
+                    PaCM.eachArray(trademarks, function (inx, t) {
+                        if (t.Id == $scope.machine.trademarkId) {
+                            t.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'MachineTrademark',
                     'Buscar marca',
                     trademarks,
+                    $scope.filters.machineTrademarkSearch,
                     function (r) {
                         $scope.machine.trademarkId = r.Id;
                         $scope.machine.trademarkName = r.Name;
+                        $scope.filters.machineTrademarkSearch = $scope.searcher.search;
                         $scope.resetMachineModel();
                         $scope.searcher.close();
                     }); 
@@ -258,6 +324,7 @@
         $scope.resetMachineTrademark = function () {
             $scope.machine.trademarkId = null;
             $scope.machine.trademarkName = null;
+            $scope.filters.machineTrademarkSearch = null;
             $scope.resetMachineModel();
         };
         
@@ -268,16 +335,26 @@
                 where.TrademarkId = $scope.machine.trademarkId;
             
             dataContext.find2('MachineModel', where, function (models) {
+                if ($scope.machine.modelId != null) {
+                    PaCM.eachArray(models, function (inx, m) {
+                        if (m.Id == $scope.machine.modelId) {
+                            m.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'MachineModel',
                     'Buscar modelo',
                     models,
+                    $scope.filters.machineModelSearch,
                     function (r) {
                         $scope.machine.modelId = r.Id;
                         $scope.machine.modelName = r.Name;
                         $scope.machine.compartmentLength = r.CompartmentLength;
                         $scope.machine.compartmentWidth = r.CompartmentWidth;
                         $scope.machine.compartmentHeight = r.CompartmentHeight;
+                        $scope.filters.machineModelSearch = $scope.searcher.search;
                         dataContext.get('MachineTrademark', r.TrademarkId, function (t) {
                             $scope.machine.trademarkId = t.Id;
                             $scope.machine.trademarkName = t.Name;
@@ -294,6 +371,7 @@
             $scope.machine.compartmentLength = null;
             $scope.machine.compartmentWidth = null;
             $scope.machine.compartmentHeight = null;
+            $scope.filters.machineModelSearch = null;
             $scope.resetMachine();
         };
         
@@ -307,14 +385,24 @@
             if ($scope.machine.modelId)
                 where.ModelId = $scope.machine.modelId;
             
-            dataContext.find2('Machine', where, function (objects) {
+            dataContext.find2('Machine', where, function (machines) {
+                if ($scope.maintenance.machineId != null) {
+                    PaCM.eachArray(machines, function (inx, m) {
+                        if (m.Id == $scope.maintenance.machineId) {
+                            m.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
                 $scope.searcher.open(
                     'Machine',
-                    'Buscar bateria / cargador',
-                    objects,
+                    'Buscar máquina',
+                    machines,
+                    $scope.filters.machineSearch,
                     function (r) {
                         $scope.maintenance.machineId = r.Id;
                         getMachine();
+                        $scope.filters.machineSearch = $scope.searcher.search;
                         $scope.searcher.close();
                     });
             });
@@ -323,6 +411,7 @@
             $scope.maintenance.machineId = null;
             $scope.machine.serial = null;
             $scope.machine.customerReference = null;
+            $scope.filters.machineSearch = null;
         };
         
         //---------------------------------------------------------------------------------------------------------
@@ -1030,28 +1119,20 @@
             }, 100);
         }
 
-var firma = function () {
-    var el = document.getElementById('c');
-    
-    var ctx = el.getContext('2d');
-    var isDrawing;
+        $scope.prepareCanvas = function () {
+            setTimeout(function () {
+                var canvas = document.getElementById('signatureCanvas');
+                var signaturePad = new SignaturePad(canvas);
+                $scope.clearCanvas = function() {
+                    signaturePad.clear();
+                }
+                $scope.saveCanvas = function() {
+                    var sigImg = signaturePad.toDataURL();
+                    $scope.signature = sigImg;
+                }
+            }, 100);
+        }
 
-    el.onmousedown = function(e) {
-      isDrawing = true;
-      ctx.moveTo(e.clientX, e.clientY);
-    };
-    el.onmousemove = function(e) {
-      if (isDrawing) {
-        ctx.lineTo(e.clientX, e.clientY);
-        ctx.stroke();
-      }
-    };
-    el.onmouseup = function() {
-      isDrawing = false;
-    };
-}
-//firma();
-        
 
         if ($scope.maintenance.id != null) {
             $scope.newMaintenance = false;
@@ -1074,6 +1155,11 @@ var firma = function () {
         refreshUI();
 
         $scope.$on('$destroy', function() {
+            if ($scope.clearCanvas)
+                delete $scope.clearCanvas;
+            if ($scope.saveCanvas)
+                delete $scope.saveCanvas;
+            delete $scope.prepareCanvas;
             delete refreshUI;
             if (_timeoutRefreshUI != null) {
                 clearTimeout(_timeoutRefreshUI);
@@ -1134,6 +1220,7 @@ var firma = function () {
             delete $scope.searchObjectTypeTrademark;
             delete $scope.resetCustomer;
             delete $scope.searchCustomer;
+            delete $scope.filters;
             $scope.searcher.close();
             $scope.modal.remove();
             //delete $scope.modal.scope;

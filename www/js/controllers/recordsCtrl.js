@@ -55,46 +55,6 @@
             applyForCharger: true
         };
         
-        $scope.history = [];
-        $scope.searchHistory = function () {
-            
-            var where = {};
-            if ($scope.filters.customerId)
-                where['r.CustomerId'] = $scope.filters.customerId;
-            else {
-                PaCM.showErrorMessage('Cliente es obligatorio');
-                return false;
-            }
-            if ($scope.filters.executedById)
-                where.ExecutedById = $scope.filters.executedById;
-            if ($scope.filters.objectTypeTrademarkId)
-                where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
-            if ($scope.filters.objectTypeModelId)
-                where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
-            if ($scope.filters.objectTypeId)
-                where.ObjectTypeId = $scope.filters.objectTypeId;
-            if ($scope.filters.applyForBattery === true && $scope.filters.applyForCharger === true) {
-                //Nothing
-            } else if ($scope.filters.applyForBattery === true) {
-                where.Type = 'BatteryMaintenance';
-            } else if ($scope.filters.applyForCharger === true) {
-                where.Type = 'ChargerMaintenance';
-            } else {
-                where.Type = '-1';
-            }
-            
-            $scope.runningProcess = true;
-            dataContext.find2('Assembly', where, function (assemblies) {
-                dataContext.find2('Maintenance', where, function (maintenances) {
-                    var records = [];
-                    PaCM.mergeArray(['Id'], records, assemblies, maintenances);
-                    PaCM.syncronizeArray(['Id'], $scope.history, records);
-                    $scope.runningProcess = false;
-                    $scope.$digest();
-                });
-            });
-        };
-        
         $scope.searchCustomer = function () {
             dataContext.list('Customer', 'r.Name', function (customers) {
                 if ($scope.filters.customerId != null) {
@@ -276,8 +236,58 @@
             $scope.filters.objectTypeDescription = null;
             $scope.filters.objectTypeSearch = null;
         };
+        
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        
+        $scope.history = [];
+        $scope.searchHistory = function () {
+            
+            var where = {};
+            if ($scope.filters.customerId)
+                where['r.CustomerId'] = $scope.filters.customerId;
+            else {
+                PaCM.showErrorMessage('Cliente es obligatorio');
+                return false;
+            }
+            if ($scope.filters.executedById)
+                where.ExecutedById = $scope.filters.executedById;
+            if ($scope.filters.objectTypeTrademarkId)
+                where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
+            if ($scope.filters.objectTypeModelId)
+                where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
+            if ($scope.filters.objectTypeId)
+                where.ObjectTypeId = $scope.filters.objectTypeId;
+            if ($scope.filters.applyForBattery === true && $scope.filters.applyForCharger === true) {
+                //Nothing
+            } else if ($scope.filters.applyForBattery === true) {
+                where.Type = 'BatteryMaintenance';
+            } else if ($scope.filters.applyForCharger === true) {
+                where.Type = 'ChargerMaintenance';
+            } else {
+                where.Type = '-1';
+            }
+            
+            $scope.runningProcess = true;
+            dataContext.find2('Assembly', where, function (assemblies) {
+                dataContext.find2('Maintenance', where, function (maintenances) {
+                    var records = [];
+                    PaCM.mergeArray(['Id'], records, assemblies, maintenances);
+                    PaCM.syncronizeArray(['Id'], $scope.history, records);
+                    $scope.runningProcess = false;
+                    $scope.$digest();
+                });
+            });
+        };
 
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        
         $scope.$on('$destroy', function() {
+            delete $scope.searchHistory;
+            delete $scope.history;
             delete $scope.resetObjectType;
             delete $scope.searchObjectType;
             delete $scope.resetObjectTypeModel;
@@ -288,8 +298,6 @@
             delete $scope.searchExecutedBy;
             delete $scope.resetCustomer;
             delete $scope.searchCustomer;
-            delete $scope.searchHistory;
-            delete $scope.history;
             delete $scope.filters;
             $scope.searcher.close();
             $scope.modal.remove();

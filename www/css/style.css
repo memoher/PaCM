@@ -35,13 +35,6 @@ textarea {
 textarea[readonly] {
     background-color: #f8f8f8;
 }
-.firma {
-	width: 500px;
-	height: 300px;
-	border: 1px solid blue;
-	z-index: 1000;
-	position: absolute;
-}
 
 .console-item {
     padding: 8px;

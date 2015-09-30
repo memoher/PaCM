@@ -336,8 +336,8 @@
                 </form>
             </ion-content>
         </ion-tab>
-        <ion-tab title="Finalizar" icon="ion-checkmark" hidden="{{ !(tabs.endingTab())}}">
-            <ion-content padding="true" class="has-header">
+        <ion-tab title="Finalizar" icon="ion-checkmark" hidden="{{ !(tabs.endingTab())}}" on-select="prepareCanvas()">
+            <ion-content padding="true" class="has-header" scroll='false'>
                 <form>
                     <div class="item item-input-inset">
                         <label class="item-input-wrapper">
@@ -345,10 +345,13 @@
                             <input placeholder="" type="text" ng-model="maintenance.acceptedBy">
                         </label>
                     </div>
-                    <button class="button" ng-click="saveMaintenance()">
-                        <i class="icon ion-checkmark"></i>
-                        Guardar todos los cambios realizados
-                    </button>
+                    <canvas id='signatureCanvas' width="{{ dev_width - 20 }}" height="300" style="border: 1px solid black;"></canvas>
+                    <div class='button-bar'>
+                        <a class='button button-energized' ng-click='clearCanvas()'>Limpiar firma</a>
+                        <a class='button button-balanced' ng-click='saveMaintenance()'>Guarda cambios</a>
+                    </div>
+                    <br>
+                    <img ng-src='{{signature}}'/>
                 </form>
             </ion-content>
         </ion-tab>
