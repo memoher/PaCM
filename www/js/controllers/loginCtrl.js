@@ -1,14 +1,23 @@
 (function () {
     
-    PaCM.controllersModule.controller('loginCtrl', function ($scope, $state, userSession) {
+    PaCM.controllersModule.controller('loginCtrl', function ($scope, $state, $ionicHistory, userSession) {
+
+        var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
+        $scope.showErrors = false;
 
         $scope.login = {
             emailAddress: null,
             password: null
         };
-        $scope.sigIn = function () {
+        $scope.sigIn = function (formValid) {
+
+            if (!(formValid === true)) {
+                $scope.showErrors = true;
+                return false;
+            }
+
             $scope.runningProcess = true;
             userSession.sigIn($scope.login.emailAddress, $scope.login.password,
                 function () {
@@ -22,15 +31,28 @@
                     PaCM.showErrorMessage(err);
                 });
         };
-        $scope.sigOut = function () {
-            userSession.sigOut();
-        };
 
+        $ionicHistory.clearHistory();
+
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        
         $scope.$on('$destroy', function() {
-            delete $scope.sigOut;
-            delete $scope.sigIn;
-            delete $scope.login;
-            delete $scope.runningProcess;
+
+            PaCM.eachProperties($scope, function (key, value) {
+                if (!(key.substring(0, 1) === '$')) {
+                    //PaCM.cleaner(value);
+                    delete $scope[key];
+                }
+            });
+
+            PaCM.eachProperties(_self, function (key, value) {
+                //PaCM.cleaner(value);
+                delete _self[key];
+            });
+            delete _self;
+            
         });
 
     });

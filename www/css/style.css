@@ -6,6 +6,15 @@
 
 input, select, textarea {
     width: 100%;
+}
+
+form.show-errors .input-required {
+    border: 1px solid red;
+}
+
+/*
+input, select, textarea {
+    width: 100%;
     background-color: #f8f8f8;
 }
 
@@ -35,6 +44,7 @@ textarea {
 textarea[readonly] {
     background-color: #f8f8f8;
 }
+*/
 
 .console-item {
     padding: 8px;

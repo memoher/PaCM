@@ -1,18 +1,18 @@
-<ion-view title="Iniciar sesión">
+<ion-view title="Iniciar sesión" cache-view="false">
     <ion-content class="has-header" padding="true">
-        <form>
+        <form name="loginForm" ng-class="{'show-errors': showErrors}">
             <ion-list>
-                <label class="item item-input">
+                <label class="item item-input" ng-class="{'input-required': loginForm.emailAddressInput.$error.required}">
                     <span class="input-label">Correo electrónico</span>
-                    <input placeholder="" type="text" ng-model="login.emailAddress">
+                    <input name="emailAddressInput" placeholder="" type="text" ng-model="login.emailAddress" required="required">
                 </label>
-                <label class="item item-input">
+                <label class="item item-input" ng-class="{'input-required': loginForm.passwordInput.$error.required}">
                     <span class="input-label">Contraseña</span>
-                    <input placeholder="" type="password" ng-model="login.password">
+                    <input name="passwordInput" placeholder="" type="password" ng-model="login.password" required="required">
                 </label>
             </ion-list>
-            <div style="height: 40px;" class="spacer"></div>
-            <button class="button button-positive button-block " ng-click="sigIn()" ng-disabled="runningProcess">Iniciar sesión</button>
+            <div style="height: 0;" class="spacer"></div>
+            <button type="submit" class="button button-positive button-block" ng-click="sigIn(loginForm.$valid)" ng-disabled="runningProcess">Iniciar sesión</button>
         </form>
     </ion-content>
 </ion-view>

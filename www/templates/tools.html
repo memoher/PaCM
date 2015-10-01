@@ -1,11 +1,12 @@
 <ion-view view-title="Herramientas">
     <ion-content class="has-header" padding="true">
-        <!--<button style="" class="button button-positive button-block " ng-click="installDatabase()" ng-disabled="runningProcess">Instalar base de datos</button>-->
-        <button style="" class="button button-positive button-block " ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
-        <h3>Consola</h3>
+    	<button style="" class="button button-positive button-block" ng-click="sigOut()" ng-disabled="runningProcess">Cerrar sesión</button>
+    	<div style="height: 0;" class="spacer"></div>
+        <button style="" class="button button-positive button-block" ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
+        <h4>Consola</h4>
         <ion-list>
-	      <ion-item class="console-item" ng-repeat="ci in entriesConsoleLog" type="item-text-wrap">
-	        <p class="level-{{ci.level}}">{{ci.dateTime}} -> {{ci.message}}</p>
+	      <ion-item class="console-item" ng-repeat="ci in entriesConsoleLog">
+	        <p class="level-{{ci.level}}">{{ ci.dateTime | date : 'medium' }} -> {{ci.message}}</p>
 	      </ion-item>
 	    </ion-list>
     </ion-content>

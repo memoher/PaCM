@@ -17,7 +17,7 @@
 
     angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
 
-        .run(function ($ionicPlatform, dbContext, synchronizer) {
+        .run(function ($ionicPlatform, dbContext, synchronizer, userSession) {
 
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -32,7 +32,9 @@
                     StatusBar.styleLightContent();
                 }
                 // Check if database installed, update otherwise
+                //dbContext.installDatabase(function () {});
                 dbContext.checkDatabase(function () {
+                    userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
                     // Initialize synchronizer service
                     synchronizer.start();
                 });
@@ -133,7 +135,7 @@
                 });
 
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('/app/tools');
+            $urlRouterProvider.otherwise('/app/history');
 
         });
 

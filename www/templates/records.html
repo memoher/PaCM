@@ -1,95 +1,50 @@
 <ion-view view-title="Historial">
     <ion-content padding="true" class="has-header">
-        <form name="recordsForm">
-            <div class="row">
+        <form name="recordsForm" ng-class="{'show-errors': showErrors}">
+            <div class="row responsive-sm">
                 <div class="col">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName" required="required">
+                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.customerInput.$error.required}">
+                            <input type="text" name="customerInput" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName" required="required">
                         </label>
-                        <button class="button button-small" ng-click="resetCustomer()">
-                            <i class="icon ion-close"></i>
-                        </button>
                     </div>
                 </div>
                 <div class="col">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Realizado por" readonly="readonly" ng-focus="searchExecutedBy()" ng-model="filters.executedByUsername">
+                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.trademarkInput.$error.required}">
+                            <input type="text" name="trademarkInput" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName" required="required">
                         </label>
-                        <button class="button button-small" ng-click="resetExecutedBy()">
-                            <i class="icon ion-close"></i>
-                        </button>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row responsive-sm">
                 <div class="col">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName" required="required">
+                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.modelInput.$error.required}">
+                            <input type="text" name="modelInput" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName" required="required">
                         </label>
-                        <button class="button button-small" ng-click="resetObjectTypeTrademark()">
-                            <i class="icon ion-close"></i>
-                        </button>
                     </div>
                 </div>
                 <div class="col">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName" required="required">
+                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.objectInput.$error.required}">
+                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly="readonly" ng-focus="searchObjectType()" ng-model="filters.objectTypeDescription" required="required">
                         </label>
-                        <button class="button button-small" ng-click="resetObjectTypeModel()">
-                            <i class="icon ion-close"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Bateria / cargador" readonly="readonly" ng-focus="searchObjectType()" ng-model="filters.objectTypeDescription">
-                        </label>
-                        <button class="button button-small" ng-click="resetObjectType()">
-                            <i class="icon ion-close"></i>
-                        </button>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row responsive-sm">
                 <div class="col">
-                    <li class="item item-toggle">
-                        Baterias
-                        <label class="toggle toggle-positive">
-                            <input type="checkbox" ng-model="filters.applyForBattery">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
-                </div>
-                <div class="col">
-                    <li class="item item-toggle">
-                        Cargadores
-                        <label class="toggle toggle-positive">
-                            <input type="checkbox" ng-model="filters.applyForCharger">
-                            <div class="track">
-                                <div class="handle"></div>
-                            </div>
-                        </label>
-                    </li>
-                </div>
-                <div class="col">
-                    <button class="button button-block button-positive" ng-click="searchHistory()" ng-disabled="runningProcess">
-                        Buscar
-                    </button>
+                    <button type="submit" class="button button-positive button-block" ng-click="searchHistory(recordsForm.$valid)" ng-disabled="runningProcess">Buscar</button>
                 </div>
             </div>
         </form>
         <ion-list>
             <ion-item ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
-                {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble '}}
-                {{ r.Type.indexOf('Battery') >= 0 ? 'bateria ' : 'cargador '}}
-                {{ r.ObjectTypeDescription}}
+                {{ r.Date | date : 'medium' }} -> 
+                {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble ' }}
+                {{ r.Type.indexOf('Battery') >= 0 ? 'bateria ' : 'cargador ' }}
+                {{ r.ObjectTypeDescription }}
             </ion-item>
         </ion-list>
     </ion-content>

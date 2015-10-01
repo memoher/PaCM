@@ -61,7 +61,7 @@
         },
         isStringIsNullOrEmpty: function (vlr) {
             var self = this;
-            return (self.isUndefined(vlr) || self.isNull(vlr) || vlr === STRING_EMPTY);
+            return (vlr === STRING_EMPTY || self.isNull(vlr));
         },
         getStringEmpty: function () {
             return STRING_EMPTY;
@@ -95,6 +95,10 @@
                 }
             });
             fncs[fncs.length - 1]();
+
+            self.cleaner(fncs); delete fncs;
+            delete _buildFnc;
+            self.cleaner(actions); delete actions;
         },
         prepareErrorMessage: function (err, msg) {
             var self = this;
@@ -179,9 +183,11 @@
                 return;
             }
 
+            var arr1Clone = arr1.slice(0);
+
             if (self.isArray(key)) {
                 self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = self.eachArray(arr1, function (inx2, e2) {
+                    var i = self.eachArray(arr1Clone, function (inx2, e2) {
                         var valid = true;
                         self.eachArray(key, function (inx3, k) {
                             if (e[k] != e2[k])
@@ -192,58 +198,31 @@
                         }
                     });
                     if (self.isNumber(i)) {
-                        arr0[inx] = arr1[i];
-                        arr1.splice(i, 1);
+                        arr0[inx] = arr1Clone[i];
+                        arr1Clone.splice(i, 1);
                     } else {
                         arr0.splice(inx, 1);
                     }
                 });
-                self.eachArray(arr1, function (inx, e) {
+                self.eachArray(arr1Clone, function (inx, e) {
                     arr0.push(e);
                 });
             } else {
                 self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = arr1.indexOf(e);
+                    var i = arr1Clone.indexOf(e);
                     if (i >= 0) {
-                        arr1.splice(i, 1);
+                        arr1Clone.splice(i, 1);
                     } else {
                         arr0.splice(inx, 1);
                     }
                 });
-                self.eachArray(arr1, function (inx, e) {
+                self.eachArray(arr1Clone, function (inx, e) {
                     arr0.push(e);
                 });
             }
+
+            self.cleaner(arr1Clone); delete arr1Clone;
         },
-//        filterArray: function (arr, where) {
-//            var self = this;
-//
-//            if (!self.isArray(arr)) {
-//                return arr;
-//            }
-//
-//            var validWhere = 
-//            self.eachProperties(where, function (key, value) {
-//                return true;
-//            });
-//
-//            if (!(validWhere === true)) {
-//                return arr;
-//            }
-//
-//            var results = [];
-//            self.eachArray(arr, function (inx, e) {
-//                var valid = true;
-//                self.eachProperties(where, function (key, value) {
-//                    if (e[key] != value)
-//                        valid = false;
-//                });
-//                if (valid === true) {
-//                    results.push(e);
-//                }
-//            });
-//            return results;
-//        },
         eachArray: function (arr, iterator) {
             var self = this;
 
@@ -317,6 +296,7 @@
                                 }
                             }
                         });
+                        self.cleaner(r); delete r;
                         var result = iterator(i, o);
                         if (self.isDefined(result)) {
                             return result;
@@ -350,6 +330,7 @@
                                 }
                             }
                         });
+                        self.cleaner(r); delete r;
                         var result = iterator(i, o);
                         if (self.isDefined(result)) {
                             return result;
@@ -357,6 +338,21 @@
                     } 
                 } else {
                     throw 'SQLResultSet is not valid';
+                }
+            }
+        },
+        cleaner: function (obj) {
+            var self = this;
+
+            if (self.isArray(obj)) {
+                while (obj.length > 0) {
+                    obj.splice(0, 1);
+                }
+            } else if (self.isObject(obj)) {
+                for (var p in obj) {
+                    if (obj.hasOwnProperty(p)) {
+                        delete obj[p];
+                    }
                 }
             }
         },

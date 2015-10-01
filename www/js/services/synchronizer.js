@@ -7,11 +7,13 @@
 
 		var debugMode = 1;
 
-		var _synchronizerInterval = null;
+		var _synchronizerInterval = 1000 * 60 * 5; /* 5 minutos */
+		var _synchronizerTask = null;
+		
 		var onLineFnc = function () {
 
-			if (_synchronizerInterval == null) {
-				_synchronizerInterval = setInterval(synchronizeFnc, 1000 /*seg*/ * 60 /*min*/ * 5);
+			if (_synchronizerTask == null) {
+				_synchronizerTask = setInterval(synchronizeFnc, _synchronizerInterval);
 			}
 			
 			onRuningFnc(3, 'En linea');
@@ -20,9 +22,9 @@
 
 		var offLineFnc = function () {
 			
-			if (_synchronizerInterval != null) {
-				clearInterval(_synchronizerInterval);
-				_synchronizerInterval = null;
+			if (_synchronizerTask != null) {
+				clearInterval(_synchronizerTask);
+				_synchronizerTask = null;
 			}
 
 			onRuningFnc(3, 'Fuera de linea');
@@ -30,9 +32,9 @@
 
 		var synchronizeFnc = function (onSucess, onError) {
 
-			if (_synchronizerInterval != null) {
-				clearInterval(_synchronizerInterval);
-				_synchronizerInterval = setInterval(synchronizeFnc, 1000 /*seg*/ * 60 /*min*/ * 5);
+			if (_synchronizerTask != null) {
+				clearInterval(_synchronizerTask);
+				_synchronizerTask = setInterval(synchronizeFnc, _synchronizerInterval);
 			}
 
 			if (!PaCM.isNetworkOnline()) {
