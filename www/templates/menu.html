@@ -16,16 +16,16 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
-                <ion-item menu-close href="#/app/login" ng-hide="userSession.isLogged()">
+                <ion-item menu-close href="#/app/login" ng-hide="userSession.isLogged">
                     Iniciar sesión
                 </ion-item>
-                <ion-item menu-close href="#/app/new" ng-show="userSession.isLogged()">
+                <ion-item menu-close href="#/app/new" ng-show="userSession.isLogged">
                     Nuevo
                 </ion-item>
-                <ion-item menu-close href="#/app/records" ng-show="userSession.isLogged()">
+                <ion-item menu-close href="#/app/records" ng-show="userSession.isLogged">
                     Historial
                 </ion-item>
-                <ion-item menu-close href="#/app/tools" ng-show="userSession.isLogged()">
+                <ion-item menu-close href="#/app/tools" ng-show="userSession.isLogged">
                     Herramientas
                 </ion-item>
             </ion-list>

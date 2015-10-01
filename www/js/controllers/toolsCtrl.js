@@ -2,7 +2,7 @@
     
     PaCM.controllersModule.controller('toolsCtrl', function ($scope, $state, synchronizer, userSession) {
 
-        if (!userSession.isLogged()) {
+        if (!userSession.isLogged) {
             $state.go('app.login');
         }
 

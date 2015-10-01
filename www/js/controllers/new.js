@@ -2,7 +2,7 @@
     
     PaCM.controllersModule.controller('newCtrl', function ($window, $scope, $state, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
 
-        if (!userSession.isLogged()) {
+        if (!userSession.isLogged) {
             $state.go('app.login');
         }
 
@@ -96,7 +96,10 @@
         };
         
         $scope.searchCustomer = function () {
-            dataContext.list('Customer', 'r.Name', function (customers) {
+            if ($scope.maintenance.id != null) {
+                return;
+            }
+            dataContext.find('Customer', { orderBy: 'Name' }, function (customers) {
                 if ($scope.maintenance.customerId != null) {
                     PaCM.eachArray(customers, function (inx, c) {
                         if (c.Id == $scope.maintenance.customerId) {
@@ -129,7 +132,7 @@
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
-            dataContext.list('ObjectTypeTrademark', 'r.Name', function (trademarks) {
+            dataContext.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
                 if ($scope.battery.trademarkId != null || $scope.charger.trademarkId != null) {
                     PaCM.eachArray(trademarks, function (inx, t) {
                         if (t.Id == (applyForBattery === true ? $scope.battery.trademarkId : $scope.charger.trademarkId)) {
@@ -171,16 +174,19 @@
         
         $scope.searchObjectTypeModel = function (applyForBattery) {
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 'Name'
+            };
             if (applyForBattery === true) {
                 if ($scope.battery.trademarkId)
-                    where.TrademarkId = $scope.battery.trademarkId;
+                    options.where.TrademarkId = $scope.battery.trademarkId;
             } else {
                 if ($scope.charger.trademarkId)
-                    where.TrademarkId = $scope.charger.trademarkId;
+                    options.where.TrademarkId = $scope.charger.trademarkId;
             }
             
-            dataContext.find2('ObjectTypeModel', where, function (models) {
+            dataContext.find('ObjectTypeModel', options, function (models) {
                 if ($scope.battery.modelId != null || $scope.charger.modelId != null) {
                     PaCM.eachArray(models, function (inx, m) {
                         if (m.Id == (applyForBattery === true ? $scope.battery.modelId : $scope.charger.modelId)) {
@@ -232,22 +238,25 @@
         
         $scope.searchObjectType = function (applyForBattery) {
 
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 't.Name, m.Name, p.Serial, p.CustomerReference'
+            };
             if ($scope.maintenance.customerId)
-                where.CustomerId = $scope.maintenance.customerId;
+                options.where.CustomerId = $scope.maintenance.customerId;
             if (applyForBattery === true) {
                 if ($scope.battery.trademarkId)
-                    where.TrademarkId = $scope.battery.trademarkId;
+                    options.where.TrademarkId = $scope.battery.trademarkId;
                 if ($scope.battery.modelId)
-                    where.ModelId = $scope.battery.modelId;
+                    options.where.ModelId = $scope.battery.modelId;
             } else {
                 if ($scope.charger.trademarkId)
-                    where.TrademarkId = $scope.charger.trademarkId;
+                    options.where.TrademarkId = $scope.charger.trademarkId;
                 if ($scope.charger.modelId)
-                    where.ModelId = $scope.charger.modelId;
+                    options.where.ModelId = $scope.charger.modelId;
             }
             
-            dataContext.find2(applyForBattery ? 'Battery' : 'Charger', where, function (objects) {
+            dataContext.find(applyForBattery ? 'Battery' : 'Charger', options, function (objects) {
                 if ($scope.maintenance.batteryId != null || $scope.maintenance.chargerId != null) {
                     PaCM.eachArray(objects, function (inx, ot) {
                         if (ot.Id == (applyForBattery === true ? $scope.maintenance.batteryId : $scope.maintenance.chargerId)) {
@@ -304,7 +313,7 @@
         };
         
         $scope.searchMachineTrademark = function () {
-            dataContext.list('MachineTrademark', 'r.Name', function (trademarks) {
+            dataContext.find('MachineTrademark', { orderBy: 'Name' }, function (trademarks) {
                 if ($scope.machine.trademarkId != null) {
                     PaCM.eachArray(trademarks, function (inx, t) {
                         if (t.Id == $scope.machine.trademarkId) {
@@ -336,11 +345,14 @@
         
         $scope.searchMachineModel = function () {
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 'Name'
+            };
             if ($scope.machine.trademarkId)
-                where.TrademarkId = $scope.machine.trademarkId;
+                options.where.TrademarkId = $scope.machine.trademarkId;
             
-            dataContext.find2('MachineModel', where, function (models) {
+            dataContext.find('MachineModel', options, function (models) {
                 if ($scope.machine.modelId != null) {
                     PaCM.eachArray(models, function (inx, m) {
                         if (m.Id == $scope.machine.modelId) {
@@ -383,15 +395,18 @@
         
         $scope.searchMachine = function () {
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 't.Name, m.Name, r.Serial, r.CustomerReference'
+            };
             if ($scope.maintenance.customerId)
-                where.CustomerId = $scope.maintenance.customerId;
+                options.where.CustomerId = $scope.maintenance.customerId;
             if ($scope.machine.trademarkId)
-                where.TrademarkId = $scope.machine.trademarkId;
+                options.where.TrademarkId = $scope.machine.trademarkId;
             if ($scope.machine.modelId)
-                where.ModelId = $scope.machine.modelId;
+                options.where.ModelId = $scope.machine.modelId;
             
-            dataContext.find2('Machine', where, function (machines) {
+            dataContext.find('Machine', options, function (machines) {
                 if ($scope.maintenance.machineId != null) {
                     PaCM.eachArray(machines, function (inx, m) {
                         if (m.Id == $scope.maintenance.machineId) {
@@ -810,14 +825,16 @@
 
             var actions = [];
             actions.push(function (onSuccess) {
-                var where = { EnabledBatteries: false, EnabledChargers: false };
+                var options = {
+                    where: { EnabledBatteries: false, EnabledChargers: false }
+                };
                 if ($scope.battery.typeId != null) {
-                    where = { EnabledBatteries: true };
+                    options.where = { EnabledBatteries: true };
                 }
                 if ($scope.charger.voltage != null) {
-                    where = { EnabledChargers: true };
+                    options.where = { EnabledChargers: true };
                 }
-                dataContext.find2('Check', where, function (checks) {
+                dataContext.find('Check', options, function (checks) {
                     PaCM.eachArray(checks, function (inx, c) {
                         arr1.push({
                             id: null,
@@ -834,7 +851,7 @@
             });
             actions.push(function (onSuccess) {
                 if ($scope.maintenance.id != null) {
-                    dataContext.find2('MaintenanceCheck', { MaintenanceId: $scope.maintenance.id }, function (maintenanceChecks) {
+                    dataContext.find('MaintenanceCheck', { where: { MaintenanceId: $scope.maintenance.id } }, function (maintenanceChecks) {
                         PaCM.eachArray(maintenanceChecks, function (inx, mc) {
                             arr2.push({
                                 id: mc.Id,
@@ -919,7 +936,7 @@
             });
             actions.push(function (onSuccess) {
                 if ($scope.maintenance.batteryId != null) {
-                    dataContext.find2('Cell', { BatteryId: $scope.maintenance.batteryId }, function (cells) {
+                    dataContext.find('Cell', { where: { BatteryId: $scope.maintenance.batteryId } }, function (cells) {
                         PaCM.eachArray(cells, function (inx, c) {
                             arr2.push({
                                 id: null,
@@ -938,7 +955,7 @@
             });
             actions.push(function (onSuccess) {
                 if ($scope.maintenance.id != null) {
-                    dataContext.find2('CellReview', { MaintenanceId: $scope.maintenance.id }, function (reviewOfCells) {
+                    dataContext.find('CellReview', { where: { MaintenanceId: $scope.maintenance.id } }, function (reviewOfCells) {
                         PaCM.eachArray(reviewOfCells, function (inx, cr) {
                             arr3.push({
                                 id: cr.Id,
@@ -1065,6 +1082,13 @@
             });
         };
 
+        $scope.title = function () {
+            return ($scope.newMaintenance === true) ? 'Nuevo mantenimiento' : 'Mantenimiento';
+        }
+        $scope.disabled = function () {
+            return !($scope.newMaintenance === true || $scope.maintenance.statusId === 'InCapture');
+        }
+
         $scope.resources = {
             batteryTypes: [],
             connectorTypes: [],
@@ -1073,7 +1097,8 @@
             diagnostics: []
         };
         _self.getResources = function () {
-            dataContext.list('BatteryType', 'r.Voltage, r.NumberOfCells', function (batteryTypes) {
+            dataContext.find('BatteryType', { orderBy: 'Voltage, NumberOfCells' }, function (batteryTypes) {
+                $scope.resources.batteryTypes.push({});
                 PaCM.eachArray(batteryTypes, function (inx, bt) {
                     $scope.resources.batteryTypes.push({
                         id: bt.Id,
@@ -1083,7 +1108,8 @@
                     });
                 });
             });
-            dataContext.list('ConnectorType', 'r.Name', function (connectorTypes) {
+            dataContext.find('ConnectorType', { orderBy: 'Name' }, function (connectorTypes) {
+                $scope.resources.connectorTypes.push({});
                 PaCM.eachArray(connectorTypes, function (inx, ct) {
                     $scope.resources.connectorTypes.push({
                         id: ct.Id,
@@ -1092,7 +1118,8 @@
                     });
                 });
             });
-            dataContext.list('Connector', 'r.Name', function (connector) {
+            dataContext.find('Connector', { orderBy: 'Name' }, function (connector) {
+                $scope.resources.connectors.push({});
                 PaCM.eachArray(connector, function (inx, c) {
                     $scope.resources.connectors.push({
                         id: c.Id,
@@ -1101,7 +1128,8 @@
                     });
                 });
             });
-            dataContext.list('Color', 'r.Name', function (connectorColors) {
+            dataContext.find('Color', { orderBy: 'Name' }, function (connectorColors) {
+                $scope.resources.connectorColors.push({});
                 PaCM.eachArray(connectorColors, function (inx, cc) {
                     $scope.resources.connectorColors.push({
                         id: cc.Id,
@@ -1109,7 +1137,8 @@
                     });
                 });
             });
-            dataContext.list('Diagnostic', 'r.Name' , function (diagnostics) {
+            dataContext.find('Diagnostic', { orderBy: 'Name' } , function (diagnostics) {
+                $scope.resources.diagnostics.push({});
                 PaCM.eachArray(diagnostics, function (inx, d) {
                     $scope.resources.diagnostics.push({
                         id: d.Id,
@@ -1158,6 +1187,11 @@
             $scope.maintenance.date = new Date();
             $scope.maintenance.preventive = true;
             $scope.maintenance.corrective = false;
+            if ($scope.maintenance.customerId != null) {
+                dataContext.get('Customer', $scope.maintenance.customerId, function (c) {
+                    $scope.maintenance.customerName = c.Name;
+                });
+            }
             $scope.maintenance.statusId = 'InCapture';
             dataContext.get('MaintenanceStatus', $scope.maintenance.statusId, function (ms) {
                 $scope.maintenance.statusDescription = ms.Description;
@@ -1165,6 +1199,14 @@
             $scope.maintenance.executedById = userSession.user.Id;
             $scope.maintenance.executedByUsername = userSession.user.Username;
             $scope.maintenance.acceptedBy = null;
+            if ($scope.maintenance.batteryId != null) {
+                _self.getBattery();
+                $scope.tabs.batteryTab = true;
+            }
+            if ($scope.maintenance.chargerId != null) {
+                _self.getCharger();
+                $scope.tabs.chargerTab = true;
+            }
         }
         _self.getResources();
         _self.refreshUI();

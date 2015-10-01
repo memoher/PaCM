@@ -2,7 +2,7 @@
     
     PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
 
-        if (!userSession.isLogged()) {
+        if (!userSession.isLogged) {
             $state.go('app.login');
         }
 
@@ -46,9 +46,6 @@
             customerId: null,
             customerName: null,
             customerSearch: null,
-            executedById: null,
-            executedByUsername: null,
-            executedBySearch: null,
             objectTypeTrademarkId: null,
             objectTypeTrademarkName: null,
             objectTypeTrademarkSearch: null,
@@ -57,13 +54,12 @@
             objectTypeModelSearch: null,
             objectTypeId: null,
             objectTypeDescription: null,
-            objectTypeSearch: null,
-            applyForBattery: true,
-            applyForCharger: true
+            objectTypeType: null,
+            objectTypeSearch: null
         };
         
         $scope.searchCustomer = function () {
-            dataContext.list('Customer', 'r.Name', function (customers) {
+            dataContext.find('Customer', { orderBy: 'Name' }, function (customers) {
                 if ($scope.filters.customerId != null) {
                     PaCM.eachArray(customers, function (inx, c) {
                         if (c.Id == $scope.filters.customerId) {
@@ -96,7 +92,7 @@
         };
         
         $scope.searchObjectTypeTrademark = function () {
-            dataContext.list('ObjectTypeTrademark', 'r.Name', function (trademarks) {
+            dataContext.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
                 if ($scope.filters.objectTypeTrademarkId != null) {
                     PaCM.eachArray(trademarks, function (inx, t) {
                         if (t.Id == $scope.filters.objectTypeTrademarkId) {
@@ -130,11 +126,14 @@
         
         $scope.searchObjectTypeModel = function () {
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 'Name'
+            };
             if ($scope.filters.objectTypeTrademarkId)
-                where.TrademarkId = $scope.filters.objectTypeTrademarkId;
+                options.where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             
-            dataContext.find2('ObjectTypeModel', where, function (models) {
+            dataContext.find('ObjectTypeModel', options, function (models) {
                 if ($scope.filters.objectTypeModelId != null) {
                     PaCM.eachArray(models, function (inx, m) {
                         if (m.Id == $scope.filters.objectTypeModelId) {
@@ -173,15 +172,18 @@
         
         $scope.searchObjectType = function () {
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 't.Name, m.Name, r.Serial, r.CustomerReference'
+            };
             if ($scope.filters.customerId)
-                where.CustomerId = $scope.filters.customerId;
+                options.where.CustomerId = $scope.filters.customerId;
             if ($scope.filters.objectTypeTrademarkId)
-                where.TrademarkId = $scope.filters.objectTypeTrademarkId;
+                options.where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             if ($scope.filters.objectTypeModelId)
-                where.ModelId = $scope.filters.objectTypeModelId;
+                options.where.ModelId = $scope.filters.objectTypeModelId;
             
-            dataContext.find2('ObjectType', where, function (objects) {
+            dataContext.find('ObjectType', options, function (objects) {
                 if ($scope.filters.objectTypeId != null) {
                     PaCM.eachArray(objects, function (inx, ot) {
                         if (ot.Id == $scope.filters.objectTypeId) {
@@ -200,6 +202,16 @@
                             $scope.filters.objectTypeId = r.Id;
                             $scope.filters.objectTypeDescription = r.Description;
                             $scope.filters.objectTypeSearch = $scope.searcher.search;
+                            dataContext.get('Battery', r.Id, function (b) {
+                                if (b) {
+                                    $scope.filters.objectTypeType = 'battery';
+                                }
+                            });
+                            dataContext.get('Charger', r.Id, function (c) {
+                                if (c) {
+                                    $scope.filters.objectTypeType = 'charger';
+                                }
+                            });
                             dataContext.get('Customer', r.CustomerId, function (c) {
                                 $scope.filters.customerId = c.Id;
                                 $scope.filters.customerName = c.Name;
@@ -221,6 +233,7 @@
         $scope.resetObjectType = function () {
             $scope.filters.objectTypeId = null;
             $scope.filters.objectTypeDescription = null;
+            $scope.filters.objectTypeType = null;
             $scope.filters.objectTypeSearch = null;
             $scope.resetHistory();
         };
@@ -237,40 +250,36 @@
                 return false;
             }
             
-            var where = {};
+            var options = {
+                where: {},
+                orderBy: 'r.Date DESC',
+                limit: 5
+            };
             if ($scope.filters.customerId)
-                where['r.CustomerId'] = $scope.filters.customerId;
-            if ($scope.filters.executedById)
-                where.ExecutedById = $scope.filters.executedById;
+                options.where['r.CustomerId'] = $scope.filters.customerId;
             if ($scope.filters.objectTypeTrademarkId)
-                where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
+                options.where.ObjectTypeTrademarkId = $scope.filters.objectTypeTrademarkId;
             if ($scope.filters.objectTypeModelId)
-                where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
+                options.where.ObjectTypeModelId = $scope.filters.objectTypeModelId;
             if ($scope.filters.objectTypeId)
-                where.ObjectTypeId = $scope.filters.objectTypeId;
-            if ($scope.filters.applyForBattery === true && $scope.filters.applyForCharger === true) {
-                //Nothing
-            } else if ($scope.filters.applyForBattery === true) {
-                where.Type = 'BatteryMaintenance';
-            } else if ($scope.filters.applyForCharger === true) {
-                where.Type = 'ChargerMaintenance';
-            } else {
-                where.Type = '-1';
-            }
+                options.where.ObjectTypeId = $scope.filters.objectTypeId;
 
             $scope.runningProcess = true;
-            dataContext.find2('Assembly', where, function (assemblies) {
-                dataContext.find2('Maintenance', where, function (maintenances) {
+            dataContext.find('Maintenance', options, function (maintenances) {
+                dataContext.find('Assembly', options, function (assemblies) {
                     var records = [];
-                    PaCM.mergeArray(['Id'], records, assemblies, maintenances);
+                    PaCM.mergeArray(['Id'], records, maintenances, assemblies);
+                    PaCM.cleaner(maintenances); delete maintenances;
+                    PaCM.cleaner(assemblies); delete assemblies;
                     PaCM.syncronizeArray(['Id'], $scope.history, records);
+                    PaCM.cleaner(records); delete records;
                     $scope.runningProcess = false;
                     $scope.$digest();
                 });
             });
         };
         $scope.resetHistory = function () {
-            PaCM.syncronizeArray(['Id'], $scope.history, []);
+            PaCM.cleaner($scope.history);
         }
 
         //---------------------------------------------------------------------------------------------------------

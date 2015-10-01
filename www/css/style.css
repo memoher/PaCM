@@ -8,8 +8,20 @@ input, select, textarea {
     width: 100%;
 }
 
+input[type="number"] {
+    text-align: right;
+}
+
 form.show-errors .input-required {
     border: 1px solid red;
+}
+
+.item-input-inset {
+    padding: 8px;
+}
+
+.item-input-inset .item-input-wrapper input, select {
+    height: 28px;
 }
 
 /*

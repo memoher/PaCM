@@ -63,14 +63,12 @@
         return {
             get: function (entity, id, onSuccess, onError) {
                 var options = {
-                    where: {
-                        conditions: 'r.Id = ?',
-                        parameters: [ id ]
-                    },
-                    orderBy: 'r.Id ASC'
+                    where: 'r.Id = ?',
+                    parameters: [ id ],
+                    orderBy: 'r.Id'
                 };
                 if (PaCM.isDefined(queries[entity])) {
-                    options.fields = queries[entity];
+                    options.select = queries[entity];
                 }
                 
                 dbContext.beginTransaction(function (tx) {
@@ -83,37 +81,10 @@
                     });
                 }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
-            list: function (entity, orderBy, onSuccess, onError) {
-                var options = {};
+            first: function (entity, options, onSuccess, onError) {
+                options = options ? options : {};
                 if (PaCM.isDefined(queries[entity])) {
-                    options.fields = queries[entity];
-                }
-                if (PaCM.isString(orderBy)) {
-                    options.orderBy = orderBy;
-                }
-                
-                dbContext.beginTransaction(function (tx) {
-                    tx.select(entities[entity], options, function (tx1, sqlResultSet1) {
-                        var results = [];
-                        PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
-                            results.push(r);
-                        });
-                        onSuccess(results);
-                    });
-                }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
-            },
-            first: function (entity, where, parameters, onSuccess, onError) {
-                var options = {};
-                if (where) {
-                    options.where = {
-                        conditions: where
-                    };
-                }
-                if (parameters) {
-                    options.where.parameters = parameters;
-                }
-                if (PaCM.isDefined(queries[entity])) {
-                    options.fields = queries[entity];
+                    options.select = queries[entity];
                 }
                 
                 dbContext.beginTransaction(function (tx) {
@@ -126,34 +97,10 @@
                     });
                 }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
             },
-            first2: function (entity, where, onSuccess, onError) {
-                var self = this;
-                
-                var fields = [];
-                var parameters = [];
-                PaCM.eachProperties(where, function (key, value) {
-                    fields.push(key + ' = ?');
-                    parameters.push(value);
-                });
-                
-                if (fields.length > 0) {
-                    self.first(entity, fields.join(' AND '), parameters, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
-                } else {
-                    self.first(entity, null, null, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
-                }
-            },
-            find: function (entity, where, parameters, onSuccess, onError) {
-                var options = {};
-                if (where) {
-                    options.where = {
-                        conditions: where
-                    };
-                }
-                if (parameters) {
-                    options.where.parameters = parameters;
-                }
+            find: function (entity, options, onSuccess, onError) {
+                options = options ? options : {};
                 if (PaCM.isDefined(queries[entity])) {
-                    options.fields = queries[entity];
+                    options.select = queries[entity];
                 }
                 
                 dbContext.beginTransaction(function (tx) {
@@ -166,22 +113,6 @@
                     });
                 }, null, PaCM.isFunction(onError) ? onError : onErrorFnc, debugMode);
                 
-            },
-            find2: function (entity, where, onSuccess, onError) {
-                var self = this;
-                
-                var fields = [];
-                var parameters = [];
-                PaCM.eachProperties(where, function (key, value) {
-                    fields.push(key + ' = ?');
-                    parameters.push(value);
-                });
-                
-                if (fields.length > 0) {
-                    self.find(entity, fields.join(' AND '), parameters, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
-                } else {
-                    self.list(entity, null, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
-                }
             },
             insert: function (entity, values, onSuccess, onError) {
                 dbContext.beginTransaction(function (tx) {
@@ -197,7 +128,9 @@
                 var self = this;
 
                 if (id) {
-                    values.Id = id;
+                    if (PaCM.isUndefined(values.Id) || PaCM.isNull(values.Id)) {
+                        values.Id = id;
+                    }
                     self.update(entity, values, 'Id = ?', [ id ], onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);
                 } else {
                     self.insert(entity, values, onSuccess, PaCM.isFunction(onError) ? onError : onErrorFnc);

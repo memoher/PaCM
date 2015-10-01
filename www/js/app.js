@@ -34,7 +34,7 @@
                 // Check if database installed, update otherwise
                 //dbContext.installDatabase(function () {});
                 dbContext.checkDatabase(function () {
-                    userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
+                    //userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
                     // Initialize synchronizer service
                     synchronizer.start();
                 });

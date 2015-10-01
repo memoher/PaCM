@@ -6,13 +6,11 @@
         
         var userSession = $rootScope.userSession = {
             user: null,
-            isLogged: function () {
-                var self = this;
-                return (self.user);
-            },
+            isLogged: false,
             sigIn: function (emailAddress, password, onSuccess, onError) {
                 var self = this;
-                dataContext.first2('User', { EmailAddress: emailAddress, Enabled: true }, function (user) {
+
+                dataContext.first('User', { where: { EmailAddress: emailAddress, Enabled: true } }, function (user) {
                     if (user == null)
                         throw 'El usuario o la contraseña no es válido';
                     
@@ -21,6 +19,7 @@
                         if (hash != pass.Hash)
                             throw 'El usuario o la contraseña no es válido';
                         self.user = user;
+                        self.isLogged = true;
                         onSuccess();
                     }, onError);
                     
@@ -30,6 +29,7 @@
                 var self = this;
                 
                 self.user = null;
+                self.isLogged = false;
             }
         };
 

@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //'http://eccmant.emhesolutions.com/'; //
+        var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //
 
         var dbVersion = '1.0.0.0';
 
@@ -203,22 +203,36 @@
                         select: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            var parameters = null;
+                            var _parameters = [];
                             var sqlCommand = 'SELECT * FROM ' + table + ' r ';
                             if (options) {
-                                if (options.fields) {
-                                    if (options.fields.indexOf(' FROM ') >= 0) {
-                                        sqlCommand = options.fields;
-                                    } else {
-                                        sqlCommand = sqlCommand.replace('SELECT * FROM', 'SELECT ' + options.fields + ' FROM');
-                                    }
+                                if (options.select) {
+                                    sqlCommand = options.select;
+                                }
+                                else if (options.fields) {
+                                    sqlCommand = sqlCommand.replace('SELECT * FROM', 'SELECT ' + options.fields + ' FROM');
                                 }
                                 if (options.where) {
-                                    sqlCommand += ' WHERE ' + options.where.conditions;
-                                    if (options.where.parameters
-                                     && options.where.parameters.length > 0) {
-                                        parameters = options.where.parameters;
+                                    if (PaCM.isString(options.where)) {
+                                        sqlCommand += ' WHERE ' + options.where;
+                                    } else if (PaCM.isObject(options.where)) {
+                                        var fields = [];
+                                        PaCM.eachProperties(options.where, function (key, value) {
+                                            fields.push(key + ' = ?');
+                                            _parameters.push(value);
+                                        });
+                                        if (fields.length > 0) {
+                                            sqlCommand += ' WHERE ' + fields.join(' AND ');
+                                        }
+                                        PaCM.cleaner(fields); delete fields;
+                                    } else {
+                                        throw 'options.where: Argument is not valid';
                                     }
+                                }
+                                if (options.parameters) {
+                                    PaCM.eachArray(options.parameters, function (inx, p) {
+                                        _parameters.push(p);
+                                    });
                                 }
                                 if (options.orderBy) {
                                     sqlCommand += ' ORDER BY ' + options.orderBy;
@@ -228,7 +242,7 @@
                                 }
                             }
                             
-                            self.executeSql(sqlCommand, parameters, onSuccessCommand, onErrorCommand);
+                            self.executeSql(sqlCommand, _parameters, onSuccessCommand, onErrorCommand);
                             
                             return self;
                         },

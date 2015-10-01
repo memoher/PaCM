@@ -3,39 +3,54 @@
         <form name="recordsForm" ng-class="{'show-errors': showErrors}">
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
+                    <div class="item item-input-inset" ng-click="searchCustomer()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.customerInput.$error.required}">
-                            <input type="text" name="customerInput" placeholder="Cliente" readonly="readonly" ng-focus="searchCustomer()" ng-model="filters.customerName" required="required">
+                            <input type="text" name="customerInput" placeholder="Cliente" readonly="readonly" ng-model="filters.customerName" required="required">
                         </label>
+                        <button type="button" class="button button-small">
+                            <i class="icon ion-search"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
+                    <div class="item item-input-inset" ng-click="searchObjectTypeTrademark()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.trademarkInput.$error.required}">
-                            <input type="text" name="trademarkInput" placeholder="Marca" readonly="readonly" ng-focus="searchObjectTypeTrademark()" ng-model="filters.objectTypeTrademarkName" required="required">
+                            <input type="text" name="trademarkInput" placeholder="Marca" readonly="readonly" ng-model="filters.objectTypeTrademarkName" required="required">
                         </label>
+                        <button type="button" class="button button-small">
+                            <i class="icon ion-search"></i>
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
+                    <div class="item item-input-inset" ng-click="searchObjectTypeModel()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.modelInput.$error.required}">
-                            <input type="text" name="modelInput" placeholder="Modelo" readonly="readonly"  ng-focus="searchObjectTypeModel()"ng-model="filters.objectTypeModelName" required="required">
+                            <input type="text" name="modelInput" placeholder="Modelo" readonly="readonly" ng-model="filters.objectTypeModelName" required="required">
                         </label>
+                        <button type="button" class="button button-small">
+                            <i class="icon ion-search"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
+                    <div class="item item-input-inset" ng-click="searchObjectType()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.objectInput.$error.required}">
-                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly="readonly" ng-focus="searchObjectType()" ng-model="filters.objectTypeDescription" required="required">
+                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly="readonly" ng-model="filters.objectTypeDescription" required="required">
                         </label>
+                        <button type="button" class="button button-small">
+                            <i class="icon ion-search"></i>
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <button type="submit" class="button button-positive button-block" ng-click="searchHistory(recordsForm.$valid)" ng-disabled="runningProcess">Buscar</button>
+                    <button type="button" class="button button-positive button-block" ng-click="searchHistory(recordsForm.$valid)" ng-disabled="runningProcess">Buscar</button>
+                </div>
+                <div class="col">
+                    <a class="button button-balanced button-block" href="#/app/new/{{ filters.customerId }}/{{ filters.objectTypeType }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !recordsForm.$valid">Nuevo mantenimiento</a>
                 </div>
             </div>
         </form>
