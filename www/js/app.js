@@ -34,7 +34,7 @@
                 // Check if database installed, update otherwise
                 //dbContext.installDatabase(function () {});
                 dbContext.checkDatabase(function () {
-                    //userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
+                    // userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
                     // Initialize synchronizer service
                     synchronizer.start();
                 });
@@ -135,7 +135,7 @@
                 });
 
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('/app/history');
+            $urlRouterProvider.otherwise('/app/records');
 
         });
 

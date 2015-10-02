@@ -9,6 +9,8 @@
         var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
+        $scope.title = 'Mantenimiento';
+        $scope.readOnlyMode = true;
         $scope.dev_width = $window.innerWidth;
         $scope.dev_height = $window.innerHeight;        
         
@@ -16,26 +18,22 @@
             starterTab: true,
             batteryTab: false,
             chargerTab: false,
-            machineTab: function () {
-                return (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
-            },
-            workToBeDoneTab: function () {
-                return (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
-            },
-            physicalInspectionTab: function () {
-                return (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
-            },
-            cellInspectionTab: function () {
-                return (this.batteryTab === true && $scope.battery.typeId);
-            },
-            suppliesTab: function () {
-                return ($scope.maintenance.corrective === true) && ((this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage));
-            },
-            technicalReportTab: function () {
-                return (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
-            },
-            endingTab: function () {
-                return ($scope.maintenance.technicalReport) && ((this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage));
+            machineTab: false,
+            workToBeDoneTab: false,
+            physicalInspectionTab: false,
+            cellInspectionTab: false,
+            suppliesTab: false,
+            technicalReportTab: false,
+            refreshTabs: function () {
+                var self = this;
+                self.machineTab = (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
+                self.workToBeDoneTab = (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
+                self.physicalInspectionTab = (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
+                self.cellInspectionTab = (this.batteryTab === true && $scope.battery.typeId);
+                self.suppliesTab = ($scope.maintenance.corrective === true) && ((this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage));
+                self.technicalReportTab = (this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage);
+                self.endingTab = ($scope.maintenance.technicalReport) && ((this.batteryTab === true && $scope.battery.typeId) || (this.chargerTab === true && $scope.charger.voltage));
+                return true;
             }
         };
         $scope.selectTab = function (tabName) {
@@ -310,6 +308,7 @@
                 $scope.charger.amperage = null;
             }
             $scope.filters.objectTypeSearch = null;
+            $scope.getMaintenanceInfo();
         };
         
         $scope.searchMachineTrademark = function () {
@@ -439,7 +438,6 @@
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
 
-        $scope.newMaintenance = false;
         $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? $stateParams.maintenanceId : null,
             uniqueCode: null,
@@ -580,8 +578,7 @@
                         $scope.battery.trademarkName = t.Name;
                     });
                     _self.refreshUI();
-                    _self.getCheckList();
-                    _self.getReviewOfCells();
+                    $scope.getMaintenanceInfo();
                 });
             }
         };
@@ -686,7 +683,7 @@
                         $scope.charger.trademarkName = t.Name;
                     });
                     _self.refreshUI();
-                    _self.getCheckList();
+                    $scope.getMaintenanceInfo();
                 });
             }
         };
@@ -916,23 +913,27 @@
 
             var actions = [];
             actions.push(function (onSuccess) {
-                var numberOfCells =
-                PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
-                    if (bt.id === $scope.battery.typeId) {
-                        return bt.numberOfCells;
-                    }
-                });
-                for (var i = 1; i <= numberOfCells; i++) {
-                    arr1.push({
-                        id: null,
-                        cellId: null,
-                        cellOrder: i,
-                        voltage: null,
-                        density: null,
-                        comments: null
+                if ($scope.battery.typeId != null) {
+                    var numberOfCells =
+                    PaCM.eachArray($scope.resources.batteryTypes, function (inx, bt) {
+                        if (bt.id === $scope.battery.typeId) {
+                            return bt.numberOfCells;
+                        }
                     });
+                    for (var i = 1; i <= numberOfCells; i++) {
+                        arr1.push({
+                            id: null,
+                            cellId: null,
+                            cellOrder: i,
+                            voltage: null,
+                            density: null,
+                            comments: null
+                        });
+                    }
+                    onSuccess();
+                } else {
+                    onSuccess();
                 }
-                onSuccess();
             });
             actions.push(function (onSuccess) {
                 if ($scope.maintenance.batteryId != null) {
@@ -1042,16 +1043,19 @@
         $scope.getMaintenanceInfo = function () {
             _self.getCheckList();
             _self.getReviewOfCells();
+            _self.getArticlesOutpus();
         }
 
         
         $scope.newBatteryMaintenance = function () {
             $scope.tabs.chargerTab = false;
             $scope.selectTab('batteryTab');
+            $scope.getMaintenanceInfo();
         };
         $scope.newChargerMaintenance = function () {
             $scope.tabs.batteryTab = false;
             $scope.selectTab('chargerTab');
+            $scope.getMaintenanceInfo();
         };
 
         
@@ -1078,15 +1082,17 @@
             actions.push(_self.saveReviewOfCells);
 
             PaCM.execute(actions, function () {
+                $scope.title = 'Mantenimiento';
+                $scope.readOnlyMode = true;
                 alert('Registro guardado con éxito');
             });
         };
 
         $scope.title = function () {
-            return ($scope.newMaintenance === true) ? 'Nuevo mantenimiento' : 'Mantenimiento';
+            return ($scope.maintenance.id) ? 'Nuevo mantenimiento' : 'Mantenimiento';
         }
         $scope.disabled = function () {
-            return !($scope.newMaintenance === true || $scope.maintenance.statusId === 'InCapture');
+            return !($scope.maintenance.statusId === 'InCapture');
         }
 
         $scope.resources = {
@@ -1157,6 +1163,7 @@
             }
             _self.timeoutRefreshUI = setTimeout(function () {
                 _self.timeoutRefreshUI = null;
+                $scope.tabs.refreshTabs();
                 $scope.$digest();
             }, 100);
         }
@@ -1179,10 +1186,14 @@
 
 
         if ($scope.maintenance.id != null) {
-            $scope.newMaintenance = false;
+            $scope.title = 'Mantenimiento';
+            $scope.readOnlyMode = true;
+
             _self.getMaintenance();
         } else {
-            $scope.newMaintenance = true;
+            $scope.title = 'Nuevo mantenimiento';
+            $scope.readOnlyMode = false;
+
             $scope.maintenance.uniqueCode = PaCM.newGuid().substring(0,5);
             $scope.maintenance.date = new Date();
             $scope.maintenance.preventive = true;

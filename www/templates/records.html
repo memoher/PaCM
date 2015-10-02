@@ -5,7 +5,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchCustomer()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.customerInput.$error.required}">
-                            <input type="text" name="customerInput" placeholder="Cliente" readonly="readonly" ng-model="filters.customerName" required="required">
+                            <input type="text" name="customerInput" placeholder="Cliente" readonly ng-model="filters.customerName" required>
                         </label>
                         <button type="button" class="button button-small">
                             <i class="icon ion-search"></i>
@@ -15,7 +15,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeTrademark()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.trademarkInput.$error.required}">
-                            <input type="text" name="trademarkInput" placeholder="Marca" readonly="readonly" ng-model="filters.objectTypeTrademarkName" required="required">
+                            <input type="text" name="trademarkInput" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" required>
                         </label>
                         <button type="button" class="button button-small">
                             <i class="icon ion-search"></i>
@@ -27,7 +27,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeModel()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.modelInput.$error.required}">
-                            <input type="text" name="modelInput" placeholder="Modelo" readonly="readonly" ng-model="filters.objectTypeModelName" required="required">
+                            <input type="text" name="modelInput" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" required>
                         </label>
                         <button type="button" class="button button-small">
                             <i class="icon ion-search"></i>
@@ -37,7 +37,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectType()">
                         <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.objectInput.$error.required}">
-                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly="readonly" ng-model="filters.objectTypeDescription" required="required">
+                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" required>
                         </label>
                         <button type="button" class="button button-small">
                             <i class="icon ion-search"></i>
