@@ -2,13 +2,13 @@
     <ion-content class="has-header" padding="true">
         <form name="loginForm" ng-class="{'show-errors': showErrors}">
             <ion-list>
-                <label class="item item-input" ng-class="{'input-required': loginForm.emailAddressInput.$error.required}">
+                <label class="item item-input">
                     <span class="input-label">Correo electrónico</span>
-                    <input name="emailAddressInput" placeholder="" type="text" ng-model="login.emailAddress" required>
+                    <input name="emailAddressInput" type="text" ng-model="login.emailAddress" ng-model-options="modelOptions" required>
                 </label>
-                <label class="item item-input" ng-class="{'input-required': loginForm.passwordInput.$error.required}">
+                <label class="item item-input">
                     <span class="input-label">Contraseña</span>
-                    <input name="passwordInput" placeholder="" type="password" ng-model="login.password" required>
+                    <input name="passwordInput" type="password" ng-model="login.password" ng-model-options="modelOptions" required>
                 </label>
             </ion-list>
             <div style="height: 0;" class="spacer"></div>

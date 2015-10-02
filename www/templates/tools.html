@@ -1,8 +1,8 @@
 <ion-view view-title="Herramientas">
     <ion-content class="has-header" padding="true">
-    	<button style="" class="button button-positive button-block" ng-click="sigOut()" ng-disabled="runningProcess">Cerrar sesión</button>
+    	<button class="button button-positive button-block" ng-click="sigOut()" ng-disabled="runningProcess">Cerrar sesión</button>
     	<div style="height: 0;" class="spacer"></div>
-        <button style="" class="button button-positive button-block" ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
+        <button class="button button-positive button-block" ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
         <h4>Consola</h4>
         <ion-list>
 	      <ion-item class="console-item" ng-repeat="ci in entriesConsoleLog">

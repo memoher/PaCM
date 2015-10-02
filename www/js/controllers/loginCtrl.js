@@ -6,6 +6,7 @@
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
+        $scope.modelOptions = { updateOn: 'blur' };
 
         $scope.login = {
             emailAddress: null,

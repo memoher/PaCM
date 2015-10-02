@@ -4,20 +4,20 @@
             <div class="row responsive-sm">
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchCustomer()">
-                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.customerInput.$error.required}">
-                            <input type="text" name="customerInput" placeholder="Cliente" readonly ng-model="filters.customerName" required>
+                        <label class="item-input-wrapper">
+                            <input type="text" name="customerInput" placeholder="Cliente" readonly ng-model="filters.customerName" ng-model-options="modelOptions" required>
                         </label>
-                        <button type="button" class="button button-small">
+                        <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeTrademark()">
-                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.trademarkInput.$error.required}">
-                            <input type="text" name="trademarkInput" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" required>
+                        <label class="item-input-wrapper">
+                            <input type="text" name="trademarkInput" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" ng-model-options="modelOptions" required>
                         </label>
-                        <button type="button" class="button button-small">
+                        <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
@@ -26,20 +26,20 @@
             <div class="row responsive-sm">
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeModel()">
-                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.modelInput.$error.required}">
-                            <input type="text" name="modelInput" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" required>
+                        <label class="item-input-wrapper">
+                            <input type="text" name="modelInput" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" ng-model-options="modelOptions" required>
                         </label>
-                        <button type="button" class="button button-small">
+                        <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectType()">
-                        <label class="item-input-wrapper" ng-class="{'input-required': recordsForm.objectInput.$error.required}">
-                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" required>
+                        <label class="item-input-wrapper">
+                            <input type="text" name="objectInput" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" ng-model-options="modelOptions" required>
                         </label>
-                        <button type="button" class="button button-small">
+                        <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <button type="button" class="button button-positive button-block" ng-click="searchHistory(recordsForm.$valid)" ng-disabled="runningProcess">Buscar</button>
+                    <button type="submit" class="button button-positive button-block" ng-click="searchHistory(recordsForm.$valid)" ng-disabled="runningProcess">Buscar</button>
                 </div>
                 <div class="col">
                     <a class="button button-balanced button-block" href="#/app/new/{{ filters.customerId }}/{{ filters.objectTypeType }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !recordsForm.$valid">Nuevo mantenimiento</a>

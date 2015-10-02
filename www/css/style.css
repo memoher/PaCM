@@ -4,20 +4,31 @@
     top: 44px;
 }
 
+.tabs .tab-item-active {
+    background-color: #ffd700;
+}
+
 input, select, textarea {
     width: 100%;
 }
 
-form.show-errors .input-required {
+form.show-errors .ng-invalid {
     border: 1px solid red;
 }
 
 .item-input-inset {
     padding: 8px;
 }
-
-.item-input-inset .item-input-wrapper input, select {
+.item-input-inset .item-input-wrapper {
+    background-color: transparent;
+}
+.item-input-inset .item-input-wrapper input,
+.item-input-inset .item-input-wrapper select {
     height: 28px;
+}
+
+.button.button-small.button-pacm {
+    min-width: 56px;
 }
 
 /*

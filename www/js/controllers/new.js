@@ -9,10 +9,14 @@
         var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
+        $scope.showErrors = false;
+        $scope.modelOptions = { updateOn: 'blur' };
+
         $scope.title = 'Mantenimiento';
         $scope.readOnlyMode = true;
         $scope.dev_width = $window.innerWidth;
-        $scope.dev_height = $window.innerHeight;        
+        $scope.dev_height = $window.innerHeight;
+        $scope.preloadData = ($stateParams.elmType);
         
         $scope.tabs = {
             starterTab: true,
@@ -65,7 +69,7 @@
                 self.type = type;
                 self.title = title;
                 self.data = data;
-                self.search = search ? search : '';
+                self.search = search ? search : PaCM.getStringEmpty();
                 self.selectRecord = onSelect;
                 
                 $scope.modal.show();
@@ -516,6 +520,7 @@
             };
             dataContext.save('Maintenance', $scope.maintenance.id, m, function () {
                 $scope.maintenance.id = m.Id;
+                PaCM.cleaner(m); delete m;
                 onSuccess();
             });
         };
@@ -589,6 +594,7 @@
                 };
                 dataContext.insert('ObjectypeTrademark', r, function () {
                     $scope.battery.trademarkId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -603,6 +609,7 @@
                 };
                 dataContext.insert('ObjectypeModel', r, function () {
                     $scope.battery.modelId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -636,6 +643,8 @@
                 };
                 dataContext.save('Battery', $scope.maintenance.batteryId, b, function () {
                     $scope.maintenance.batteryId = b.Id;
+                    PaCM.cleaner(ot); delete ot;
+                    PaCM.cleaner(b); delete b;
                     onSuccess();
                 });
             });
@@ -694,6 +703,7 @@
                 };
                 dataContext.insert('ObjectypeTrademark', r, function () {
                     $scope.charger.trademarkId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -708,6 +718,7 @@
                 };
                 dataContext.insert('ObjectypeModel', r, function () {
                     $scope.charger.modelId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -730,6 +741,8 @@
                 };
                 dataContext.save('Charger', $scope.maintenance.chargerId, c, function () {
                     $scope.maintenance.chargerId = c.Id;
+                    PaCM.cleaner(ot); delete ot;
+                    PaCM.cleaner(c); delete c;
                     onSuccess();
                 });
             });
@@ -779,6 +792,7 @@
                 };
                 dataContext.insert('MachineTrademark', r, function () {
                     $scope.machine.trademarkId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -796,6 +810,7 @@
                 };
                 dataContext.insert('MachineModel', r, function () {
                     $scope.machine.modelId = r.Id;
+                    PaCM.cleaner(r); delete r;
                     onSuccess();
                 });
             } else {
@@ -811,6 +826,7 @@
             };
             dataContext.save('Machine', $scope.maintenance.machineId, m, function () {
                 $scope.maintenance.machineId = m.Id;
+                PaCM.cleaner(m); delete m;
                 onSuccess();
             });
         };
@@ -889,6 +905,7 @@
                         };
                         dataContext.save('MaintenanceCheck', c.id, mc, function () {
                             c.id = mc.Id;
+                            PaCM.cleaner(mc); delete mc;
                             onSuccess();
                         });
                     } else {
@@ -995,6 +1012,7 @@
                         };
                         dataContext.insert('Cell', cr, function () {
                             c.cellId = cr.Id;
+                            PaCM.cleaner(cr); delete cr;
                             onSuccess();
                         });
                     } else {
@@ -1015,6 +1033,7 @@
                         };
                         dataContext.save('CellReview', c.id, cr, function () {
                             c.id = cr.Id;
+                            PaCM.cleaner(cr); delete cr;
                             onSuccess();
                         });
                     } else {
@@ -1104,7 +1123,6 @@
         };
         _self.getResources = function () {
             dataContext.find('BatteryType', { orderBy: 'Voltage, NumberOfCells' }, function (batteryTypes) {
-                $scope.resources.batteryTypes.push({});
                 PaCM.eachArray(batteryTypes, function (inx, bt) {
                     $scope.resources.batteryTypes.push({
                         id: bt.Id,
@@ -1115,7 +1133,6 @@
                 });
             });
             dataContext.find('ConnectorType', { orderBy: 'Name' }, function (connectorTypes) {
-                $scope.resources.connectorTypes.push({});
                 PaCM.eachArray(connectorTypes, function (inx, ct) {
                     $scope.resources.connectorTypes.push({
                         id: ct.Id,
@@ -1125,7 +1142,6 @@
                 });
             });
             dataContext.find('Connector', { orderBy: 'Name' }, function (connector) {
-                $scope.resources.connectors.push({});
                 PaCM.eachArray(connector, function (inx, c) {
                     $scope.resources.connectors.push({
                         id: c.Id,
@@ -1135,16 +1151,15 @@
                 });
             });
             dataContext.find('Color', { orderBy: 'Name' }, function (connectorColors) {
-                $scope.resources.connectorColors.push({});
                 PaCM.eachArray(connectorColors, function (inx, cc) {
                     $scope.resources.connectorColors.push({
                         id: cc.Id,
-                        name: cc.Name
+                        name: cc.Name,
+                        hex: cc.HEX
                     });
                 });
             });
             dataContext.find('Diagnostic', { orderBy: 'Name' } , function (diagnostics) {
-                $scope.resources.diagnostics.push({});
                 PaCM.eachArray(diagnostics, function (inx, d) {
                     $scope.resources.diagnostics.push({
                         id: d.Id,
@@ -1173,14 +1188,14 @@
             if (PaCM.isUndefined(_self.canvas)) {
                 setTimeout(function () {
                     _self.canvas = document.getElementById('signatureCanvas');
-                    var signaturePad = new SignaturePad(_self.canvas);
+                    _self.signaturePad = new SignaturePad(_self.canvas);
                     $scope.clearCanvas = function() {
-                        signaturePad.clear();
+                        _self.signaturePad.clear();
                     }
                     $scope.saveCanvas = function() {
-                        $scope.signature = signaturePad.toDataURL();
+                        $scope.signature = _self.signaturePad.toDataURL();
                     }
-                }, 250);
+                }, 100);
             }
         }
 

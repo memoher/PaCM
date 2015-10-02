@@ -10,6 +10,7 @@
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
+        $scope.modelOptions = { updateOn: 'blur' };
         
         // Create the modal popup searcher
         $scope.searcher = {};
@@ -24,7 +25,7 @@
                 self.type = type;
                 self.title = title;
                 self.data = data;
-                self.search = search ? search : '';
+                self.search = search ? search : PaCM.getStringEmpty();
                 self.selectRecord = onSelect;
                 
                 $scope.modal.show();
