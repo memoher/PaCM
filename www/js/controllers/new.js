@@ -12,6 +12,13 @@
         $scope.showErrors = false;
         $scope.modelOptions = { updateOn: 'blur' };
 
+        _self.onSqlError = function (err) {
+            $scope.runningProcess = false;
+            $scope.$digest();
+            PaCM.showErrorMessage(err);
+            throw err;
+        }
+
         $scope.title = 'Mantenimiento';
         $scope.readOnlyMode = true;
         $scope.dev_width = $window.innerWidth;
@@ -98,7 +105,7 @@
         };
         
         $scope.searchCustomer = function () {
-            if ($scope.maintenance.id != null) {
+            if ($scope.readOnlyMode || $scope.preloadData || $scope.maintenance.id) {
                 return;
             }
             dataContext.find('Customer', { orderBy: 'Name' }, function (customers) {
@@ -119,8 +126,9 @@
                         $scope.maintenance.customerId = r.Id;
                         $scope.maintenance.customerName = r.Name;
                         $scope.filters.customerSearch = $scope.searcher.search;
-                        $scope.resetObjectType(true);
-                        $scope.resetObjectType(false);
+                        $scope.resetObjectTypeTrademark(true);
+                        $scope.resetObjectTypeTrademark(false);
+                        $scope.resetMachineTrademark();
                         $scope.searcher.close();
                     });
             });
@@ -129,8 +137,9 @@
             $scope.maintenance.customerId = null;
             $scope.maintenance.customerName = null;
             $scope.filters.customerSearch = null;
-            $scope.resetObjectType(true);
-            $scope.resetObjectType(false);
+            $scope.resetObjectTypeTrademark(true);
+            $scope.resetObjectTypeTrademark(false);
+            $scope.resetMachineTrademark();
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
@@ -164,11 +173,11 @@
         };
         $scope.resetObjectTypeTrademark = function (applyForBattery) {
             if (applyForBattery === true) {
-                $scope.battery.trademarkId = r.Id;
-                $scope.battery.trademarkName = r.Name;
+                $scope.battery.trademarkId = null;
+                $scope.battery.trademarkName = null;
             } else {
-                $scope.charger.trademarkId = r.Id;
-                $scope.charger.trademarkName = r.Name;
+                $scope.charger.trademarkId = null;
+                $scope.charger.trademarkName = null;
             }
             $scope.filters.objectTypeTrademarkSearch = null;
             $scope.resetObjectTypeModel(applyForBattery);
@@ -293,6 +302,7 @@
                 $scope.battery.typeId = null;
                 $scope.battery.amperage = null;
                 $scope.battery.connectorTypeId = null;
+                $scope.battery.connectorColorRequired = null;
                 $scope.battery.connectorId = null;
                 $scope.battery.connectorColorId = null;
                 $scope.battery.standarBox = false;
@@ -522,7 +532,7 @@
                 $scope.maintenance.id = m.Id;
                 PaCM.cleaner(m); delete m;
                 onSuccess();
-            });
+            }, _self.onSqlError);
         };
         
         $scope.battery = {
@@ -538,6 +548,7 @@
             typeId: null,
             amperage: null,
             connectorTypeId: null,
+            connectorColorRequired: null,
             connectorId: null,
             connectorColorId: null,
             standardBox: false,
@@ -575,6 +586,9 @@
                     $scope.battery.drainHoles = r.DrainHoles;
                     dataContext.get('Connector', $scope.battery.connectorId, function (c) {
                         $scope.battery.connectorTypeId = c.TypeId;
+                        dataContext.get('ConnectorType', $scope.battery.connectorTypeId, function (ct) {
+                            $scope.battery.connectorColorRequired = ct.ColorRequired;
+                        });
                     });
                     dataContext.get('ObjectTypeModel', $scope.battery.modelId, function (m) {
                         $scope.battery.modelName = m.Name;
@@ -592,11 +606,11 @@
                 var r = {
                     Name: $scope.battery.trademarkName
                 };
-                dataContext.insert('ObjectypeTrademark', r, function () {
+                dataContext.insert('ObjecTypeTrademark', r, function () {
                     $scope.battery.trademarkId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -607,11 +621,11 @@
                     Name: $scope.battery.modelName,
                     TrademarkId: $scope.battery.trademarkId
                 };
-                dataContext.insert('ObjectypeModel', r, function () {
+                dataContext.insert('ObjecTypeModel', r, function () {
                     $scope.battery.modelId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -646,19 +660,19 @@
                     PaCM.cleaner(ot); delete ot;
                     PaCM.cleaner(b); delete b;
                     onSuccess();
-                });
-            });
+                }, _self.onSqlError);
+            }, _self.onSqlError);
         };
 
-        $scope.showConnectorColorList = function () {
-            var result = 
-            PaCM.eachArray($scope.resources.connectorTypes, function (inx, ct) {
-                if (ct.id === $scope.battery.connectorTypeId) {
-                    return ct.colorRequired;
-                }
-            });
-            return (result === true);
-        };
+        $scope.refreshConnectorColorList = function () {
+            if ($scope.battery.connectorTypeId != null) {
+                dataContext.get('ConnectorType', $scope.battery.connectorTypeId, function (ct) {
+                    $scope.battery.connectorColorRequired = ct.ColorRequired;
+                });
+            } else {
+                $scope.battery.connectorColorRequired = false;
+            }
+        }
         
         $scope.charger = {
             //id: null,
@@ -701,11 +715,11 @@
                 var r = {
                     Name: $scope.charger.trademarkName
                 };
-                dataContext.insert('ObjectypeTrademark', r, function () {
+                dataContext.insert('ObjecTypeTrademark', r, function () {
                     $scope.charger.trademarkId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -716,11 +730,11 @@
                     Name: $scope.charger.modelName,
                     TrademarkId: $scope.charger.trademarkId
                 };
-                dataContext.insert('ObjectypeModel', r, function () {
+                dataContext.insert('ObjecTypeModel', r, function () {
                     $scope.charger.modelId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -744,8 +758,8 @@
                     PaCM.cleaner(ot); delete ot;
                     PaCM.cleaner(c); delete c;
                     onSuccess();
-                });
-            });
+                }, _self.onSqlError);
+            }, _self.onSqlError);
         };
         
         $scope.machine = {
@@ -794,7 +808,7 @@
                     $scope.machine.trademarkId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -812,7 +826,7 @@
                     $scope.machine.modelId = r.Id;
                     PaCM.cleaner(r); delete r;
                     onSuccess();
-                });
+                }, _self.onSqlError);
             } else {
                 onSuccess();
             }
@@ -828,7 +842,7 @@
                 $scope.maintenance.machineId = m.Id;
                 PaCM.cleaner(m); delete m;
                 onSuccess();
-            });
+            }, _self.onSqlError);
         };
 
         $scope.checkList = [];
@@ -907,7 +921,7 @@
                             c.id = mc.Id;
                             PaCM.cleaner(mc); delete mc;
                             onSuccess();
-                        });
+                        }, _self.onSqlError);
                     } else {
                         onSuccess();
                     }
@@ -1014,7 +1028,7 @@
                             c.cellId = cr.Id;
                             PaCM.cleaner(cr); delete cr;
                             onSuccess();
-                        });
+                        }, _self.onSqlError);
                     } else {
                         onSuccess();
                     }
@@ -1035,7 +1049,7 @@
                             c.id = cr.Id;
                             PaCM.cleaner(cr); delete cr;
                             onSuccess();
-                        });
+                        }, _self.onSqlError);
                     } else {
                         onSuccess();
                     }
@@ -1100,7 +1114,10 @@
             actions.push(_self.saveCheckList);
             actions.push(_self.saveReviewOfCells);
 
+            $scope.runningProcess = true;
             PaCM.execute(actions, function () {
+                $scope.runningProcess = false;
+                
                 $scope.title = 'Mantenimiento';
                 $scope.readOnlyMode = true;
                 alert('Registro guardado con éxito');

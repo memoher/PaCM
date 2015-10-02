@@ -9,7 +9,7 @@
         <form>
             <label class="item item-input">
                 <i class="icon ion-search placeholder-icon"></i>
-                <input type="search" placeholder="Digite aquí texto para reducir los resultados" ng-model="searcher.search">
+                <input type="search" placeholder="Filtro" ng-model="searcher.search">
             </label>
         </form>
         <ion-list ng-if="['Customer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(searcher.type)>=0">

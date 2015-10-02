@@ -8,12 +8,14 @@
     background-color: #ffd700;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
 }
 
 form.show-errors .ng-invalid {
-    border: 1px solid red;
+    border: 1px solid lightcoral;
 }
 
 .item-input-inset {

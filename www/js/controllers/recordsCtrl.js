@@ -225,7 +225,7 @@
                                 $scope.filters.objectTypeTrademarkId = t.Id;
                                 $scope.filters.objectTypeTrademarkName = t.Name;
                             });
-                            $scope.resetHistory();
+                            $scope.searchHistory(true);
                         }
                         $scope.searcher.close();
                     });
