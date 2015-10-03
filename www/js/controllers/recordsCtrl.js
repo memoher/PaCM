@@ -10,7 +10,6 @@
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
-        $scope.modelOptions = { updateOn: 'blur' };
         
         // Create the modal popup searcher
         $scope.searcher = {};
