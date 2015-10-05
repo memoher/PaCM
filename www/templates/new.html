@@ -39,7 +39,7 @@
                     <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.preventive" ng-change="maintenance.preventive = true">Preventivo</ion-toggle>
                     <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="maintenance.corrective = readOnlyMode ? !maintenance.corrective : maintenance.corrective; tabs.refreshTabs();">Correctivo</ion-toggle>
                 </form>
-                <div class="button-bar" ng-show="(!readOnlyMode && !preloadData && maintenance.customerId)">
+                <div class="button-bar" ng-hide="(readOnlyMode || preloadData || maintenance.id || !(maintenance.customerId))">
                     <button type="button" class="button button-block  icon ion-battery-charging" ng-click="newBatteryMaintenance()"> Mantenimiento de batería</button>
                     <button type="button" class="button button-block  icon ion-flash" ng-click="newChargerMaintenance()"> Mantenimiento de cargador</button>
                 </div>
@@ -112,10 +112,10 @@
                             </select>
                         </label>
                     </div>
-                    <div class="item item-input-inset">
+                    <div class="item item-input-inset" ng-show="battery.connectorColorRequired">
                         <label class="item-input-wrapper">
                             <span class="input-label"> </span>
-                            <select ng-model="battery.connectorColorId" ng-options="cc.id as cc.name for cc in resources.connectorColors" ng-required="battery.connectorColorRequired" ng-disabled="readOnlyMode || !battery.connectorColorRequired">
+                            <select ng-model="battery.connectorColorId" ng-options="cc.id as cc.name for cc in resources.connectorColors" ng-required="battery.connectorColorRequired" ng-disabled="readOnlyMode">
                                 <option value=""> </option>
                             </select>
                         </label>

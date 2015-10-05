@@ -6,9 +6,9 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //'http://eccmant.emhesolutions.com/'; //
+        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 
-        var dbVersion = '1.0.0.0';
+        var dbVersion = '1.1.1.1';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 

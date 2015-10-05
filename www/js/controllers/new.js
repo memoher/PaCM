@@ -199,40 +199,57 @@
             }
             
             dataContext.find('ObjectTypeModel', options, function (models) {
-                if ($scope.battery.modelId != null || $scope.charger.modelId != null) {
-                    PaCM.eachArray(models, function (inx, m) {
-                        if (m.Id == (applyForBattery === true ? $scope.battery.modelId : $scope.charger.modelId)) {
-                            m.Selected = true;
-                            return true; //break;
-                        }
-                    });
-                }
-                $scope.searcher.open(
-                    'ObjectTypeModel',
-                    'Buscar modelo',
-                    models,
-                    $scope.filters.objectTypeModelSearch,
-                    function (r) {
-                        if (applyForBattery === true) {
-                            $scope.battery.modelId = r.Id;
-                            $scope.battery.modelName = r.Name;
-                        } else {
-                            $scope.charger.modelId = r.Id;
-                            $scope.charger.modelName = r.Name;
-                        }
-                        $scope.filters.objectTypeModelSearch = $scope.searcher.search;
-                        dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
-                            if (applyForBattery === true) {
-                                $scope.battery.trademarkId = t.Id;
-                                $scope.battery.trademarkName = t.Name;
-                            } else {
-                                $scope.charger.trademarkId = t.Id;
-                                $scope.charger.trademarkName = t.Name;
+
+                options.orderBy = 'ModelId';
+                dataContext.find(!(applyForBattery === true) ? 'Battery' : 'Charger', options, function (objects) {
+                    PaCM.eachArrayInvert(models, function (inxM, m) {
+                        var valid = true;
+                        PaCM.eachArrayInvert(objects, function (inxO, o) {
+                            if (m.Id === o.ModelId) {
+                                valid = false;
+                                objects.splice(inxO, 1);
                             }
                         });
-                        $scope.resetObjectType(applyForBattery);
-                        $scope.searcher.close();
-                    }); 
+                        if (!(valid === true)) {
+                            models.splice(inxM, 1);
+                        }
+                    });
+
+                    if ($scope.battery.modelId != null || $scope.charger.modelId != null) {
+                        PaCM.eachArray(models, function (inx, m) {
+                            if (m.Id == (applyForBattery === true ? $scope.battery.modelId : $scope.charger.modelId)) {
+                                m.Selected = true;
+                                return true; //break;
+                            }
+                        });
+                    }
+                    $scope.searcher.open(
+                        'ObjectTypeModel',
+                        'Buscar modelo',
+                        models,
+                        $scope.filters.objectTypeModelSearch,
+                        function (r) {
+                            if (applyForBattery === true) {
+                                $scope.battery.modelId = r.Id;
+                                $scope.battery.modelName = r.Name;
+                            } else {
+                                $scope.charger.modelId = r.Id;
+                                $scope.charger.modelName = r.Name;
+                            }
+                            $scope.filters.objectTypeModelSearch = $scope.searcher.search;
+                            dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                                if (applyForBattery === true) {
+                                    $scope.battery.trademarkId = t.Id;
+                                    $scope.battery.trademarkName = t.Name;
+                                } else {
+                                    $scope.charger.trademarkId = t.Id;
+                                    $scope.charger.trademarkName = t.Name;
+                                }
+                            });
+                            $scope.resetObjectType(applyForBattery);
+                            $scope.searcher.close();
+                        }); 
+                });
             });
             
         };
@@ -268,7 +285,7 @@
                     options.where.ModelId = $scope.charger.modelId;
             }
             
-            dataContext.find(applyForBattery ? 'Battery' : 'Charger', options, function (objects) {
+            dataContext.find(applyForBattery === true ? 'Battery' : 'Charger', options, function (objects) {
                 if ($scope.maintenance.batteryId != null || $scope.maintenance.chargerId != null) {
                     PaCM.eachArray(objects, function (inx, ot) {
                         if (ot.Id == (applyForBattery === true ? $scope.maintenance.batteryId : $scope.maintenance.chargerId)) {
@@ -279,7 +296,7 @@
                 }
                 $scope.searcher.open(
                     'ObjectType',
-                    applyForBattery ? 'Buscar bateria' : 'Buscar cargador',
+                    applyForBattery === true ? 'Buscar bateria' : 'Buscar cargador',
                     objects,
                     $scope.filters.objectTypeSearch,
                     function (r) {
@@ -598,7 +615,6 @@
                         $scope.battery.trademarkName = t.Name;
                     });
                     $scope.getMaintenanceInfo();
-                    _self.refreshUI();
                 });
             }
         };
@@ -707,7 +723,6 @@
                         $scope.charger.trademarkName = t.Name;
                     });
                     $scope.getMaintenanceInfo();
-                    _self.refreshUI();
                 });
             }
         };
@@ -796,7 +811,6 @@
                     dataContext.get('MachineTrademark', $scope.machine.trademarkId, function (t) {
                         $scope.machine.trademarkName = t.Name;
                     });
-                    _self.refreshUI();
                 });
             }
         };
@@ -1076,16 +1090,19 @@
             _self.getCheckList();
             _self.getReviewOfCells();
             _self.getArticlesOutpus();
+            _self.refreshUI();
         }
 
         
         $scope.newBatteryMaintenance = function () {
             $scope.tabs.chargerTab = false;
             $scope.selectTab('batteryTab');
+            $scope.resetObjectTypeTrademark(false);
         };
         $scope.newChargerMaintenance = function () {
             $scope.tabs.batteryTab = false;
             $scope.selectTab('chargerTab');
+            $scope.resetObjectTypeTrademark(true);
         };
 
         
