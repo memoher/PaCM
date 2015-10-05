@@ -465,6 +465,40 @@
             $scope.machine.customerReference = null;
             $scope.filters.machineSearch = null;
         };
+
+        $scope.searchArticle = function (ao) {
+            var options = {
+                where: { EnabledBatteries: false, EnabledChargers: false }
+            };
+            if ($scope.battery.typeId != null) {
+                options.where = { EnabledBatteries: true };
+            }
+            if ($scope.charger.voltage != null) {
+                options.where = { EnabledChargers: true };
+            }
+            options.where.CorrectiveMaintenanceEnabled = true;
+
+            dataContext.find('Article', options, function (articles) {
+                if (ao.articleId != null) {
+                    PaCM.eachArray(articles, function (inx, a) {
+                        if (a.Id == ao.articleId) {
+                            a.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
+                $scope.searcher.open(
+                    'Article',
+                    'Buscar artículo',
+                    articles,
+                    null,
+                    function (r) {
+                        ao.articleId = r.Id;
+                        ao.articleName = r.Name + ' (' + r.InventoryCode + ')';
+                        $scope.searcher.close();
+                    });
+            });
+        };
         
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -487,7 +521,8 @@
             statusDescription: null,
             executedById: null,
             executedByUsername: null,
-            acceptedBy: null
+            acceptedBy: null,
+            acceptedByDigitalSignatureId: null
         };
         _self.getMaintenance = function () {
             if ($scope.maintenance.id != null) {
@@ -506,6 +541,7 @@
                     $scope.maintenance.statusId = r.StatusId;
                     $scope.maintenance.executedById = r.ExecutedById;
                     $scope.maintenance.acceptedBy = r.AcceptedBy;
+                    $scope.maintenance.acceptedByDigitalSignatureId = r.AcceptedByDigitalSignatureId;
                     dataContext.get('Customer', $scope.maintenance.customerId, function (c) {
                         $scope.maintenance.customerName = c.Name;
                     });
@@ -514,6 +550,11 @@
                     });
                     dataContext.get('User', $scope.maintenance.executedById, function (u) {
                         $scope.maintenance.executedByUsername = u.Username;
+                    });
+                    dataContext.get('File', $scope.maintenance.acceptedByDigitalSignatureId, function (f) {
+                        if (f) {
+                            _self.signatureData = 'data:image/png;base64,' + f.Base64Str;
+                        }
                     });
                     if ($scope.maintenance.batteryId != null) {
                         $scope.tabs.batteryTab = true;
@@ -530,6 +571,26 @@
                 });
             }
         };
+        _self.saveSignature = function (onSuccess) {
+            if (!$scope.signaturePad.isEmpty()) {
+                $scope.saveCanvas();
+                var f = {
+                    Name: 'Accepted by signature.png',
+                    Extension: 'png',
+                    Base64Str: _self.signatureData.substring('data:image/png;base64,'.length)
+                };
+                if (!($scope.maintenance.acceptedByDigitalSignatureId)) {
+                    f.LocalName = PaCM.newGuid();
+                }
+                dataContext.save('File', $scope.maintenance.acceptedByDigitalSignatureId, f, function () {
+                    $scope.maintenance.acceptedByDigitalSignatureId = f.Id;
+                    PaCM.cleaner(f); delete f;
+                    onSuccess();
+                });
+            } else {
+                onSuccess();
+            }
+        }
         _self.saveMaintenance = function (onSuccess) {
             var m = {
                 UniqueCode: $scope.maintenance.uniqueCode,
@@ -544,7 +605,8 @@
                 TechnicalReport: $scope.maintenance.technicalReport,
                 ExecutedById: $scope.maintenance.executedById,
                 StatusId: $scope.maintenance.statusId,
-                AcceptedBy: $scope.maintenance.acceptedBy
+                AcceptedBy: $scope.maintenance.acceptedBy,
+                AcceptedByDigitalSignatureId: $scope.maintenance.acceptedByDigitalSignatureId
             };
             dataContext.save('Maintenance', $scope.maintenance.id, m, function () {
                 $scope.maintenance.id = m.Id;
@@ -946,7 +1008,6 @@
             PaCM.eachArray($scope.checkList, function (inx, c) {
                 actions.push(_saveFnc(c));
             });
-
             PaCM.execute(actions, onSuccess);
         };
 
@@ -1074,22 +1135,84 @@
                 actions.push(_saveFnc01(c));
                 actions.push(_saveFnc02(c));
             });
-
             PaCM.execute(actions, onSuccess);
         };
 
         $scope.articlesOutputs = [];
-        _self.getArticlesOutpus = function () {
-            
+        _self.getArticlesOutputs = function () {
+            if ($scope.maintenance.id != null) {
+                dataContext.find('ArticleOutput', { where: { MaintenanceId: $scope.maintenance.id } }, function (articlesOutputs) {
+                    var articles = [];
+                    PaCM.eachArray(articlesOutputs, function (inx, a) {
+                        articles.push({
+                            id: a.Id,
+                            articleId: a.ArticleId,
+                            articleName: a.ArticleName + ' (' + a.InventoryCode + ')',
+                            quantity: a.Quantity
+                        });
+                    });
+                    PaCM.syncronizeArray(["id"], $scope.articlesOutputs, articles);
+                    PaCM.cleaner(articles); delete articles;
+
+                    if ($scope.maintenance.corrective === true) {
+                        while ($scope.articlesOutputs.length < 3) {
+                            $scope.addArticle();
+                        }
+                    }
+                });
+            } else {
+                PaCM.cleaner($scope.articlesOutputs);
+
+                if ($scope.maintenance.corrective === true) {
+                    while ($scope.articlesOutputs.length < 3) {
+                        $scope.addArticle();
+                    }
+                }
+            }
         };
+        $scope.addArticle = function () {
+            $scope.articlesOutputs.push({
+                id: null,
+                articleId: null,
+                articleName: null,
+                quantity: null
+            });
+        };
+        $scope.removeArticle = function (ao) {
+            $scope.articlesOutputs.splice($scope.articlesOutputs.indexOf(ao), 1);
+        }
         _self.saveArticlesOutpus = function (onSuccess) {
-            
+
+            var _saveFnc01 = function (a) {
+                return function (onSuccess) {
+                    if (a.articleId != null && a.quantity != null) {
+                        var ao = {
+                            MaintenanceId: $scope.maintenance.id,
+                            ArticleId: a.articleId,
+                            Quantity: a.quantity
+                        };
+                        dataContext.save('ArticleOutput', a.id, ao, function () {
+                            a.id = ao.Id;
+                            PaCM.cleaner(ao); delete ao;
+                            onSuccess();
+                        }, _self.onSqlError);
+                    } else {
+                        onSuccess();
+                    }
+                };
+            };
+
+            var actions = [];
+            PaCM.eachArray($scope.articlesOutputs, function (inx, a) {
+                actions.push(_saveFnc01(a));
+            });
+            PaCM.execute(actions, onSuccess);
         };
 
         $scope.getMaintenanceInfo = function () {
             _self.getCheckList();
             _self.getReviewOfCells();
-            _self.getArticlesOutpus();
+            _self.getArticlesOutputs();
             _self.refreshUI();
         }
 
@@ -1105,7 +1228,7 @@
             $scope.resetObjectTypeTrademark(true);
         };
 
-        
+
         $scope.saveMaintenance = function () {
             var actions = [];
 
@@ -1124,9 +1247,11 @@
                 actions.push(_self.saveMachineModel);
                 actions.push(_self.saveMachine);
             }
+            actions.push(_self.saveSignature);
             actions.push(_self.saveMaintenance);
             actions.push(_self.saveCheckList);
             actions.push(_self.saveReviewOfCells);
+            actions.push(_self.saveArticlesOutpus);
 
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
@@ -1211,14 +1336,18 @@
             if (PaCM.isUndefined(_self.canvas)) {
                 setTimeout(function () {
                     _self.canvas = document.getElementById('signatureCanvas');
-                    _self.signaturePad = new SignaturePad(_self.canvas);
+                    $scope.signaturePad = new SignaturePad(_self.canvas);
+                    if (_self.signatureData) {
+                        $scope.signaturePad.fromDataURL(_self.signatureData);
+                    }
                     $scope.clearCanvas = function() {
-                        _self.signaturePad.clear();
+                        $scope.signaturePad.clear();
                     }
                     $scope.saveCanvas = function() {
-                        $scope.signature = _self.signaturePad.toDataURL();
+                        _self.signatureData = $scope.signaturePad.toDataURL('image/png');
                     }
-                }, 100);
+                    _self.refreshUI();
+                }, 20);
             }
         }
 
@@ -1243,14 +1372,13 @@
             });
             $scope.maintenance.executedById = userSession.user.Id;
             $scope.maintenance.executedByUsername = userSession.user.Username;
-            $scope.maintenance.acceptedBy = null;
             if ($scope.maintenance.batteryId != null) {
-                _self.getBattery();
                 $scope.tabs.batteryTab = true;
+                _self.getBattery();
             }
             if ($scope.maintenance.chargerId != null) {
-                _self.getCharger();
                 $scope.tabs.chargerTab = true;
+                _self.getCharger();
             }
             _self.refreshUI();
         }

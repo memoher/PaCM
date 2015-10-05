@@ -6,7 +6,7 @@
 
     PaCM.servicesModule.factory('dataContext', function (dbContext) {
 
-        var debugMode = 1;
+        var debugMode = 4;
 
         var entities = {
             Settings: 'AppSettings',
@@ -45,6 +45,9 @@
             CellReview: 'MntCellsReviews',
             ArticleOutput: 'MntArticlesOutputs'
         };
+        var entitiesInheritedOfObjectType = [
+            'MntBatteries', 'MntChargers'
+        ];
         var queries = {
             ObjectType: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId] FROM MntObjects r INNER JOIN MntObjectModels m ON r.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
             Battery: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || p.[Serial], '') || IFNULL(' / # Interno: ' || p.[CustomerReference], '')) [Description], p.[Enabled], p.[Serial], p.[CustomerReference], p.[ModelId], p.[CustomerId], m.[TrademarkId], p.[CreatedOn], p.[LastModified] FROM MntBatteries r INNER JOIN MntObjects p ON r.Id = p.Id INNER JOIN MntObjectModels m ON p.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
@@ -53,7 +56,8 @@
             Assembly: "SELECT r.*, (ot.[Name] || ' / ' || om.[Name] || IFNULL(' / Serial: ' || o.[Serial], '') || IFNULL(' / # Interno: ' || o.[CustomerReference], '')) [ObjectTypeDescription], o.[ModelId] ObjectTypeModelId, om.[TrademarkId] ObjectTypeTrademarkId FROM MntAssemblies r INNER JOIN MntObjects o ON r.ObjectTypeId = o.Id INNER JOIN MntObjectModels om ON o.ModelId = om.Id INNER JOIN MntObjectTrademarks ot ON om.TrademarkId = ot.Id",
             Maintenance: "SELECT r.*, (ot.[Name] || ' / ' || om.[Name] || IFNULL(' / Serial: ' || o.[Serial], '') || IFNULL(' / # Interno: ' || o.[CustomerReference], '')) [ObjectTypeDescription], o.[ModelId] ObjectTypeModelId, om.[TrademarkId] ObjectTypeTrademarkId, m.[ModelId] MachineModelId, mm.[TrademarkId] MachineTrademarkId FROM MntMaintenances r INNER JOIN MntObjects o ON r.ObjectTypeId = o.Id INNER JOIN MntObjectModels om ON o.ModelId = om.Id INNER JOIN MntObjectTrademarks ot ON om.TrademarkId = ot.Id LEFT  JOIN MntMachines m ON r.MachineId = m.Id LEFT  JOIN MntMachineModels mm ON m.ModelId = mm.Id",
             MaintenanceCheck: "SELECT r.*, cl.[Name] [CheckName], cl.[Order] [CheckOrder], cl.[DiagnosticTypeId] FROM MntMaintenanceCheckList r INNER JOIN MntCheckList cl ON cl.Id = r.CheckId",
-            CellReview: "SELECT r.*, c.[Id] [CellId], c.[Order] [CellOrder], c.BatteryId FROM MntCellsReviews r INNER JOIN MntCells c ON c.Id = r.CellId"
+            CellReview: "SELECT r.*, c.[Id] [CellId], c.[Order] [CellOrder], c.BatteryId FROM MntCellsReviews r INNER JOIN MntCells c ON c.Id = r.CellId",
+            ArticleOutput: "SELECT r.*, a.[Name] [ArticleName], a.[InventoryCode] FROM [MntArticlesOutputs] r INNER JOIN [MntArticles] a ON a.[Id] = r.[ArticleId]"
         };
 
         var onSqlError = function (err) {
@@ -116,20 +120,56 @@
                 
             },
             insert: function (entity, values, onSuccess, onError) {
+                if (entitiesInheritedOfObjectType.indexOf(entity) < 0) {
+                    values.Id = PaCM.newGuid();
+                    values.CreatedOn = new Date();
+                    values.LastModified = new Date();
+                    values.ReplicationStatus = 0;
+                }
                 dbContext.beginTransaction(function (tx) {
                     tx.insert(entities[entity], values);
                 }, onSuccess, PaCM.isFunction(onError) ? onError : onSqlError, debugMode);
             },
             update: function (entity, values, where, parameters, onSuccess, onError) {
+                var options = {
+                    where: where,
+                    parameters: parameters
+                };
+
                 dbContext.beginTransaction(function (tx) {
-                    tx.update(entities[entity], values, where, parameters);
+                    tx.select(entities[entity], options, function (tx1, sqlResultSet1) {
+                        var changed =
+                        PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
+                            var valid =
+                            PaCM.eachProperties(values, function (key, val) {
+                                if (!(r[key] === val)) {
+                                    if (PaCM.isDate(r[key]) && PaCM.isDate(val)) {
+                                        if (!((r[key] - val) === 0)) {
+                                            return true; //Break;
+                                        }
+                                    } else {
+                                        return true; //Break;
+                                    }
+                                }
+                            });
+                            if (valid === true)
+                                return valid; //Break;
+                        });
+                        if (changed === true) {
+                            if (entitiesInheritedOfObjectType.indexOf(entity) < 0) {
+                                values.LastModified = new Date();
+                                values.ReplicationStatus = 0;
+                            }
+                            tx.update(entities[entity], values, where, parameters);
+                        }
+                    });
                 }, onSuccess, PaCM.isFunction(onError) ? onError : onSqlError, debugMode);
             },
             save: function (entity, id, values, onSuccess, onError) {
                 var self = this;
 
                 if (id) {
-                    if (PaCM.isUndefined(values.Id) || PaCM.isNull(values.Id)) {
+                    if (!(values.Id)) {
                         values.Id = id;
                     }
                     self.update(entity, values, 'Id = ?', [ id ], onSuccess, PaCM.isFunction(onError) ? onError : onSqlError);

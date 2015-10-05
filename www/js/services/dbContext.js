@@ -6,9 +6,9 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //'http://eccmant.emhesolutions.com/'; //
 
-        var dbVersion = '1.1.1.1';
+        var dbVersion = '2015.10.05.17.32';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -259,15 +259,6 @@
                         insert: function (table, values, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
-                                values.Id = (values.Id) ? values.Id : PaCM.newGuid();
-                                values.CreatedOn = (values.CreatedOn) ? values.CreatedOn : new Date();
-                                values.LastModified = (values.LastModified) ? values.LastModified : new Date();
-                                if (PaCM.isUndefined(values.ReplicationStatus)) {
-                                    values.ReplicationStatus = 0;
-                                }
-                            }
-
                             var parameters = [];
                             var arrFields = [];
                             var parFields = [];
@@ -293,13 +284,6 @@
                         update: function (table, values, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
                             
-                            if (tablesInheritedOfMntObjects.indexOf(table) < 0) {
-                                values.LastModified = (values.LastModified) ? values.LastModified : new Date();
-                                if (PaCM.isUndefined(values.ReplicationStatus)) {
-                                    values.ReplicationStatus = 0;
-                                }
-                            }
-
                             var _parameters = [];
                             var arrFields = [];
                             PaCM.eachProperties(values, function (key, val) {
@@ -409,7 +393,7 @@
                     var sqlCommands = [
     'create table AppVersion ( Id TEXT not null, DbVersion TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppSettings ( Id TEXT not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
-    'create table AppFiles ( Id TEXT not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT not null, MIMEType TEXT, Encoding TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
+    'create table AppFiles ( Id TEXT not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT, MIMEType TEXT, Encoding TEXT, Base64Str TEXT, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppKeys ( Id TEXT not null, Salt TEXT not null, Hash TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table CfgCountries ( Id TEXT not null, Name TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table CfgStates ( Id TEXT not null, Name TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, CountryId TEXT not null, primary key (Id), constraint FK_State_CountryId foreign key (CountryId) references CfgCountries )',

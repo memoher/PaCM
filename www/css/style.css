@@ -33,6 +33,12 @@ form.show-errors .ng-invalid {
     min-width: 56px;
 }
 
+#signatureCanvas {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 /*
 input, select, textarea {
     width: 100%;

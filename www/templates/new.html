@@ -37,7 +37,7 @@
                         </label>
                     </div>
                     <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.preventive" ng-change="maintenance.preventive = true">Preventivo</ion-toggle>
-                    <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="maintenance.corrective = readOnlyMode ? !maintenance.corrective : maintenance.corrective; tabs.refreshTabs();">Correctivo</ion-toggle>
+                    <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="maintenance.corrective = readOnlyMode ? !maintenance.corrective : maintenance.corrective; getMaintenanceInfo();">Correctivo</ion-toggle>
                 </form>
                 <div class="button-bar" ng-hide="(readOnlyMode || preloadData || maintenance.id || !(maintenance.customerId))">
                     <button type="button" class="button button-block  icon ion-battery-charging" ng-click="newBatteryMaintenance()"> Mantenimiento de batería</button>
@@ -285,7 +285,7 @@
         <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab }}">
             <ion-content padding="true" class="has-header">
                 <form name="physicalInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
-                    <div class="row" ng-repeat="cl in checkList| orderBy: 'checkOrder'">
+                    <div class="row" ng-repeat="cl in checkList | orderBy: 'checkOrder'">
                         <div class="col col-20">
                             {{ cl.checkName}}
                         </div>
@@ -313,7 +313,7 @@
         <ion-tab title="Inspección de celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab }}">
             <ion-content padding="true" class="has-header">
                 <form name="cellInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
-                    <div class="row" ng-repeat="cr in reviewOfCells| orderBy: 'cellOrder'">
+                    <div class="row" ng-repeat="cr in reviewOfCells | orderBy: 'cellOrder'">
                         <div class="col col-10">
                             # {{ cr.cellOrder}}
                         </div>
@@ -346,8 +346,35 @@
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab }}">
             <ion-content padding="true" class="has-header">
                 <form name="suppliesForm" ng-class="{'show-errors': !readOnlyMode}">
-                    <ion-list>
-                    </ion-list>
+                    <div class="row" ng-repeat="ao in articlesOutputs">
+                        <div class="col col-80">
+                            <div class="item item-input-inset" ng-click="searchArticle(ao)">
+                                <label class="item-input-wrapper">
+                                    <input placeholder="Artículo" type="text" readonly ng-model="ao.articleName">
+                                </label>
+                                <button type="button" tabindex="-1" class="button button-small button-pacm" ng-hide="readOnlyMode">
+                                    <i class="icon ion-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col col-10">
+                            <div class="item item-input-inset">
+                                <label class="item-input-wrapper">
+                                    <input type="number" min="0" placeholder="Cantidad" ng-model="ao.quantity" ng-required="ao.articleId" ng-readonly="readOnlyMode">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col col-10">
+                            <button type="button" tabindex="-1" class="button button-small button-pacm" ng-hide="readOnlyMode || !(ao.articleId)" ng-click="removeArticle(ao);">
+                                <i class="icon ion-trash-a"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="button" tabindex="-1" class="button button-block button-pacm" ng-hide="readOnlyMode" ng-click="addArticle();">
+                            <i class="icon ion-plus-round"></i> Agregar
+                        </button>
+                    </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
             </ion-content>
@@ -369,12 +396,13 @@
                             <input placeholder="Aceptado por" type="text" ng-model="maintenance.acceptedBy" required ng-readonly="readOnlyMode">
                         </label>
                     </div>
-                    <canvas id="signatureCanvas" width="{{ dev_width - 20 }}" height="300" style="border: 1px solid black;"></canvas>
-                    <img ng-src='{{signature}}'/>
+                    <div>
+                    <canvas id="signatureCanvas" width="600" height="300" style="border: 1px solid black;"></canvas>
+                    </div>
                 </form>
                 <div class="button-bar">
                     <button type="button" class="button button-energized" ng-click="clearCanvas()" ng-disabled="runningProcess || readOnlyMode">Repetir firma</button>
-                    <button type="button" class="button button-balanced" ng-click="saveMaintenance()" ng-disabled="runningProcess || readOnlyMode">Guarda cambios</button>
+                    <button type="button" class="button button-balanced" ng-click="saveMaintenance()" ng-disabled="(runningProcess || readOnlyMode || !(signaturePad) || signaturePad.isEmpty())">Guarda cambios</button>
                 </div>
                 <div style="height: 300px;" class="spacer"></div>
             </ion-content>

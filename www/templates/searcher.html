@@ -44,5 +44,13 @@
                 </a>
             </ion-item>
         </ion-list>
+        <ion-list ng-if="['Article'].indexOf(searcher.type)>=0">
+            <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: searcher.search" ng-click="searcher.selectRecord(r)">
+                {{ r.Name }} ({{ r.InventoryCode }})
+                <a class="button button-positive" ng-show="r.Selected">
+                    <i class="icon ion-checkmark"></i>
+                </a>
+            </ion-item>
+        </ion-list>
     </ion-content>
 </ion-modal-view>
