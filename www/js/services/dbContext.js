@@ -8,7 +8,7 @@
         
         var addressServer = 'http://192.168.0.12:57080/'; //'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //
 
-        var dbVersion = '2015.10.05.17.32';
+        var dbVersion = '2015.10.05.18.47';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -391,7 +391,7 @@
                     delete fnc03;
 
                     var sqlCommands = [
-    'create table AppVersion ( Id TEXT not null, DbVersion TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
+    'create table AppVersion ( DbVersion TEXT not null )',
     'create table AppSettings ( Id TEXT not null, SMTPServerDomain TEXT, SMTPServerHost TEXT not null, SMTPServerPort INT not null, SMTPServerAccount TEXT not null, SMTPServerPassword TEXT not null, SMTPServerEnableSsl BOOL not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppFiles ( Id TEXT not null, LocalName TEXT not null, Name TEXT not null, Extension TEXT, Size INT, MIMEType TEXT, Encoding TEXT, Base64Str TEXT, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
     'create table AppKeys ( Id TEXT not null, Salt TEXT not null, Hash TEXT not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, primary key (Id) )',
