@@ -18,8 +18,6 @@
             throw err;
         }
 
-        $scope.title = 'Mantenimiento';
-        $scope.readOnlyMode = true;
         $scope.preloadData = PaCM.isDefined($stateParams.elmType);
         
         $scope.tabs = {
@@ -1324,7 +1322,7 @@
             }
             _self.timeoutRefreshUI = setTimeout(function () {
                 _self.timeoutRefreshUI = null;
-                $scope.readOnlyMode = (!($scope.maintenance.statusId === 'InCapture') || !($scope.maintenance.executedById === userSession.user.Id) || !(userSession.user.Administrator === true));
+                $scope.readOnlyMode = (!($scope.maintenance.statusId === 'InCapture') || !($scope.maintenance.executedById === userSession.user.Id));
                 $scope.tabs.refreshTabs();
                 $scope.$digest();
             }, 200);
@@ -1344,7 +1342,6 @@
                     $scope.saveCanvas = function() {
                         _self.signatureData = $scope.signaturePad.toDataURL('image/png');
                     }
-                    _self.refreshUI();
                 }, 20);
             }
         }
