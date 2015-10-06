@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('newCtrl', function ($window, $scope, $state, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
+    PaCM.controllersModule.controller('newCtrl', function ($scope, $state, $stateParams, $ionicModal, $ionicTabsDelegate, dataContext, userSession) {
 
         if (!userSession.isLogged) {
             $state.go('app.login');
@@ -20,8 +20,6 @@
 
         $scope.title = 'Mantenimiento';
         $scope.readOnlyMode = true;
-        $scope.dev_width = $window.innerWidth;
-        $scope.dev_height = $window.innerHeight;
         $scope.preloadData = PaCM.isDefined($stateParams.elmType);
         
         $scope.tabs = {

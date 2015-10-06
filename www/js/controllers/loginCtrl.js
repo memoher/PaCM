@@ -2,6 +2,9 @@
     
     PaCM.controllersModule.controller('loginCtrl', function ($scope, $state, $ionicHistory, userSession) {
 
+        $ionicHistory.clearHistory();
+        $ionicHistory.clearCache();
+
         var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
@@ -22,17 +25,18 @@
             userSession.sigIn($scope.login.emailAddress, $scope.login.password,
                 function () {
                     $scope.runningProcess = false;
+                    $scope.login.emailAddress = null;
+                    $scope.login.password = null;
                     $scope.$digest();
                     $state.go('app.records');
                 },
                 function (err) {
                     $scope.runningProcess = false;
+                    $scope.login.password = null;
                     $scope.$digest();
                     PaCM.showErrorMessage(err);
                 });
         };
-
-        $ionicHistory.clearHistory();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------

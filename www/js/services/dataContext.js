@@ -46,7 +46,7 @@
             ArticleOutput: 'MntArticlesOutputs'
         };
         var entitiesInheritedOfObjectType = [
-            'MntBatteries', 'MntChargers'
+            'Battery', 'Charger'
         ];
         var queries = {
             ObjectType: "SELECT r.*, (t.[Name] || ' / ' || m.[Name] || IFNULL(' / Serial: ' || r.[Serial], '') || IFNULL(' / # Interno: ' || r.[CustomerReference], '')) [Description], m.[TrademarkId] FROM MntObjects r INNER JOIN MntObjectModels m ON r.ModelId = m.Id INNER JOIN MntObjectTrademarks t ON t.Id = m.TrademarkId",
