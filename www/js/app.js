@@ -104,6 +104,16 @@
                     }
                 })
 
+                .state('app.customer', {
+                    url: '/customer',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/customer.html',
+                            controller: 'customerCtrl'
+                        }
+                    }
+                })
+
                 .state('app.records', {
                     url: '/records',
                     views: {

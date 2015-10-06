@@ -243,9 +243,9 @@
         //---------------------------------------------------------------------------------------------------------
         
         $scope.history = [];
-        $scope.searchHistory = function (formValid) {
+        $scope.searchHistory = function (objectValid) {
 
-            if (!(formValid === true)) {
+            if (!(objectValid === true)) {
                 $scope.showErrors = true;
                 return false;
             }

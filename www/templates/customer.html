@@ -1,0 +1,140 @@
+<ion-view title="Nuevo cliente" cache-view="false">
+    <ion-content class="has-header" padding="true">
+        <form name="customerForm" ng-class="{'show-errors': showErrors}">
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">T.I.</span>
+                            <select ng-model="customer.identityTypeId" ng-options="it.id as it.shortName for it in resources.identityTypes" required>
+                                <option value=""> </option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Identidad</span>
+                            <input type="text" required ng-model="customer.identity">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Nombre</span>
+                            <input type="text" required ng-model="customer.name">
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Nombre corto</span>
+                            <input type="text" ng-model="customer.shortName">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">País</span>
+                            <input type="text" required ng-model="customer.countryName" placeholder="Digite aquí el nombre del país, si este aún no existe" ng-change="customer.countryId = null; resetState();">
+                        </label>
+                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchCountry()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Departamento</span>
+                            <input type="text" required ng-model="customer.stateName" placeholder="Digite aquí el nombre del departamento, si este aún no existe" ng-change="customer.stateId = null; resetCity();">
+                        </label>
+                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchState()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper">
+                            <span class="input-label">Ciudad</span>
+                            <input type="text" required ng-model="customer.cityName" placeholder="Digite aquí el nombre de la ciudad / municipio, si este aún no existe" ng-change="customer.cityId = null;">
+                        </label>
+                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchCity()">
+                            <i class="icon ion-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Dirección</span>
+                            <input type="text" required ng-model="customer.address">
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Código postal</span>
+                            <input type="text" ng-model="customer.postalCode">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Teléfono</span>
+                            <input type="text" required ng-model="customer.phoneNumber">
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Web site</span>
+                            <input type="url" ng-model="customer.webSite">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row responsive-sm">
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Nombre del contacto</span>
+                            <input type="text" ng-model="customer.contactName">
+                        </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
+                            <span class="input-label">Correo electrónico del contacto</span>
+                            <input type="email" ng-model="customer.contactEmailAddress">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 0;" class="spacer"></div>
+            <button type="submit" class="button button-positive button-block" ng-click="saveCustomer(customerForm.$valid)" ng-disabled="runningProcess">Guardar</button>
+        </form>
+        <div style="height: 300px;" class="spacer"></div>
+    </ion-content>
+</ion-view>

@@ -28,6 +28,10 @@ form.show-errors .ng-invalid {
 .item-input-inset .item-input-wrapper select {
     height: 28px;
 }
+.item-input-inset .item-input-wrapper.with-title input,
+.item-input-inset .item-input-wrapper.with-title select {
+    width: calc(100% - 200px);
+}
 
 .button.button-small.button-pacm {
     min-width: 56px;

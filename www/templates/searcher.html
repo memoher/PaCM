@@ -12,7 +12,7 @@
                 <input type="search" placeholder="Filtro" ng-model="searcher.search">
             </label>
         </form>
-        <ion-list ng-if="['Customer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(searcher.type)>=0">
+        <ion-list ng-if="['Country', 'State', 'City', 'Customer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(searcher.type)>=0">
             <ion-item class="item-button-right" ng-repeat="r in searcher.data | filter: { Name: searcher.search }" ng-click="searcher.selectRecord(r)">
                 {{ r.Name}}
                 <a class="button button-positive" ng-show="r.Selected">

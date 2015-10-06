@@ -14,9 +14,9 @@
             emailAddress: null,
             password: null
         };
-        $scope.sigIn = function (formValid) {
+        $scope.sigIn = function (loginValid) {
 
-            if (!(formValid === true)) {
+            if (!(loginValid === true)) {
                 $scope.showErrors = true;
                 return false;
             }

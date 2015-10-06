@@ -4,34 +4,34 @@
             <ion-content padding="true" class="has-header">
                 <form name="starterForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Código único</span>
                             <input type="text" required readonly ng-model="maintenance.uniqueCode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Fecha</span>
                             <input type="date" required ng-readonly="readOnlyMode" ng-model="maintenance.date">
                         </label>
                     </div>
-                    <div class="item item-input-inset" ng-click="searchCustomer()">
-                        <label class="item-input-wrapper">
+                    <div class="item item-input-inset">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Cliente</span>
                             <input placeholder="" type="text" required readonly ng-model="maintenance.customerName">
                         </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-hide="(readOnlyMode || preloadData || maintenance.id)">
+                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchCustomer()" ng-hide="(readOnlyMode || preloadData || maintenance.id)">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Realizado por</span>
                             <input type="text" required readonly ng-model="maintenance.executedByUsername">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Estado</span>
                             <input type="text" required readonly ng-model="maintenance.statusDescription">
                         </label>
@@ -50,25 +50,25 @@
             <ion-content padding="true" class="has-header">
                 <form name="batteryForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Marca</span>
-                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text"  required ng-readonly="readOnlyMode" ng-model="battery.trademarkName">
+                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text"  required ng-readonly="readOnlyMode" ng-model="battery.trademarkName" ng-change="battery.trademarkId = null; resetObjectTypeModel(true);">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchObjectTypeTrademark(true)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Modelo</span>
-                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="battery.modelName">
+                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="battery.modelName" ng-change="battery.modelId = null; resetObjectType(true);">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchObjectTypeModel(true)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Serial</span>
                             <input type="text" placeholder="Digite aquí el serial, si la batería aún no existe" ng-model="battery.serial" ng-readonly="(readOnlyMode || (maintenance.batteryId && battery.serial))">
                         </label>
@@ -77,13 +77,13 @@
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Nro Interno</span>
                             <input placeholder="Nro de referencia del cliente" type="text" ng-model="battery.customerReference" ng-readonly="(readOnlyMode || (maintenance.batteryId && battery.customerReference))">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Voltaje</span>
                             <select ng-model="battery.typeId" ng-options="bt.id as bt.description for bt in resources.batteryTypes" ng-change="getMaintenanceInfo()" required ng-disabled="(readOnlyMode || maintenance.batteryId)">
                                 <option value=""> </option>
@@ -91,13 +91,13 @@
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Amperaje</span>
                             <input placeholder="Amperaje" type="text" ng-model="battery.amperage" required ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Conector</span>
                             <select ng-model="battery.connectorTypeId" ng-options="ct.id as ct.name for ct in resources.connectorTypes" ng-change="refreshConnectorColorList()" required ng-disabled="readOnlyMode">
                                 <option value=""> </option>
@@ -105,7 +105,7 @@
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label"> </span>
                             <select ng-model="battery.connectorId" ng-options="c.id as c.name for c in resources.connectors | filter: { typeId: battery.connectorTypeId }" required ng-disabled="readOnlyMode">
                                 <option value=""> </option>
@@ -113,7 +113,7 @@
                         </label>
                     </div>
                     <div class="item item-input-inset" ng-show="battery.connectorColorRequired">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label"> </span>
                             <select ng-model="battery.connectorColorId" ng-options="cc.id as cc.name for cc in resources.connectorColors" ng-required="battery.connectorColorRequired" ng-disabled="readOnlyMode">
                                 <option value=""> </option>
@@ -124,37 +124,37 @@
                     <ion-toggle toggle-class="toggle-positive" ng-model="battery.cover" ng-change="battery.cover = readOnlyMode ? !battery.cover : battery.cover">Tapa</ion-toggle>
                     <ion-toggle toggle-class="toggle-positive" ng-model="battery.drainHoles" ng-change="battery.drainHoles = readOnlyMode ? !battery.drainHoles : battery.drainHoles">Agujeros de drenaje</ion-toggle>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Peso mínimo (kg)</span>
                             <input placeholder="Peso mínimo" type="number" min="0" ng-model="battery.minimunWeight" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Peso máximo (kg)</span>
                             <input placeholder="Peso máximo" type="number" min="0" ng-model="battery.maximunWeight" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Longitud (mm)</span>
                             <input placeholder="Longitud" type="number" min="0" ng-model="battery.length" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Ancho (mm)</span>
                             <input placeholder="Ancho" type="number" min="0" ng-model="battery.width" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Altura de los ojales (mm)</span>
                             <input placeholder="Altura ojales" type="number" min="0" ng-model="battery.handleHeight" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Altura de la jarra (mm)</span>
                             <input placeholder="Altura jarra" type="number" min="0" ng-model="battery.boxHeight" ng-readonly="readOnlyMode">
                         </label>
@@ -167,25 +167,25 @@
             <ion-content padding="true" class="has-header">
                 <form name="chargerForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Marca</span>
-                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="charger.trademarkName">
+                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="charger.trademarkName" ng-change="charger.trademarkId = null; resetObjectTypeModel(false);">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchObjectTypeTrademark(false)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Modelo</span>
-                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="charger.modelName">
+                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" required ng-readonly="readOnlyMode" ng-model="charger.modelName" ng-change="charger.modelId = null; resetObjectType(false);">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchObjectTypeModel(false)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Serial</span>
                             <input type="text" placeholder="Digite aquí el serial, si el cargador aún no existe" ng-model="charger.serial" ng-readonly="(readOnlyMode || (maintenance.chargerId && charger.serial))">
                         </label>
@@ -194,19 +194,19 @@
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Nro Interno</span>
                             <input placeholder="Nro de referencia del cliente" type="text" ng-model="charger.customerReference" ng-readonly="(readOnlyMode || (maintenance.chargerId && charger.customerReference))">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Voltaje</span>
                             <input placeholder="Voltaje" type="text" ng-model="charger.voltage" required ng-change="getMaintenanceInfo()" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Amperaje</span>
                             <input placeholder="Amperaje" type="text" ng-model="charger.amperage" required ng-readonly="readOnlyMode">
                         </label>
@@ -219,25 +219,25 @@
             <ion-content padding="true" class="has-header">
                 <form name="machineForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Marca</span>
-                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text" ng-model="machine.trademarkName" ng-readonly="readOnlyMode">
+                            <input placeholder="Digite aquí el nombre de la marca, si esta aún no existe" type="text" ng-model="machine.trademarkName" ng-readonly="readOnlyMode" ng-change="machine.trademarkId = null; resetMachineModel();">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchMachineTrademark(false)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Modelo</span>
-                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" ng-model="machine.modelName" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode">
+                            <input placeholder="Digite aquí el nombre del modelo, si este aún no existe" type="text" ng-model="machine.modelName" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode" ng-change="machine.mdoelId = null; resetMachine();">
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchMachineModel(false)" ng-hide="readOnlyMode">
                             <i class="icon ion-search"></i>
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Serial</span>
                             <input type="text" placeholder="Digite aquí el serial, si la máquina aún no existe" ng-model="machine.serial" ng-readonly="(readOnlyMode || (maintenance.machineId && machine.serial))">
                         </label>
@@ -246,26 +246,26 @@
                         </button>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Nro Interno</span>
                             <input placeholder="Nro de referencia del cliente" type="text" ng-model="machine.customerReference" ng-readonly="(readOnlyMode || (maintenance.machineId && machine.customerReference))">
                         </label>
                     </div>
                     <h4>Compartimiento</h4>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Longitud (mm)</span>
                             <input placeholder="Longitud" type="number" min="0" ng-model="machine.compartmentLength"  ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Ancho (mm)</span>
                             <input placeholder="Ancho" type="number" min="0" ng-model="machine.compartmentWidth"  ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode">
                         </label>
                     </div>
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Altura (mm)</span>
                             <input placeholder="Altura" type="number" min="0" ng-model="machine.compartmentHeight"  ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode">
                         </label>
@@ -391,7 +391,7 @@
             <ion-content padding="true" class="has-header" scroll="false">
                 <form name="endingForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
+                        <label class="item-input-wrapper with-title">
                             <span class="input-label">Aceptado por</span>
                             <input placeholder="Aceptado por" type="text" ng-model="maintenance.acceptedBy" required ng-readonly="readOnlyMode">
                         </label>

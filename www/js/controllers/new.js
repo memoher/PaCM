@@ -677,33 +677,25 @@
             }
         };
         _self.saveBatteryTrademark = function (onSuccess) {
-            if ($scope.battery.trademarkId == null) {
-                var r = {
-                    Name: $scope.battery.trademarkName
-                };
-                dataContext.insert('ObjectTypeTrademark', r, function () {
-                    $scope.battery.trademarkId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.battery.trademarkName
+            };
+            dataContext.save('ObjectTypeTrademark', $scope.battery.trademarkId, r, function () {
+                $scope.battery.trademarkId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveBatteryModel = function (onSuccess) {
-            if ($scope.battery.modelId == null) {
-                var r = {
-                    Name: $scope.battery.modelName,
-                    TrademarkId: $scope.battery.trademarkId
-                };
-                dataContext.insert('ObjectTypeModel', r, function () {
-                    $scope.battery.modelId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.battery.modelName,
+                TrademarkId: $scope.battery.trademarkId
+            };
+            dataContext.save('ObjectTypeModel', $scope.battery.modelId, r, function () {
+                $scope.battery.modelId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveBattery = function (onSuccess) {
             var ot = {
@@ -785,33 +777,25 @@
             }
         };
         _self.saveChargerTrademark = function (onSuccess) {
-            if ($scope.charger.trademarkId == null) {
-                var r = {
-                    Name: $scope.charger.trademarkName
-                };
-                dataContext.insert('ObjectTypeTrademark', r, function () {
-                    $scope.charger.trademarkId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.charger.trademarkName
+            };
+            dataContext.save('ObjectTypeTrademark', $scope.charger.trademarkId, r, function () {
+                $scope.charger.trademarkId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveChargerModel = function (onSuccess) {
-            if ($scope.charger.modelId == null) {
-                var r = {
-                    Name: $scope.charger.modelName,
-                    TrademarkId: $scope.charger.trademarkId
-                };
-                dataContext.insert('ObjectTypeModel', r, function () {
-                    $scope.charger.modelId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.charger.modelName,
+                TrademarkId: $scope.charger.trademarkId
+            };
+            dataContext.save('ObjectTypeModel', $scope.charger.modelId, r, function () {
+                $scope.charger.modelId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveCharger = function (onSuccess) {
             var ot = {
@@ -873,36 +857,28 @@
             }
         };
         _self.saveMachineTrademark = function (onSuccess) {
-            if ($scope.machine.trademarkId == null) {
-                var r = {
-                    Name: $scope.machine.trademarkName
-                };
-                dataContext.insert('MachineTrademark', r, function () {
-                    $scope.machine.trademarkId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.machine.trademarkName
+            };
+            dataContext.save('MachineTrademark', $scope.machine.trademarkId, r, function () {
+                $scope.machine.trademarkId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveMachineModel = function (onSuccess) {
-            if ($scope.machine.modelId == null) {
-                var r = {
-                    Name: $scope.machine.modelName,
-                    TrademarkId: $scope.machine.trademarkId,
-                    CompartmentLength: $scope.machine.compartmentLength,
-                    CompartmentWidth: $scope.machine.compartmentWidth,
-                    CompartmentHeight: $scope.machine.compartmentHeight
-                };
-                dataContext.insert('MachineModel', r, function () {
-                    $scope.machine.modelId = r.Id;
-                    PaCM.cleaner(r); delete r;
-                    onSuccess();
-                }, _self.onSqlError);
-            } else {
+            var r = {
+                Name: $scope.machine.modelName,
+                TrademarkId: $scope.machine.trademarkId,
+                CompartmentLength: $scope.machine.compartmentLength,
+                CompartmentWidth: $scope.machine.compartmentWidth,
+                CompartmentHeight: $scope.machine.compartmentHeight
+            };
+            dataContext.save('MachineModel', $scope.machine.modelId, r, function () {
+                $scope.machine.modelId = r.Id;
+                PaCM.cleaner(r); delete r;
                 onSuccess();
-            }
+            }, _self.onSqlError);
         };
         _self.saveMachine = function (onSuccess) {
             var m = {
@@ -1089,19 +1065,15 @@
 
             var _saveFnc01 = function (c) {
                 return function (onSuccess) {
-                    if (c.cellId == null) {
-                        var cr = {
-                            BatteryId: $scope.maintenance.batteryId,
-                            Order: c.cellOrder
-                        };
-                        dataContext.insert('Cell', cr, function () {
-                            c.cellId = cr.Id;
-                            PaCM.cleaner(cr); delete cr;
-                            onSuccess();
-                        }, _self.onSqlError);
-                    } else {
+                    var cr = {
+                        BatteryId: $scope.maintenance.batteryId,
+                        Order: c.cellOrder
+                    };
+                    dataContext.save('Cell', c.cellId, cr, function () {
+                        c.cellId = cr.Id;
+                        PaCM.cleaner(cr); delete cr;
                         onSuccess();
-                    }
+                    }, _self.onSqlError);
                 };
             };
 
@@ -1258,6 +1230,24 @@
             });
         };
 
+        $scope.prepareCanvas = function () {
+            if (PaCM.isUndefined(_self.canvas)) {
+                setTimeout(function () {
+                    _self.canvas = document.getElementById('signatureCanvas');
+                    $scope.signaturePad = new SignaturePad(_self.canvas);
+                    if (_self.signatureData) {
+                        $scope.signaturePad.fromDataURL(_self.signatureData);
+                    }
+                    $scope.clearCanvas = function() {
+                        $scope.signaturePad.clear();
+                    }
+                    $scope.saveCanvas = function() {
+                        _self.signatureData = $scope.signaturePad.toDataURL('image/png');
+                    }
+                }, 20);
+            }
+        }
+
         $scope.resources = {
             batteryTypes: [],
             connectorTypes: [],
@@ -1328,24 +1318,6 @@
             }, 200);
         }
 
-        $scope.prepareCanvas = function () {
-            if (PaCM.isUndefined(_self.canvas)) {
-                setTimeout(function () {
-                    _self.canvas = document.getElementById('signatureCanvas');
-                    $scope.signaturePad = new SignaturePad(_self.canvas);
-                    if (_self.signatureData) {
-                        $scope.signaturePad.fromDataURL(_self.signatureData);
-                    }
-                    $scope.clearCanvas = function() {
-                        $scope.signaturePad.clear();
-                    }
-                    $scope.saveCanvas = function() {
-                        _self.signatureData = $scope.signaturePad.toDataURL('image/png');
-                    }
-                }, 20);
-            }
-        }
-
 
         if ($scope.maintenance.id != null) {
             $scope.title = 'Mantenimiento';
@@ -1375,9 +1347,13 @@
                 $scope.tabs.chargerTab = true;
                 _self.getCharger();
             }
-            _self.refreshUI();
         }
         _self.getResources();
+        _self.refreshUI();
+
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------------
 
         $scope.$on('$destroy', function() {
 
