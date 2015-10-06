@@ -397,12 +397,12 @@
                         </label>
                     </div>
                     <div>
-                    <canvas id="signatureCanvas" width="600" height="300" style="border: 1px solid black;"></canvas>
+                    <canvas id="signatureCanvas" width="700" height="350"></canvas>
                     </div>
                 </form>
                 <div class="button-bar">
                     <button type="button" class="button button-energized" ng-click="clearCanvas()" ng-disabled="runningProcess || readOnlyMode">Repetir firma</button>
-                    <button type="button" class="button button-balanced" ng-click="saveMaintenance()" ng-disabled="(runningProcess || readOnlyMode || !(signaturePad) || signaturePad.isEmpty())">Guarda cambios</button>
+                    <button type="button" class="button button-balanced" ng-click="saveMaintenance()" ng-disabled="(runningProcess || readOnlyMode)">Guarda cambios</button>
                 </div>
                 <div style="height: 300px;" class="spacer"></div>
             </ion-content>
