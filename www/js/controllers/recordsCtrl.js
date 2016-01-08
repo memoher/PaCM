@@ -2,11 +2,11 @@
     
     PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
 
-        if (!userSession.isLogged) {
+        if (!(userSession.isLogged === true)) {
             $state.go('app.login');
         }
 
-        var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
@@ -60,9 +60,10 @@
         
         $scope.searchCustomer = function () {
             dataContext.find('Customer', { orderBy: 'Name' }, function (customers) {
-                if ($scope.filters.customerId != null) {
+                if ($scope.filters.customerId) {
+                    var val = $scope.filters.customerId;
                     PaCM.eachArray(customers, function (inx, c) {
-                        if (c.Id == $scope.filters.customerId) {
+                        if (c.Id == val) {
                             c.Selected = true;
                             return true; //break;
                         }
@@ -93,9 +94,10 @@
         
         $scope.searchObjectTypeTrademark = function () {
             dataContext.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
-                if ($scope.filters.objectTypeTrademarkId != null) {
+                if ($scope.filters.objectTypeTrademarkId) {
+                    var val = $scope.filters.objectTypeTrademarkId;
                     PaCM.eachArray(trademarks, function (inx, t) {
-                        if (t.Id == $scope.filters.objectTypeTrademarkId) {
+                        if (t.Id == val) {
                             t.Selected = true;
                             return true; //break;
                         }
@@ -134,9 +136,10 @@
                 options.where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             
             dataContext.find('ObjectTypeModel', options, function (models) {
-                if ($scope.filters.objectTypeModelId != null) {
+                if ($scope.filters.objectTypeModelId) {
+                    var val = $scope.filters.objectTypeModelId;
                     PaCM.eachArray(models, function (inx, m) {
-                        if (m.Id == $scope.filters.objectTypeModelId) {
+                        if (m.Id == val) {
                             m.Selected = true;
                             return true; //break;
                         }
@@ -184,9 +187,10 @@
                 options.where.ModelId = $scope.filters.objectTypeModelId;
             
             dataContext.find('ObjectType', options, function (objects) {
-                if ($scope.filters.objectTypeId != null) {
+                if ($scope.filters.objectTypeId) {
+                    var val = $scope.filters.objectTypeId;
                     PaCM.eachArray(objects, function (inx, ot) {
-                        if (ot.Id == $scope.filters.objectTypeId) {
+                        if (ot.Id == val) {
                             ot.Selected = true;
                             return true; //break;
                         }
@@ -291,18 +295,8 @@
             $scope.searcher.close();
             $scope.modal.remove();
 
-            PaCM.eachProperties($scope, function (key, value) {
-                if (!(key.substring(0, 1) === '$')) {
-                    //PaCM.cleaner(value);
-                    delete $scope[key];
-                }
-            });
-
-            PaCM.eachProperties(_self, function (key, value) {
-                //PaCM.cleaner(value);
-                delete _self[key];
-            });
-            delete _self;
+            PaCM.cleaner($scope);
+            PaCM.cleaner(_this); delete _this;
             
         });
         

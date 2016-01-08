@@ -5,7 +5,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchCustomer()">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Cliente" readonly ng-model="filters.customerName" required>
+                            <input type="text" placeholder="Cliente" readonly ng-model="filters.customerName" ng-model-options="{ updateOn: 'blur' }" required>
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
@@ -15,7 +15,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeTrademark()">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" required>
+                            <input type="text" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" ng-model-options="{ updateOn: 'blur' }" required>
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
@@ -27,7 +27,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectTypeModel()">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" required>
+                            <input type="text" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" ng-model-options="{ updateOn: 'blur' }" required>
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>
@@ -37,7 +37,7 @@
                 <div class="col">
                     <div class="item item-input-inset" ng-click="searchObjectType()">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" required>
+                            <input type="text" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" ng-model-options="{ updateOn: 'blur' }" required>
                         </label>
                         <button type="button" tabindex="-1" class="button button-small button-pacm">
                             <i class="icon ion-search"></i>

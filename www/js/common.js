@@ -9,6 +9,7 @@
     window.PaCM = {
         isDefined: function (vlr) {
             var self = this;
+
             return !self.isUndefined(vlr);
         },
         isUndefined: function (vlr) {
@@ -24,10 +25,11 @@
             return (typeof vlr === 'function');
         },
         isObject: function (vlr) {
-            return (typeof vlr === 'object');
+            return (typeof vlr === 'object' && vlr.toString() === '[object Object]');
         },
         isInteger: function (vlr) {
             var self = this;
+
             return (self.isNumber(vlr) && (vlr % 1 === 0));
         },
         isNumber: function (vlr) {
@@ -38,6 +40,7 @@
         },
         parseDateString: function (vlr) {
             var self = this;
+
             if (self.isDate(vlr))
                 return vlr;
             if (self.isString(vlr)) {
@@ -61,6 +64,7 @@
         },
         isStringIsNullOrEmpty: function (vlr) {
             var self = this;
+
             return (vlr === STRING_EMPTY || self.isNull(vlr));
         },
         getStringEmpty: function () {
@@ -129,6 +133,7 @@
         },
         showErrorMessage: function (err, msg) {
             var self = this;
+
             alert(self.prepareErrorMessage(err, msg));
         },
         mergeArray: function (key, arr0, arr1, arr2, arr3, arr4, arr5) {
@@ -228,7 +233,8 @@
 
             if (arr) {
                 if (self.isArray(arr)) {
-                    for (var i = 0; i < arr.length; i++) {
+                    var arrayLength = arr.length;
+                    for (var i = 0; i < arrayLength; i++) {
                         var result = iterator(i, arr[i]);
                         if (self.isDefined(result)) {
                             return result;
@@ -244,7 +250,8 @@
 
             if (arr) {
                 if (self.isArray(arr)) {
-                    for (var i = arr.length - 1; i >= 0; i--) {
+                    var arrayLength = arr.length;
+                    for (var i = arrayLength - 1; i >= 0; i--) {
                         var result = iterator(i, arr[i]);
                         if (self.isDefined(result)) {
                             return result;
@@ -278,7 +285,8 @@
 
             if (sqlRS) {
                 if (self.isDefined(sqlRS.rows)) {
-                    for (var i = 0; i < sqlRS.rows.length; i++) {
+                    var totalRows = sqlRS.rows.length;
+                    for (var i = 0; i < totalRows; i++) {
                         var r = sqlRS.rows.item(i);
                         var o = {};
                         self.eachProperties(r, function (key, val) {
@@ -312,7 +320,8 @@
 
             if (sqlRS) {
                 if (self.isDefined(sqlRS.rows)) {
-                    for (var i = sqlRS.rows.length - 1; i >= 0; i--) {
+                    var totalRows = sqlRS.rows.length;
+                    for (var i = totalRows - 1; i >= 0; i--) {
                         var r = sqlRS.rows.item(i);
                         var o = {};
                         self.eachProperties(r, function (key, val) {
@@ -345,19 +354,21 @@
             var self = this;
 
             if (self.isArray(obj)) {
-                while (obj.length > 0) {
-                    obj.splice(0, 1);
-                }
+                obj.length = 0;
             } else if (self.isObject(obj)) {
-                for (var p in obj) {
-                    if (obj.hasOwnProperty(p)) {
-                        delete obj[p];
+                self.eachProperties(obj, function (key, val) {
+                    if (!(key.substring(0, 1) === '$')) {
+                        if (self.isArray(obj[key])) {
+                            obj[key].length = 0;
+                        }
+                        delete obj[key];
                     }
-                }
+                });
             }
         },
         isNetworkOnline: function () {
             var self = this;
+
             if (self.isDefined(navigator.connection)) {
                 var networkState = navigator.connection.type;
                 return !(networkState === Connection.NONE);

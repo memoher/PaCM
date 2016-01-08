@@ -5,14 +5,14 @@
         $ionicHistory.clearHistory();
         $ionicHistory.clearCache();
 
-        var _self = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
 
         $scope.login = {
-            emailAddress: null,
-            password: null
+            emailAddress: 'julian_her@hotmail.com',
+            password: 123456
         };
         $scope.sigIn = function (loginValid) {
 
@@ -44,18 +44,8 @@
         
         $scope.$on('$destroy', function() {
 
-            PaCM.eachProperties($scope, function (key, value) {
-                if (!(key.substring(0, 1) === '$')) {
-                    //PaCM.cleaner(value);
-                    delete $scope[key];
-                }
-            });
-
-            PaCM.eachProperties(_self, function (key, value) {
-                //PaCM.cleaner(value);
-                delete _self[key];
-            });
-            delete _self;
+            PaCM.cleaner($scope);
+            PaCM.cleaner(_this); delete _this;
             
         });
 
