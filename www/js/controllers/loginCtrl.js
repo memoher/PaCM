@@ -28,6 +28,10 @@
                     $scope.login.emailAddress = null;
                     $scope.login.password = null;
                     $scope.$digest();
+                    
+                    $ionicHistory.nextViewOptions({
+                        historyRoot: true
+                    });
                     $state.go('app.records');
                 },
                 function (err) {

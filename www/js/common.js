@@ -2,8 +2,17 @@
 
     var STRING_EMPTY = '';
 
-    var _newGuid_s4 = function () {
+    var _randomS4Fnc = function () {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+    var _buildGuidFnc = function () {
+        return _randomS4Fnc() + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + _randomS4Fnc() + _randomS4Fnc();
+    };
+
+    var _buildFunctionFnc = function (fnc01, fnc02) {
+        return function () {
+            fnc01(fnc02);
+        };
     };
 
     window.PaCM = {
@@ -41,8 +50,9 @@
         parseDateString: function (vlr) {
             var self = this;
 
-            if (self.isDate(vlr))
+            if (self.isDate(vlr)) {
                 return vlr;
+            }
             if (self.isString(vlr)) {
                 if (vlr.length = 24 && vlr.substring(4,5) == '-' && vlr.substring(7,8) == '-' && vlr.substring(10,11) == 'T') {
                     return new Date(vlr);
@@ -71,7 +81,7 @@
             return STRING_EMPTY;
         },
         newGuid: function () {
-            return _newGuid_s4() + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + '-' + _newGuid_s4() + _newGuid_s4() + _newGuid_s4();
+            return _buildGuidFnc();
         },
         execute: function (actions, onSuccess) {
             var self = this;
@@ -81,27 +91,22 @@
                 return;
             }
             
-            var _buildFnc = function (fnc01, fnc02) {
-                return function () {
-                    fnc01(fnc02);
-                };
-            };
+            var totalFncs = actions.length;
 
             var fncs = [];
             self.eachArrayInvert(actions, function (inx, f) {
                 // Todos menos el último
-                if (inx < (actions.length - 1)) {
-                    fncs.push(_buildFnc(f, fncs[fncs.length - 1]));
+                if (inx < (totalFncs - 1)) {
+                    fncs.push(_buildFunctionFnc(f, fncs[fncs.length - 1]));
                 }
                 //Último (primera función en la pila, última en ejecutarse)
                 else {
-                    fncs.push(_buildFnc(f, onSuccess));
+                    fncs.push(_buildFunctionFnc(f, onSuccess));
                 }
             });
             fncs[fncs.length - 1]();
 
             self.cleaner(fncs); delete fncs;
-            delete _buildFnc;
             self.cleaner(actions); delete actions;
         },
         prepareErrorMessage: function (err, msg) {
@@ -235,7 +240,7 @@
                 if (self.isArray(arr)) {
                     var arrayLength = arr.length;
                     for (var i = 0; i < arrayLength; i++) {
-                        var result = iterator(i, arr[i]);
+                        var result = iterator(i, arr[i], arrayLength);
                         if (self.isDefined(result)) {
                             return result;
                         }
@@ -252,7 +257,7 @@
                 if (self.isArray(arr)) {
                     var arrayLength = arr.length;
                     for (var i = arrayLength - 1; i >= 0; i--) {
-                        var result = iterator(i, arr[i]);
+                        var result = iterator(i, arr[i], arrayLength);
                         if (self.isDefined(result)) {
                             return result;
                         }
@@ -305,7 +310,7 @@
                             }
                         });
                         self.cleaner(r); delete r;
-                        var result = iterator(i, o);
+                        var result = iterator(i, o, totalRows);
                         if (self.isDefined(result)) {
                             return result;
                         }
@@ -340,7 +345,7 @@
                             }
                         });
                         self.cleaner(r); delete r;
-                        var result = iterator(i, o);
+                        var result = iterator(i, o, totalRows);
                         if (self.isDefined(result)) {
                             return result;
                         }
