@@ -20,29 +20,45 @@
             synchronizer.run(
                 function () {
                     $scope.runningProcess = false;
-                    $scope.$digest();
+                    _this.refreshUI();
                     alert('Data synchronized successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
-                    $scope.$digest();
+                    _this.refreshUI();
                     PaCM.showErrorMessage(err, 'Fails during data synchronize');
                 });
         };
 
         $scope.entriesConsoleLog = [];
         _this.refreshConsoleLog = function (level, msg) {
-            while ($scope.entriesConsoleLog.length > 10) {
-                $scope.entriesConsoleLog.splice(0, 1);
-            }
             $scope.entriesConsoleLog.push({
                 dateTime: new Date(),
                 level: level,
                 message: msg
             });
+            if ($scope.entriesConsoleLog.length > 10) {
+                $scope.entriesConsoleLog.shift();
+            }
+            _this.refreshUI();
         }
 
         synchronizer.addEventOnRuning(_this.refreshConsoleLog);
+
+
+        _this.timeoutRefreshUI = null;
+        _this._onRefreshUI = function () {
+            _this.timeoutRefreshUI = null;
+            $scope.$digest();
+        };
+        _this.refreshUI = function () {
+            if (_this.timeoutRefreshUI) {
+                clearTimeout(_this.timeoutRefreshUI);
+                _this.timeoutRefreshUI = null;
+            }
+            _this.timeoutRefreshUI = setTimeout(_this._onRefreshUI, 100);
+        }
+        _this.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -53,7 +69,7 @@
             synchronizer.removeEventOnRuning(_this.refreshConsoleLog);
 
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); delete _this;
+            PaCM.cleaner(_this); _this = null;
 
         });
     });

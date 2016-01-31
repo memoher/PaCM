@@ -10,62 +10,62 @@
 		var _synchronizerInterval = 1000 * 60 * 5; /* 5 minutos */
 		var _synchronizerTask = null;
 		
-		var onLineFnc = function () {
+		var _onLineFnc = function () {
 
 			if (_synchronizerTask == null) {
-				_synchronizerTask = setInterval(synchronizeFnc, _synchronizerInterval);
+				_synchronizerTask = setInterval(_synchronizeFnc, _synchronizerInterval);
 			}
 			
-			onRuningFnc(3, 'En linea');
-			synchronizeFnc();
+			_onRuningFnc(3, 'En linea');
+			_synchronizeFnc();
 		};
 
-		var offLineFnc = function () {
+		var _offLineFnc = function () {
 			
 			if (_synchronizerTask != null) {
 				clearInterval(_synchronizerTask);
 				_synchronizerTask = null;
 			}
 
-			onRuningFnc(3, 'Fuera de linea');
+			_onRuningFnc(3, 'Fuera de linea');
 		};
 
-		var synchronizeFnc = function (onSucess, onError) {
+		var _synchronizeFnc = function (onSucess, onError) {
 
 			if (_synchronizerTask != null) {
 				clearInterval(_synchronizerTask);
-				_synchronizerTask = setInterval(synchronizeFnc, _synchronizerInterval);
+				_synchronizerTask = setInterval(_synchronizeFnc, _synchronizerInterval);
 			}
 
 			if (!PaCM.isNetworkOnline()) {
-				onRuningFnc(3, 'Sin conexión con el servidor');
+				_onRuningFnc(3, 'Sin conexión con el servidor');
 				if (PaCM.isFunction(onSucess))
             		onSucess();
 				return;
 			}
 
-			onRuningFnc(3, 'Inicia proceso de sincronización con el servidor');
-			onRuningFnc(3, 'Subiendo datos nuevos al servidor');
+			_onRuningFnc(3, 'Inicia proceso de sincronización con el servidor');
+			_onRuningFnc(3, 'Subiendo datos nuevos al servidor');
 			dbContext.exportData(
                 function (uploadedData) {
                 	if (uploadedData === true)
-                		onRuningFnc(3, 'Datos subidos correctamente');
+                		_onRuningFnc(3, 'Datos subidos correctamente');
                 	else
-                		onRuningFnc(3, 'No hay datos nuevos por subir');
+                		_onRuningFnc(3, 'No hay datos nuevos por subir');
 
-					onRuningFnc(3, 'Descargando datos nuevos del servidor');
+					_onRuningFnc(3, 'Descargando datos nuevos del servidor');
                     dbContext.importData(
 		                function (downloadedData) {
 		                	if (downloadedData === true)
-		                		onRuningFnc(3, 'Datos descargados correctamente');
+		                		_onRuningFnc(3, 'Datos descargados correctamente');
 		                	else
-		                		onRuningFnc(3, 'No hay datos nuevos por descargar');
+		                		_onRuningFnc(3, 'No hay datos nuevos por descargar');
 
 		                	if (PaCM.isFunction(onSucess))
 		                		onSucess();
 		                },
 		                function (err) {
-		                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+		                	_onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
 
 		                	if (PaCM.isFunction(onError))
 		                		onError();
@@ -73,21 +73,21 @@
 		                debugMode);
                 },
                 function (err) {
-                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+                	_onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
 
-					onRuningFnc(3, 'Descargando datos nuevos del servidor');
+					_onRuningFnc(3, 'Descargando datos nuevos del servidor');
                     dbContext.importData(
 		                function (downloadedData) {
 		                	if (downloadedData === true)
-		                		onRuningFnc(3, 'Datos descargados correctamente');
+		                		_onRuningFnc(3, 'Datos descargados correctamente');
 		                	else
-		                		onRuningFnc(3, 'No hay datos nuevos por descargar');
+		                		_onRuningFnc(3, 'No hay datos nuevos por descargar');
 
 		                	if (PaCM.isFunction(onError))
 		                		onError();
 		                },
 		                function (err) {
-		                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+		                	_onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
 
 		                	if (PaCM.isFunction(onError))
 		                		onError();
@@ -97,8 +97,8 @@
                 debugMode);
 		};
 
-		var eventsOnRuning = [];
-		var onRuningFnc = function (level, msg) {
+		var _eventsOnRuning = [];
+		var _onRuningFnc = function (level, msg) {
 			switch (level) {
 				case 1:
 					if (debugMode >= 1)
@@ -115,33 +115,33 @@
 				default:
 				break;
 			}
-			PaCM.eachArray(eventsOnRuning, function (inx, fnc) {
+			PaCM.eachArray(_eventsOnRuning, function (inx, fnc) {
 				fnc(level, msg);
 			});
 		}
 
 		return {
 			start: function () {
-				onLineFnc();
-				document.addEventListener("online", onLineFnc, false);
-				document.addEventListener("offline", offLineFnc, false);
+				_onLineFnc();
+				document.addEventListener("online", _onLineFnc, false);
+				document.addEventListener("offline", _offLineFnc, false);
 			},
 			run: function (onSucess, onError) {
-				synchronizeFnc(onSucess, onError);
+				_synchronizeFnc(onSucess, onError);
 			},
 			stop: function () {
-				document.removeEventListener("online", onLineFnc, false);
-				document.removeEventListener("offline", offLineFnc, false);
-				offLineFnc();
+				document.removeEventListener("online", _onLineFnc, false);
+				document.removeEventListener("offline", _offLineFnc, false);
+				_offLineFnc();
 			},
             addEventOnRuning: function (fnc) {
                 if (PaCM.isFunction(fnc))
-                    eventsOnRuning.push(fnc);
+                    _eventsOnRuning.push(fnc);
             },
             removeEventOnRuning: function (fnc) {
-            	var i = eventsOnRuning.indexOf(fnc);
+            	var i = _eventsOnRuning.indexOf(fnc);
             	if (i >= 0)
-            		eventsOnRuning.splice(i, 1);
+            		_eventsOnRuning.splice(i, 1);
             }
 		};
 	});

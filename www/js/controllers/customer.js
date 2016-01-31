@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('customerCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
+    PaCM.controllersModule.controller('customerCtrl', function ($scope, $state, $stateParams, searcherPopup, dataContext, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
@@ -9,7 +9,7 @@
         var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
-        $scope.showErrors = false;
+        $scope.showErrors = true;
 
         _this.onSqlError = function (err) {
             $scope.runningProcess = false;
@@ -19,35 +19,7 @@
         }
 
         // Create the modal popup searcher
-        $scope.searcher = {};
-        $ionicModal.fromTemplateUrl('templates/searcher.html', {
-            scope: $scope,
-            focusFirstInput: false
-        }).then(function(modal) {
-            $scope.modal = modal;
-            $scope.searcher.open = function (type, title, data, search, onSelect) {
-                var self = this;
-                
-                self.type = type;
-                self.title = title;
-                self.data = data;
-                self.search = search ? search : PaCM.getStringEmpty();
-                self.selectRecord = onSelect;
-                
-                $scope.modal.show();
-            };
-            $scope.searcher.close = function () {
-                var self = this;
-                
-                delete self.type;
-                delete self.title;
-                PaCM.cleaner(self.data); delete self.data;
-                delete self.search;
-                delete self.selectRecord;
-                
-                $scope.modal.hide();
-            };
-        });
+        searcherPopup.initialize($scope);
         
         $scope.filters = {
             countrySearch: null,
@@ -72,12 +44,15 @@
                     countries,
                     $scope.filters.countrySearch,
                     function (r) {
-                        $scope.customer.countryId = r.Id;
-                        $scope.customer.countryName = r.Name;
+                        $scope.resetCountry();
+                        if (r === $scope.searcher.search) {
+                            $scope.customer.countryName = r;
+                        } else {
+                            $scope.customer.countryId = r.Id;
+                            $scope.customer.countryName = r.Name;
+                        }
                         $scope.filters.countrySearch = $scope.searcher.search;
-                        $scope.resetState();
-                        $scope.searcher.close();
-                    });
+                    }, true);
             });
         };
         $scope.resetCountry = function () {
@@ -92,6 +67,8 @@
                 where: {},
                 orderBy: 'Name'
             };
+            if ($scope.customer.countryName)
+                options.where.CountryId = -1;
             if ($scope.customer.countryId)
                 options.where.CountryId = $scope.customer.countryId;
 
@@ -111,16 +88,19 @@
                     states,
                     $scope.filters.stateSearch,
                     function (r) {
-                        $scope.customer.stateId = r.Id;
-                        $scope.customer.stateName = r.Name;
-                        $scope.customer.countryId = r.CountryId;
+                        $scope.resetState();
+                        if (r === $scope.searcher.search) {
+                            $scope.customer.stateName = r;
+                        } else {
+                            $scope.customer.stateId = r.Id;
+                            $scope.customer.stateName = r.Name;
+                            $scope.customer.countryId = r.CountryId;
+                            dataContext.get('Country', $scope.customer.countryId, function (c) {
+                                $scope.customer.countryName = c.Name;
+                            });
+                        }
                         $scope.filters.stateSearch = $scope.searcher.search;
-                        dataContext.get('Country', $scope.customer.countryId, function (c) {
-                            $scope.customer.countryName = c.Name;
-                        });
-                        $scope.resetCity();
-                        $scope.searcher.close();
-                    });
+                    }, true);
             });
         };
         $scope.resetState = function () {
@@ -135,6 +115,12 @@
                 where: {},
                 orderBy: 'Name'
             };
+            if ($scope.customer.countryName)
+                options.where.CountryId = -1;
+            if ($scope.customer.countryId)
+                options.where.CountryId = $scope.customer.countryId;
+            if ($scope.customer.stateName)
+                options.where.StateId = -1;
             if ($scope.customer.stateId)
                 options.where.StateId = $scope.customer.stateId;
 
@@ -154,19 +140,23 @@
                     cities,
                     $scope.filters.citySearch,
                     function (r) {
-                        $scope.customer.cityId = r.Id;
-                        $scope.customer.cityName = r.Name;
-                        $scope.customer.stateId = r.StateId;
-                        $scope.filters.citySearch = $scope.searcher.search;
-                        dataContext.get('State', $scope.customer.stateId, function (s) {
-                            $scope.customer.stateName = s.Name;
-                            $scope.customer.countryId = s.CountryId;
-                            dataContext.get('Country', $scope.customer.countryId, function (c) {
-                                $scope.customer.countryName = c.Name;
+                        $scope.resetCity();
+                        if (r === $scope.searcher.search) {
+                            $scope.customer.cityName = r;
+                        } else {
+                            $scope.customer.cityId = r.Id;
+                            $scope.customer.cityName = r.Name;
+                            $scope.customer.stateId = r.StateId;
+                            dataContext.get('State', $scope.customer.stateId, function (s) {
+                                $scope.customer.stateName = s.Name;
+                                $scope.customer.countryId = s.CountryId;
+                                dataContext.get('Country', $scope.customer.countryId, function (c) {
+                                    $scope.customer.countryName = c.Name;
+                                });
                             });
-                        });
-                        $scope.searcher.close();
-                    });
+                        }
+                        $scope.filters.citySearch = $scope.searcher.search;
+                    }, true);
             });
         };
         $scope.resetCity = function () {
@@ -182,7 +172,7 @@
         $scope.customer = {
             identityTypeId: null,
             identity: null,
-            name: null,
+            name: $stateParams.name,
             shortName: null,
             countryId: null,
             countryName: null,
@@ -197,13 +187,7 @@
             contactName: null,
             contactEmailAddress: null
         };
-        $scope.saveCustomer = function (customerValid) {
-
-            if (!(customerValid === true)) {
-                $scope.showErrors = true;
-                return false;
-            }
-
+        $scope.saveCustomer = function () {
             var actions = [];
             actions.push(_this.saveCountry);
             actions.push(_this.saveState);
@@ -215,6 +199,9 @@
                 $scope.runningProcess = false;
                 _this.refreshUI();
                 alert('Registro guardado con éxito');
+                $state.go('app.newByCustomer', {
+                    customerId: $scope.customer.id
+                });
             });
         }
 
@@ -224,7 +211,7 @@
             };
             dataContext.save('Country', $scope.customer.countryId, r, function () {
                 $scope.customer.countryId = r.Id;
-                PaCM.cleaner(r); delete r;
+                PaCM.cleaner(r); r = null;
                 onSuccess();
             }, _this.onSqlError);
         }
@@ -235,7 +222,7 @@
             };
             dataContext.save('State', $scope.customer.stateId, r, function () {
                 $scope.customer.stateId = r.Id;
-                PaCM.cleaner(r); delete r;
+                PaCM.cleaner(r); r = null;
                 onSuccess();
             }, _this.onSqlError);
         }
@@ -246,7 +233,7 @@
             };
             dataContext.save('City', $scope.customer.cityId, r, function () {
                 $scope.customer.cityId = r.Id;
-                PaCM.cleaner(r); delete r;
+                PaCM.cleaner(r); r = null;
                 onSuccess();
             }, _this.onSqlError);
         }
@@ -267,7 +254,7 @@
             };
             dataContext.save('Customer', $scope.customer.id, r, function () {
                 $scope.customer.id = r.Id;
-                PaCM.cleaner(r); delete r;
+                PaCM.cleaner(r); r = null;
                 onSuccess();
             }, _this.onSqlError);
         }
@@ -284,21 +271,36 @@
                     });
                 });
             });
+
+            //Valores iniciales
+            dataContext.first('IdentityType', { where: 'lower(ShortName) = ?', parameters: ['nit'] }, function (it) {
+                if (!(it === null)) {
+                    $scope.customer.identityTypeId = it.Id;
+                }
+            });
+            dataContext.first('Country', { where: 'lower(Name) = ?', parameters: [ 'colombia' ] }, function (c) {
+                if (!(c === null)) {
+                    $scope.customer.countryId = c.Id;
+                    $scope.customer.countryName = c.Name;
+                }
+            });
         }
 
+        _this.getResources();
+
+
         _this.timeoutRefreshUI = null;
+        _this.onRefreshUI = function () {
+            _this.timeoutRefreshUI = null;
+            $scope.$digest();
+        }
         _this.refreshUI = function () {
             if (_this.timeoutRefreshUI) {
                 clearTimeout(_this.timeoutRefreshUI);
                 _this.timeoutRefreshUI = null;
             }
-            _this.timeoutRefreshUI = setTimeout(function () {
-                _this.timeoutRefreshUI = null;
-                $scope.$digest();
-            }, 200);
+            _this.timeoutRefreshUI = setTimeout(_this.onRefreshUI, 100);
         }
-
-        _this.getResources();
         _this.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
@@ -312,11 +314,9 @@
                 _this.timeoutRefreshUI = null;
             }
 
-            $scope.searcher.close();
-            $scope.modal.remove();
-
+            $scope.searcher.destroy();
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); delete _this;
+            PaCM.cleaner(_this); _this = null;
 
         });
     });

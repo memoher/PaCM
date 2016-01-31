@@ -8,7 +8,7 @@
         
         var addressServer = 'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //'http://192.168.0.12:57080/'; //
 
-        var dbVersion = '2015.10.10.08.00';
+        var dbVersion = '2016.01.29.09.40';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -47,9 +47,8 @@
                     if (_sqlError) {
                         _onError(_sqlError);
                     } else {
-                        delete _sqlError;
-                        delete _onSuccess;
-                        delete _onError;
+                        _onSuccess = null;
+                        _onError = null;
 
                         if (debugMode >= 3)
                             console.info('Successful transaction');
@@ -59,9 +58,9 @@
                     }
                 };
                 var _onError = function (sqlError) {
-                    delete _sqlError;
-                    delete _onSuccess;
-                    delete _onError;
+                    _sqlError = null;
+                    _onSuccess = null;
+                    _onError = null;
 
                     if (debugMode >= 1)
                         console.error('Failed transaction', sqlError);
@@ -80,8 +79,8 @@
                             var self = this;
                             
                             var _onSuccessCommand = function (tx1, sqlResultSet) {
-                                delete _onSuccessCommand;
-                                delete _onErrorCommand;
+                                _onSuccessCommand = null;
+                                _onErrorCommand = null;
 
                                 if (debugMode >= 3)
                                     console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
@@ -99,8 +98,8 @@
                                 }
                             };
                             var _onErrorCommand = function (tx1, sqlError) {
-                                delete _onSuccessCommand;
-                                delete _onErrorCommand;
+                                _onSuccessCommand = null;
+                                _onErrorCommand = null;
 
                                 if (debugMode >= 1)
                                     console.error(new Date(), sqlCommand, sqlParameters, sqlError);
@@ -160,8 +159,8 @@
                                 
                                 self.executeSql('SELECT 1', null, sqlFncs[sqlFncs.length - 1], onErrorCommands);
                                 
-                                PaCM.cleaner(sqlFncs); delete sqlFncs;
-                                delete _buildFnc;
+                                sqlFncs.length = 0; sqlFncs = null;
+                                _buildFnc = null;
 
                             } else {
                                 throw 'sqlCommands: Argument is not valid';
@@ -185,7 +184,7 @@
                             });
 
                             var sqlCommand = 'CREATE IF NOT EXISTS TABLE ' + table + ' (' + arrFields.join(', ') + ')';
-                            PaCM.cleaner(arrFields); delete arrFields;
+                            arrFields.length = 0; arrFields = null;
 
                             self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
                             
@@ -224,7 +223,7 @@
                                         if (fields.length > 0) {
                                             sqlCommand += ' WHERE ' + fields.join(' AND ');
                                         }
-                                        PaCM.cleaner(fields); delete fields;
+                                        fields.length = 0; fields = null;
                                     } else {
                                         throw 'options.where: Argument is not valid';
                                     }
@@ -241,6 +240,9 @@
                                     sqlCommand += ' LIMIT ' + options.limit;
                                 }
                             }
+                            
+                            if (_parameters.length == 0)
+                                _parameters = null;
                             
                             self.executeSql(sqlCommand, _parameters, onSuccessCommand, onErrorCommand);
                             
@@ -274,8 +276,8 @@
                             });
 
                             var sqlStatement = 'INSERT INTO ' + table + ' ([' + arrFields.join('], [') + ']) VALUES (' + parFields.join(', ') + ')';
-                            PaCM.cleaner(arrFields); delete arrFields;
-                            PaCM.cleaner(parFields); delete parFields;
+                            arrFields.length = 0; arrFields = null;
+                            parFields.length = 0; parFields = null;
 
                             self.executeSql(sqlStatement, parameters, onSuccessCommand, onErrorCommand);
                             
@@ -300,11 +302,14 @@
                             if (where) {
                                 sqlStatement += ' WHERE ' + where;
                             }
-                            PaCM.cleaner(arrFields); delete arrFields;
+                            arrFields.length = 0; arrFields = null;
                             
                             PaCM.eachArray(parameters, function (inx, p) {
                                 _parameters.push(p);
                             });
+
+                            if (_parameters.length == 0)
+                                _parameters = null;
 
                             self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
                             
@@ -330,12 +335,12 @@
 
                 var dbInstalled = false;
                 var fnc01 = function (tx) {
-                    delete fnc01;
+                    fnc01 = null;
 
                     tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and name = "AppVersion" LIMIT 1', null, fnc02);
                 }
                 var fnc02 = function (tx, sqlResultSet) {
-                    delete fnc02;
+                    fnc02 = null;
 
                     dbInstalled = 
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
@@ -346,7 +351,7 @@
                     }
                 }
                 var fnc03 = function (tx, sqlResultSet) {
-                    delete fnc03;
+                    fnc03 = null;
 
                     dbInstalled = 
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
@@ -354,7 +359,7 @@
                     });
                 }
                 var fnc04 = function () {
-                    delete fnc04;
+                    fnc04 = null;
 
                     if (dbInstalled === true) {
                         if (PaCM.isFunction(onSuccess))
@@ -370,12 +375,12 @@
                 var self = this;
                 
                 var fnc01 = function (tx) {
-                    delete fnc01;
+                    fnc01 = null;
 
                     tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")', null, fnc02);
                 };
                 var fnc02 = function (tx, sqlResultSet) {
-                    delete fnc02;
+                    fnc02 = null;
 
                     var sqlCommands = [];
                     PaCM.eachSqlRS(sqlResultSet, function (inx, r) {
@@ -388,7 +393,7 @@
                     }
                 };
                 var fnc03 = function (tx) {
-                    delete fnc03;
+                    fnc03 = null;
 
                     var sqlCommands = [
     'create table AppVersion ( DbVersion TEXT not null )',
@@ -432,12 +437,12 @@
                     tx.executeMultiSql(sqlCommands, null, fnc04);
                 };
                 var fnc04 = function (tx) {
-                    delete fnc04;
+                    fnc04 = null;
 
                     tx.insert('AppVersion', { DbVersion: dbVersion });
                 };
                 var fnc05 = function () {
-                    delete fnc05;
+                    fnc05 = null;
 
                     if (PaCM.isFunction(onSuccess))
                         onSuccess();
@@ -456,7 +461,7 @@
                 //existen localmente
                 
                 var fnc01 = function (tx) {
-                    delete fnc01;
+                    fnc01 = null;
 
                     var sqlCommands = [];
                     PaCM.eachArray(tablesForImport, function (inx, t) {
@@ -479,7 +484,7 @@
                     });
                 };
                 var fnc02 = function () {
-                    delete fnc02;
+                    fnc02 = null;
 
                     if (tablesForImport.length > 0) {
                         $http.post(addressServer + 'SyncronizeData/GetData', {
@@ -495,7 +500,7 @@
                     }
                 };
                 var fnc03 = function (data) {
-                    delete fnc03;
+                    fnc03 = null;
 
                     self.beginTransaction(function (tx) {
                         PaCM.eachArray(data.Records, function (inx, r) {
@@ -522,11 +527,11 @@
                                     throw 'Action not support';
                             }
                         });
-                        PaCM.cleaner(data.Records); delete data.Records;
+                        data.Records.length = 0; data.Records = null;
                     }, fnc04, onError, debugMode);
                 };
                 var fnc04 = function () {
-                    delete fnc04;
+                    fnc04 = null;
 
                     if (PaCM.isFunction(onSuccess))
                         onSuccess(hasNewData === true);
@@ -546,7 +551,7 @@
                 //enviar la nueva información al servidor
                 
                 var fnc01 = function (tx) {
-                    delete fnc01;
+                    fnc01 = null;
 
                     var sqlCommands = [];
                     PaCM.eachArray(tablesForExport, function (inx, t) {
@@ -583,7 +588,7 @@
                     });
                 };
                 var fnc02 = function () {
-                    delete fnc02;
+                    fnc02 = null;
 
                     if (localData.length > 0) {
                         $http.post(addressServer + 'SyncronizeData/SetData', {
@@ -597,7 +602,7 @@
                     }
                 };
                 var fnc03 = function (data) {
-                    delete fnc03;
+                    fnc03 = null;
 
                     self.beginTransaction(function (tx) {
                         PaCM.eachArray(localData, function (inx, r) {

@@ -7,29 +7,26 @@
         "files": {}
     },
     "installed_plugins": {
-        "com.ionic.keyboard": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
-        },
         "cordova-plugin-console": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
         },
         "cordova-plugin-device": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
-        },
-        "cordova-plugin-dialogs": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
-        },
-        "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
         },
         "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
         },
-        "cordova-plugin-vibration": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
         },
         "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "{706cd7c0-b313-11e5-a130-596257592bfc}"
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
         }
     },
     "dependent_plugins": {}

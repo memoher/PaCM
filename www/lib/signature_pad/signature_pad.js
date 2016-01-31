@@ -15,7 +15,7 @@
 }(this, function () {
 
 /*!
- * Signature Pad v1.4.0
+ * Signature Pad v1.5.2
  * https://github.com/szimek/signature_pad
  *
  * Copyright 2015 Szymon Nowak
@@ -76,21 +76,24 @@ var SignaturePad = (function (document) {
         };
 
         this._handleTouchStart = function (event) {
-            var touch = event.changedTouches[0];
-            self._strokeBegin(touch);
+            if (event.targetTouches.length == 1) {
+                var touch = event.changedTouches[0];
+                self._strokeBegin(touch);
+             }
         };
 
         this._handleTouchMove = function (event) {
             // Prevent scrolling.
             event.preventDefault();
 
-            var touch = event.changedTouches[0];
+            var touch = event.targetTouches[0];
             self._strokeUpdate(touch);
         };
 
         this._handleTouchEnd = function (event) {
             var wasCanvasTouched = event.target === self._canvas;
             if (wasCanvasTouched) {
+                event.preventDefault();
                 self._strokeEnd(event);
             }
         };
@@ -165,7 +168,6 @@ var SignaturePad = (function (document) {
     };
 
     SignaturePad.prototype._handleMouseEvents = function () {
-        var self = this;
         this._mouseButtonDown = false;
 
         this._canvas.addEventListener("mousedown", this._handleMouseDown);
@@ -174,14 +176,17 @@ var SignaturePad = (function (document) {
     };
 
     SignaturePad.prototype._handleTouchEvents = function () {
-        var self = this;
-
         // Pass touch events to canvas element on mobile IE.
         this._canvas.style.msTouchAction = 'none';
 
         this._canvas.addEventListener("touchstart", this._handleTouchStart);
         this._canvas.addEventListener("touchmove", this._handleTouchMove);
         document.addEventListener("touchend", this._handleTouchEnd);
+    };
+
+    SignaturePad.prototype.on = function () {
+        this._handleMouseEvents();
+        this._handleTouchEvents();
     };
 
     SignaturePad.prototype.off = function () {

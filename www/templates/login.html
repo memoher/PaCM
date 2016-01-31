@@ -1,6 +1,6 @@
 <ion-view title="Iniciar sesión" can-swipe-back="false" hide-back-button="true">
     <ion-content class="has-header" padding="true">
-        <form name="loginForm" ng-class="{'show-errors': showErrors}">
+        <form name="loginForm" ng-class="{'show-errors': showErrors}" ng-submit="sigIn()">
             <ion-list>
                 <label class="item item-input">
                     <span class="input-label">Correo electrónico</span>
@@ -11,8 +11,8 @@
                     <input type="password" ng-model="login.password" ng-model-options="{ updateOn: 'blur' }" required>
                 </label>
             </ion-list>
-            <div style="height: 0;" class="spacer"></div>
-            <button type="submit" class="button button-positive button-block" ng-click="sigIn(loginForm.$valid)" ng-disabled="runningProcess">Iniciar sesión</button>
+            <div class="spacer"></div>
+            <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Iniciar sesión</button>
         </form>
     </ion-content>
 </ion-view>

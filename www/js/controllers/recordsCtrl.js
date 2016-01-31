@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, $ionicModal, dataContext, userSession) {
+    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, searcherPopup, dataContext, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
@@ -12,35 +12,7 @@
         $scope.showErrors = false;
         
         // Create the modal popup searcher
-        $scope.searcher = {};
-        $ionicModal.fromTemplateUrl('templates/searcher.html', {
-            scope: $scope,
-            focusFirstInput: false
-        }).then(function(modal) {
-            $scope.modal = modal;
-            $scope.searcher.open = function (type, title, data, search, onSelect) {
-                var self = this;
-                
-                self.type = type;
-                self.title = title;
-                self.data = data;
-                self.search = search ? search : PaCM.getStringEmpty();
-                self.selectRecord = onSelect;
-                
-                $scope.modal.show();
-            };
-            $scope.searcher.close = function () {
-                var self = this;
-                
-                delete self.type;
-                delete self.title;
-                PaCM.cleaner(self.data); delete self.data;
-                delete self.search;
-                delete self.selectRecord;
-                
-                $scope.modal.hide();
-            };
-        });
+        searcherPopup.initialize($scope);
         
         $scope.filters = {
             customerId: null,
@@ -79,9 +51,8 @@
                             $scope.filters.customerId = r.Id;
                             $scope.filters.customerName = r.Name;
                             $scope.filters.customerSearch = $scope.searcher.search;
-                            $scope.resetObjectTypeTrademark();
+                            $scope.resetObjectType();
                         }
-                        $scope.searcher.close();
                     });
             });
         };
@@ -89,7 +60,7 @@
             $scope.filters.customerId = null;
             $scope.filters.customerName = null;
             $scope.filters.customerSearch = null;
-            $scope.resetObjectTypeTrademark();
+            $scope.resetObjectType();
         };
         
         $scope.searchObjectTypeTrademark = function () {
@@ -115,7 +86,6 @@
                             $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
                             $scope.resetObjectTypeModel();
                         }
-                        $scope.searcher.close();
                     }); 
             });
         };
@@ -161,7 +131,6 @@
                             });
                             $scope.resetObjectType();
                         }
-                        $scope.searcher.close();
                     }); 
             });
             
@@ -173,8 +142,12 @@
             $scope.resetObjectType();
         };
         
-        $scope.searchObjectType = function () {
-            
+        $scope.searchObjectType = function (filterValid) {
+            if (!(filterValid === true)) {
+                $scope.showErrors = true;
+                return false;
+            }
+
             var options = {
                 where: {},
                 orderBy: 't.Name, m.Name, r.Serial, r.CustomerReference'
@@ -228,9 +201,8 @@
                                 $scope.filters.objectTypeTrademarkId = t.Id;
                                 $scope.filters.objectTypeTrademarkName = t.Name;
                             });
-                            $scope.searchHistory(true);
+                            $scope.searchHistory();
                         }
-                        $scope.searcher.close();
                     });
             });
         };
@@ -247,12 +219,7 @@
         //---------------------------------------------------------------------------------------------------------
         
         $scope.history = [];
-        $scope.searchHistory = function (objectValid) {
-
-            if (!(objectValid === true)) {
-                $scope.showErrors = true;
-                return false;
-            }
+        $scope.searchHistory = function () {
             
             var options = {
                 where: {},
@@ -271,14 +238,12 @@
             $scope.runningProcess = true;
             dataContext.find('Maintenance', options, function (maintenances) {
                 dataContext.find('Assembly', options, function (assemblies) {
-                    var records = [];
-                    PaCM.mergeArray(['Id'], records, maintenances, assemblies);
-                    PaCM.cleaner(maintenances); delete maintenances;
-                    PaCM.cleaner(assemblies); delete assemblies;
-                    PaCM.syncronizeArray(['Id'], $scope.history, records);
-                    PaCM.cleaner(records); delete records;
+                    PaCM.mergeArray(['Id'], maintenances, assemblies);
+                    PaCM.syncronizeArray(['Id'], $scope.history, maintenances);
+                    maintenances.length = 0; maintenances = null;
+                    assemblies.length = 0; assemblies = null;
                     $scope.runningProcess = false;
-                    $scope.$digest();
+                    _this.refreshUI();
                 });
             });
         };
@@ -286,17 +251,29 @@
             PaCM.cleaner($scope.history);
         }
 
+
+        _this.timeoutRefreshUI = null;
+        _this.onRefreshUI = function () {
+            _this.timeoutRefreshUI = null;
+            $scope.$digest();
+        };
+        _this.refreshUI = function () {
+            if (_this.timeoutRefreshUI) {
+                clearTimeout(_this.timeoutRefreshUI);
+                _this.timeoutRefreshUI = null;
+            }
+            _this.timeoutRefreshUI = setTimeout(_this.onRefreshUI, 100);
+        }
+        _this.refreshUI();
+
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         
         $scope.$on('$destroy', function() {
-
-            $scope.searcher.close();
-            $scope.modal.remove();
-
+            $scope.searcher.destroy();
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); delete _this;
+            PaCM.cleaner(_this); _this = null;
             
         });
         

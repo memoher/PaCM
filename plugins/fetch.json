@@ -31,10 +31,18 @@
         "is_top_level": true,
         "variables": {}
     },
-    "com.ionic.keyboard": {
+    "cordova-plugin-statusbar": {
         "source": {
             "type": "registry",
-            "id": "com.ionic.keyboard"
+            "id": "cordova-plugin-statusbar"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "ionic-plugin-keyboard": {
+        "source": {
+            "type": "registry",
+            "id": "ionic-plugin-keyboard"
         },
         "is_top_level": true,
         "variables": {}
@@ -43,22 +51,6 @@
         "source": {
             "type": "registry",
             "id": "cordova-plugin-network-information"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
-    "cordova-plugin-dialogs": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-dialogs"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
-    "cordova-plugin-vibration": {
-        "source": {
-            "type": "registry",
-            "id": "cordova-plugin-vibration"
         },
         "is_top_level": true,
         "variables": {}

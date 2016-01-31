@@ -2,17 +2,32 @@
 
     var STRING_EMPTY = '';
 
-    var _randomS4Fnc = function () {
+    function _randomS4Fnc() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     };
-    var _buildGuidFnc = function () {
+    function _buildGuidFnc() {
         return _randomS4Fnc() + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + _randomS4Fnc() + _randomS4Fnc();
     };
 
-    var _buildFunctionFnc = function (fnc01, fnc02) {
+    function _buildFunctionFnc(fnc01, fnc02) {
         return function () {
             fnc01(fnc02);
         };
+    };
+
+    function _findObjectFnc(arr0, key, obj) {
+        var keyLength = key.length;
+        var arr0Length = arr0.length;
+        for (var j = 0; j < arr0Length; j++) {
+            var valid = true;
+            for (var k = 0; k < keyLength; k++) {
+                if (obj[key[k]] != arr0[j][key[k]])
+                    valid = false;
+            }
+            if (valid === true)
+                return j;
+        }
+        return null;
     };
 
     window.PaCM = {
@@ -34,7 +49,9 @@
             return (typeof vlr === 'function');
         },
         isObject: function (vlr) {
-            return (typeof vlr === 'object' && vlr.toString() === '[object Object]');
+            var self = this;
+
+            return (self.isDefined(vlr) && !self.isNull(vlr) && vlr.toString() === '[object Object]');
         },
         isInteger: function (vlr) {
             var self = this;
@@ -50,19 +67,18 @@
         parseDateString: function (vlr) {
             var self = this;
 
-            if (self.isDate(vlr)) {
+            if (self.isDate(vlr))
                 return vlr;
-            }
+            
             if (self.isString(vlr)) {
-                if (vlr.length = 24 && vlr.substring(4,5) == '-' && vlr.substring(7,8) == '-' && vlr.substring(10,11) == 'T') {
+                if (vlr.length = 24 && vlr.substring(4,5) == '-' && vlr.substring(7,8) == '-' && vlr.substring(10,11) == 'T')
                     return new Date(vlr);
-                }
-                if (vlr.indexOf('/Date(') >= 0 && vlr.indexOf(')/') >= 0) {
+                
+                if (vlr.indexOf('/Date(') >= 0 && vlr.indexOf(')/') >= 0)
                     return new Date(parseInt(vlr.replace('/Date(', STRING_EMPTY).replace(')/', STRING_EMPTY)));
-                }
-                if (vlr.indexOf(' GMT') >= 0) {
+                
+                if (vlr.indexOf(' GMT') >= 0)
                     return new Date(vlr);
-                }
             }
             return null;
         },
@@ -86,28 +102,32 @@
         execute: function (actions, onSuccess) {
             var self = this;
 
-            if (actions.length == 0) {
+            if (!self.isArray(actions))
+                throw 'Array is not valid';
+
+            var actionsLength = actions.length;
+            if (actionsLength == 0) {
                 onSuccess();
                 return;
             }
             
-            var totalFncs = actions.length;
-
+            //Recorre el array del último al primero, arma una pila de funciones,
+            //con el objetivo de que se ejecuten de manera ordenada
             var fncs = [];
-            self.eachArrayInvert(actions, function (inx, f) {
+            for (var i = actionsLength - 1; i >= 0; i--) {
                 // Todos menos el último
-                if (inx < (totalFncs - 1)) {
-                    fncs.push(_buildFunctionFnc(f, fncs[fncs.length - 1]));
+                if (i < (actionsLength - 1)) {
+                    fncs.push(_buildFunctionFnc(actions[i], fncs[fncs.length - 1]));
                 }
                 //Último (primera función en la pila, última en ejecutarse)
                 else {
-                    fncs.push(_buildFunctionFnc(f, onSuccess));
+                    fncs.push(_buildFunctionFnc(actions[i], onSuccess));
                 }
-            });
+            }
             fncs[fncs.length - 1]();
 
-            self.cleaner(fncs); delete fncs;
-            self.cleaner(actions); delete actions;
+            fncs.length = 0; fncs = null;
+            actions.length = 0; actions = null;
         },
         prepareErrorMessage: function (err, msg) {
             var self = this;
@@ -141,7 +161,7 @@
 
             alert(self.prepareErrorMessage(err, msg));
         },
-        mergeArray: function (key, arr0, arr1, arr2, arr3, arr4, arr5) {
+        mergeArray: function (key, arr0, arr1) {
             var self = this;
             
             if (!self.isArray(arr0) || !self.isArray(arr1)) {
@@ -149,41 +169,22 @@
             }
 
             if (self.isArray(key)) {
-                self.eachArray(arr1, function (inx, e) {
-                    var i = self.eachArray(arr0, function (inx2, e2) {
-                        var valid = true;
-                        self.eachArray(key, function (inx3, k) {
-                            if (e[k] != e2[k])
-                                valid = false;
-                        });
-                        if (valid === true) {
-                            return inx2;
-                        }
-                    });
-                    if (self.isNumber(i)) {
-                        arr0[i] = e;
+                var arr1Length = arr1.length;
+                for (var i = 0; i < arr1Length; i++) {
+                    var index = _findObjectFnc(arr0, key, arr1[i]);
+                    if (!(index === null)) {
+                        arr0[index] = arr1[i];
                     } else {
-                        arr0.push(e);
+                        arr0.push(arr1[i]);
                     }
-                });
+                };
             } else {
-                self.eachArray(arr1, function (inx, e) {
-                    if (arr0.indexOf(e) < 0) {
-                        arr0.push(e);
+                var arr1Length = arr1.length;
+                for (var i = 0; i < arr1Length; i++) {
+                    if (arr0.indexOf(arr1[i]) < 0) {
+                        arr0.push(arr1[i]);
                     }
-                });
-            }
-            if (self.isArray(arr2)) {
-                self.mergeArray(key, arr0, arr2);
-            }
-            if (self.isArray(arr3)) {
-                self.mergeArray(key, arr0, arr3);
-            }
-            if (self.isArray(arr4)) {
-                self.mergeArray(key, arr0, arr4);
-            }
-            if (self.isArray(arr5)) {
-                self.mergeArray(key, arr0, arr5);
+                };
             }
         },
         syncronizeArray: function (key, arr0, arr1) {
@@ -196,75 +197,63 @@
             var arr1Clone = arr1.slice(0);
 
             if (self.isArray(key)) {
-                self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = self.eachArray(arr1Clone, function (inx2, e2) {
-                        var valid = true;
-                        self.eachArray(key, function (inx3, k) {
-                            if (e[k] != e2[k])
-                                valid = false;
-                        });
-                        if (valid === true) {
-                            return inx2;
-                        }
-                    });
-                    if (self.isNumber(i)) {
-                        arr0[inx] = arr1Clone[i];
-                        arr1Clone.splice(i, 1);
+                var arr0Length = arr0.length;
+                for (var i = arr0Length - 1; i >= 0; i--) {
+                    var index = _findObjectFnc(arr1Clone, key, arr0[i]);
+                    if (!(index === null)) {
+                        arr0[i] = arr1Clone[index];
+                        arr1Clone.splice(index, 1);
                     } else {
-                        arr0.splice(inx, 1);
+                        arr0.splice(i, 1);
                     }
-                });
-                self.eachArray(arr1Clone, function (inx, e) {
-                    arr0.push(e);
-                });
+                }
             } else {
-                self.eachArrayInvert(arr0, function (inx, e) {
-                    var i = arr1Clone.indexOf(e);
-                    if (i >= 0) {
-                        arr1Clone.splice(i, 1);
+                var arr0Length = arr0.length;
+                for (var i = arr0Length - 1; i >= 0; i--) {
+                    var index = arr1Clone.indexOf(arr0[i]);
+                    if (index >= 0) {
+                        arr1Clone.splice(index, 1);
                     } else {
-                        arr0.splice(inx, 1);
+                        arr0.splice(i, 1);
                     }
-                });
-                self.eachArray(arr1Clone, function (inx, e) {
-                    arr0.push(e);
-                });
+                }
             }
 
-            self.cleaner(arr1Clone); delete arr1Clone;
+            var arr1CloneLength = arr1Clone.length;
+            for (var i = 0; i < arr1CloneLength; i++) {
+                arr0.push(arr1Clone[i]);
+            }
+
+            arr1Clone.length = 0; arr1Clone = null;
         },
-        eachArray: function (arr, iterator) {
+        eachArray: function (array, iterator) {
             var self = this;
 
-            if (arr) {
-                if (self.isArray(arr)) {
-                    var arrayLength = arr.length;
+            if (array) {
+                if (self.isArray(array)) {
+                    var arrayLength = array.length;
                     for (var i = 0; i < arrayLength; i++) {
-                        var result = iterator(i, arr[i], arrayLength);
-                        if (self.isDefined(result)) {
+                        var result = iterator(i, array[i], arrayLength);
+                        if (self.isDefined(result))
                             return result;
-                        }
                     }
-                } else {
+                } else
                     throw 'Array is not valid';
-                }
             }
         },
-        eachArrayInvert: function (arr, iterator) {
+        eachArrayInvert: function (array, iterator) {
             var self = this;
 
-            if (arr) {
-                if (self.isArray(arr)) {
-                    var arrayLength = arr.length;
+            if (array) {
+                if (self.isArray(array)) {
+                    var arrayLength = array.length;
                     for (var i = arrayLength - 1; i >= 0; i--) {
-                        var result = iterator(i, arr[i], arrayLength);
-                        if (self.isDefined(result)) {
+                        var result = iterator(i, array[i], arrayLength);
+                        if (self.isDefined(result))
                             return result;
-                        }
                     }
-                } else {
+                } else
                     throw 'Array is not valid';
-                }
             }
         },
         eachProperties: function (obj, iterator) {
@@ -275,14 +264,12 @@
                     for (var p in obj) {
                         if (obj.hasOwnProperty(p)) {
                             var result = iterator(p, obj[p]);
-                            if (self.isDefined(result)) {
+                            if (self.isDefined(result))
                                 return result;
-                            }
                         }
                     }
-                } else {
+                } else
                     throw 'Object is not valid';
-                }
             }
         },
         eachSqlRS: function (sqlRS, iterator) {
@@ -294,30 +281,33 @@
                     for (var i = 0; i < totalRows; i++) {
                         var r = sqlRS.rows.item(i);
                         var o = {};
-                        self.eachProperties(r, function (key, val) {
-                            o[key] = val;
-                            if (self.isString(val)) {
-                                if (val === 'true') {
-                                    o[key] = true;
-                                } else if (val === 'false') {
-                                    o[key] = false;
-                                } else {
-                                    var date = self.parseDateString(val);
-                                    if (date) {
-                                        o[key] = date;
+                        // ------------------------
+                        for (var p in r) {
+                            if (r.hasOwnProperty(p)) {
+                                var v = r[p];
+                                o[p] = v;
+                                if (self.isString(v)) {
+                                    if (v === 'true') {
+                                        o[p] = true;
+                                    } else if (v === 'false') {
+                                        o[p] = false;
+                                    } else {
+                                        var date = self.parseDateString(v);
+                                        if (date) {
+                                            o[p] = date;
+                                        }
                                     }
                                 }
                             }
-                        });
-                        self.cleaner(r); delete r;
-                        var result = iterator(i, o, totalRows);
-                        if (self.isDefined(result)) {
-                            return result;
                         }
+                        // ------------------------
+                        r = null;
+                        var result = iterator(i, o, totalRows);
+                        if (self.isDefined(result))
+                            return result;
                     } 
-                } else {
+                } else
                     throw 'SQLResultSet is not valid';
-                }
             }
         },
         eachSqlRSInvert: function (sqlRS, iterator) {
@@ -329,30 +319,33 @@
                     for (var i = totalRows - 1; i >= 0; i--) {
                         var r = sqlRS.rows.item(i);
                         var o = {};
-                        self.eachProperties(r, function (key, val) {
-                            o[key] = val;
-                            if (self.isString(val)) {
-                                if (val === 'true') {
-                                    o[key] = true;
-                                } else if (val === 'false') {
-                                    o[key] = false;
-                                } else {
-                                    var date = self.parseDateString(val);
-                                    if (date) {
-                                        o[key] = date;
+                        // ------------------------
+                        for (var p in r) {
+                            if (r.hasOwnProperty(p)) {
+                                var v = r[p];
+                                o[p] = v;
+                                if (self.isString(v)) {
+                                    if (v === 'true') {
+                                        o[p] = true;
+                                    } else if (v === 'false') {
+                                        o[p] = false;
+                                    } else {
+                                        var date = self.parseDateString(v);
+                                        if (date) {
+                                            o[p] = date;
+                                        }
                                     }
                                 }
                             }
-                        });
-                        self.cleaner(r); delete r;
-                        var result = iterator(i, o, totalRows);
-                        if (self.isDefined(result)) {
-                            return result;
                         }
+                        // ------------------------
+                        r = null;
+                        var result = iterator(i, o, totalRows);
+                        if (self.isDefined(result))
+                            return result;
                     } 
-                } else {
+                } else
                     throw 'SQLResultSet is not valid';
-                }
             }
         },
         cleaner: function (obj) {
@@ -361,14 +354,16 @@
             if (self.isArray(obj)) {
                 obj.length = 0;
             } else if (self.isObject(obj)) {
-                self.eachProperties(obj, function (key, val) {
-                    if (!(key.substring(0, 1) === '$')) {
-                        if (self.isArray(obj[key])) {
-                            obj[key].length = 0;
+                for (var p in obj) {
+                    if (obj.hasOwnProperty(p)) {
+                        if (!(p.substring(0, 1) === '$')) {
+                            if (self.isArray(obj[p])) {
+                                obj[p].length = 0;
+                            }
+                            obj[p] = null;
                         }
-                        delete obj[key];
                     }
-                });
+                }
             }
         },
         isNetworkOnline: function () {

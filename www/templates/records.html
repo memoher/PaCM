@@ -1,63 +1,43 @@
 <ion-view view-title="Historial" can-swipe-back="false" hide-back-button="true">
-    <ion-content padding="true" class="has-header">
+    <ion-content class="has-header" padding="true">
         <form name="recordsForm" ng-class="{'show-errors': showErrors}">
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset" ng-click="searchCustomer()">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Cliente" readonly ng-model="filters.customerName" ng-model-options="{ updateOn: 'blur' }" required>
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Cliente</span>
+                        <input type="text" required readonly ng-model="filters.customerName" ng-focus="searchCustomer()">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset" ng-click="searchObjectTypeTrademark()">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Marca" readonly ng-model="filters.objectTypeTrademarkName" ng-model-options="{ updateOn: 'blur' }" required>
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Marca</span>
+                        <input type="text" required readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset" ng-click="searchObjectTypeModel()">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Modelo" readonly ng-model="filters.objectTypeModelName" ng-model-options="{ updateOn: 'blur' }" required>
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Modelo</span>
+                        <input type="text" required readonly ng-model="filters.objectTypeModelName" ng-focus="searchObjectTypeModel()">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset" ng-click="searchObjectType()">
-                        <label class="item-input-wrapper">
-                            <input type="text" placeholder="Bateria / cargador" readonly ng-model="filters.objectTypeDescription" ng-model-options="{ updateOn: 'blur' }" required>
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Bateria / cargador</span>
+                        <input type="text" readonly ng-model="filters.objectTypeDescription" ng-focus="searchObjectType(recordsForm.$valid)">
+                    </label>
                 </div>
             </div>
-            <div class="row responsive-sm">
-                <div class="col">
-                    <a class="button button-balanced button-block" href="#/app/new/{{ filters.customerId }}/{{ filters.objectTypeType }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !recordsForm.$valid">Nuevo mantenimiento</a>
-                </div>
-            </div>
+            <a class="button button-positive button-block" href="#/app/new/{{ filters.customerId }}/{{ filters.objectTypeType }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
         </form>
-        <ion-list>
-            <ion-item ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
-                {{ r.Date | date : 'medium' }} -> 
+        <div class="list">
+            <a class="item" ng-repeat="r in history" href="#/app/details/{{ r.Id }}">
+                {{ r.Date | date : 'dd/MM/yyyy' }} -> 
                 {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble ' }}
-                {{ r.Type.indexOf('Battery') >= 0 ? 'bateria ' : 'cargador ' }}
-                {{ r.ObjectTypeDescription }}
-            </ion-item>
-        </ion-list>
+                {{ r.Preventive === true ? 'preventivo ' : '' }}
+                {{ r.Corrective === true ? 'correctivo ' : '' }}
+            </a>
+        </div>
     </ion-content>
 </ion-view>

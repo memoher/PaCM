@@ -1,139 +1,104 @@
 <ion-view title="Nuevo cliente" cache-view="false">
     <ion-content class="has-header" padding="true">
-        <form name="customerForm" ng-class="{'show-errors': showErrors}">
+        <form name="customerForm" ng-class="{'show-errors': showErrors}" ng-submit="saveCustomer()">
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">T.I.</span>
-                            <select ng-model="customer.identityTypeId" ng-options="it.id as it.shortName for it in resources.identityTypes" required>
-                                <option value=""> </option>
-                            </select>
-                        </label>
-                    </div>
+                    <label class="item item-input item-select">
+                        <span class="input-label">Doc.</span>
+                        <select required ng-model="customer.identityTypeId" ng-options="it.id as it.shortName for it in resources.identityTypes">
+                            <option value=""> </option>
+                        </select>
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Identidad</span>
-                            <input type="text" required ng-model="customer.identity" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Identidad</span>
+                        <input type="text" required ng-model="customer.identity" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Nombre</span>
-                            <input type="text" required ng-model="customer.name" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Nombre</span>
+                        <input type="text" required ng-model="customer.name" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Nombre corto</span>
-                            <input type="text" ng-model="customer.shortName" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Alias</span>
+                        <input type="text" ng-model="customer.shortName" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">País</span>
-                            <input type="text" required ng-model="customer.countryName" ng-model-options="{ updateOn: 'blur' }" placeholder="Digite aquí el nombre del país, si este aún no existe" ng-change="customer.countryId = null; resetState();">
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchCountry()">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">País</span>
+                        <input type="text" required readonly ng-model="customer.countryName" ng-focus="searchCountry()">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Departamento</span>
-                            <input type="text" required ng-model="customer.stateName" ng-model-options="{ updateOn: 'blur' }" placeholder="Digite aquí el nombre del departamento, si este aún no existe" ng-change="customer.stateId = null; resetCity();">
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchState()">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Departamento</span>
+                        <input type="text" required readonly ng-model="customer.stateName" ng-focus="searchState()">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper">
-                            <span class="input-label">Ciudad</span>
-                            <input type="text" required ng-model="customer.cityName" ng-model-options="{ updateOn: 'blur' }" placeholder="Digite aquí el nombre de la ciudad / municipio, si este aún no existe" ng-change="customer.cityId = null;">
-                        </label>
-                        <button type="button" tabindex="-1" class="button button-small button-pacm" ng-click="searchCity()">
-                            <i class="icon ion-search"></i>
-                        </button>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Ciudad</span>
+                        <input type="text" required readonly ng-model="customer.cityName" ng-focus="searchCity()">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Dirección</span>
-                            <input type="text" required ng-model="customer.address" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Dirección</span>
+                        <input type="text" required ng-model="customer.address" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Código postal</span>
-                            <input type="text" ng-model="customer.postalCode" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Código postal</span>
+                        <input type="text" ng-model="customer.postalCode" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Teléfono</span>
-                            <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Teléfono</span>
+                        <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Web site</span>
-                            <input type="url" ng-model="customer.webSite" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Web site</span>
+                        <input type="url" ng-model="customer.webSite" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Nombre del contacto</span>
-                            <input type="text" ng-model="customer.contactName" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Nombre del contacto</span>
+                        <input type="text" ng-model="customer.contactName" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
                 <div class="col">
-                    <div class="item item-input-inset">
-                        <label class="item-input-wrapper with-title">
-                            <span class="input-label">Correo electrónico del contacto</span>
-                            <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{ updateOn: 'blur' }">
-                        </label>
-                    </div>
+                    <label class="item item-input">
+                        <span class="input-label">Correo electrónico del contacto</span>
+                        <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{ updateOn: 'blur' }">
+                    </label>
                 </div>
             </div>
-            <div style="height: 0;" class="spacer"></div>
-            <button type="submit" class="button button-positive button-block" ng-click="saveCustomer(customerForm.$valid)" ng-disabled="runningProcess">Guardar</button>
+            <div class="spacer"></div>
+            <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Guardar</button>
         </form>
         <div style="height: 300px;" class="spacer"></div>
     </ion-content>

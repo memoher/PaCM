@@ -37,7 +37,7 @@
                     // userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
                     // Initialize synchronizer service
                     synchronizer.start();
-                });
+                }, null, 1 /*debugMode*/);
             });
 
         })
@@ -105,7 +105,7 @@
                 })
 
                 .state('app.customer', {
-                    url: '/customer',
+                    url: '/customer/:name',
                     views: {
                         'menuContent': {
                             templateUrl: 'templates/customer.html',

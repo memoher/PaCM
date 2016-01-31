@@ -1,82 +1,53 @@
 /* Empty. Add your own CSS if you like */
 
-.pane.tab-content.has-header {
-    top: 44px;
+/* Tab panel */
+
+ion-tabs ion-content.pane.tab-content.has-tabs {
+    top:45px;
+}
+ion-tabs .tabs .tab-item.tab-item-active {
+    background-color: #FFBF00;
 }
 
-.tabs .tab-item-active {
-    background-color: #ffd700;
+.show-errors .ng-invalid {
+    border-bottom: 1px solid red;
 }
 
-input,
-select,
-textarea {
-    width: 100%;
+.list-inset .item.item-input input {
+  padding-right: 0;
 }
 
-form.show-errors .ng-invalid {
-    border: 1px solid lightcoral;
+.item.no-padding {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+}
+.item.no-padding .row,
+.item.no-padding .row .col {
+  padding: 0;
 }
 
-.item-input-inset {
-    padding: 8px;
+.item-signature {
+  background-color: lightgray;
+  padding-left: 0;
+  padding-right: 0;
 }
-.item-input-inset .item-input-wrapper {
-    background-color: transparent;
-}
-.item-input-inset .item-input-wrapper input,
-.item-input-inset .item-input-wrapper select {
-    height: 28px;
-}
-.item-input-inset .item-input-wrapper.with-title input,
-.item-input-inset .item-input-wrapper.with-title select {
-    width: calc(100% - 200px);
+.item-signature .input-signature {
+  background-color: white;
+  margin: auto;
 }
 
-.button.button-small.button-pacm {
-    min-width: 56px;
+@media (max-width: 567px) {
+  .row.responsive-sm {
+    padding: 0;
+  }
+  .row.responsive-sm .col {
+    margin: 0;
+    padding: 0;
+  }
 }
 
-#signatureCanvas {
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-    border: 1px solid gray;
-}
-
-/*
-input, select, textarea {
-    width: 100%;
-    background-color: #f8f8f8;
-}
-
-.col .button.button-block, .col .button.button-full {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.item-input-inset {
-    padding: 8px;
-}
-.item-input-inset .item-input-wrapper {
-    background-color: transparent;
-}
-.item-input-inset .item-input-wrapper input,
-.item-input-inset .item-input-wrapper select,
-textarea {
-    background-color: #e4e5e7;
-
-}
-.item-input-inset .item-input-wrapper input,
-.item-input-inset .item-input-wrapper select {
-	height: 29px;
-}
-.item-input-inset .item-input-wrapper input[readonly],
-.item-input-inset .item-input-wrapper select[readonly],
-textarea[readonly] {
-    background-color: #f8f8f8;
-}
-*/
+/* Events console */
 
 .console-item {
     padding: 8px;
