@@ -6,7 +6,7 @@
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
         
-        var addressServer = 'http://localhost:8100/api/'; //'http://eccmant.emhesolutions.com/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 
         var dbVersion = '2016.01.29.09.40';
 
