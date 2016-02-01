@@ -1,7 +1,7 @@
 <ion-view title="{{ title }}" cache-view="false">
     <ion-tabs class="tabs-positive tabs-icon-top">
         <ion-tab title="Inicio" icon="ion-search" hidden="{{ !tabs.starterTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="starterForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -33,10 +33,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="batteryForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -122,10 +122,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="chargerForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -164,10 +164,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ !tabs.machineTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="machineForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -211,10 +211,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Trabajo a realizar" icon="ion-hammer" hidden="{{ !tabs.workToBeDoneTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="workToBeDoneForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -223,10 +223,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="physicalInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cl in checkList | orderBy: 'checkOrder'">
@@ -241,10 +241,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Inspección de celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="cellInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells | orderBy: 'cellOrder'">
@@ -272,10 +272,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="suppliesForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="ao in articlesOutputs">
@@ -299,10 +299,10 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Reporte técnico" icon="ion-compose" hidden="{{ !tabs.technicalReportTab }}">
-            <ion-content>
+            <ion-scroll>
                 <form name="technicalReportForm" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -311,7 +311,7 @@
                     </div>
                 </form>
                 <div style="height: 300px;" class="spacer"></div>
-            </ion-content>
+            </ion-scroll>
         </ion-tab>
         <ion-tab title="Finalizar" icon="ion-checkmark" hidden="{{ !tabs.endingTab }}">
             <ion-content scroll="false">
