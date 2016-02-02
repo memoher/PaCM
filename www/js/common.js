@@ -369,12 +369,13 @@
         isNetworkOnline: function () {
             var self = this;
 
-            alert(Connection);
-            alert(Connection.toString());
-
-            if ((navigator) && (navigator.connection) && (navigator.connection.type)) {
+            if ((navigator) && (navigator.connection)) {
                 var networkState = navigator.connection.type;
-                return !(networkState === Connection.NONE);
+                if ((Connection)) {
+                    return !(networkState === Connection.NONE);
+                } else {
+                    return !(networkState === navigator.connection.NONE);
+                }
             } else {
                 return true;
             }
