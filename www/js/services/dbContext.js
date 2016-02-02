@@ -8,7 +8,7 @@
         
         var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 
-        var dbVersion = '2016.01.29.09.40';
+        var dbVersion = '2016.02.02.10.00';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
