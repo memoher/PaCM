@@ -370,10 +370,15 @@
             var self = this;
 
             if ((navigator) && (navigator.connection)) {
+                alert(navigator.connection.toString());
+                alert(11);
                 var networkState = navigator.connection.type;
+                alert(networkState);
                 if ((Connection)) {
+                    alert(12);
                     return !(networkState === Connection.NONE);
                 } else {
+                    alert(13);
                     return !(networkState === navigator.connection.NONE);
                 }
             } else {
