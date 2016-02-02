@@ -373,8 +373,8 @@
                 alert(navigator.connection.toString());
                 alert(11);
                 var networkState = navigator.connection.type;
-                alert(networkState);
-                if ((Connection)) {
+                alert(PaCM.isDefined(Connection));
+                if (PaCM.isDefined(Connection)) {
                     alert(12);
                     return !(networkState === Connection.NONE);
                 } else {
