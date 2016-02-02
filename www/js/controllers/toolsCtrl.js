@@ -2,10 +2,6 @@
     
     PaCM.controllersModule.controller('toolsCtrl', function ($scope, $state, synchronizer, userSession) {
 
-        if (!(userSession.isLogged === true)) {
-            $state.go('app.login');
-        }
-
         var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
