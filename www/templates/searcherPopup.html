@@ -20,7 +20,7 @@
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </ion-item>
             <button class="button button-assertive button-block" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
-                ¡Opps! ¿Desea agregarlo?
+                ¡Opps! ¿Desea adicionar este?
             </button>
         </ion-list>
         <ion-list ng-if="searcher.group==2">
@@ -29,7 +29,7 @@
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </ion-item>
             <button class="button button-assertive button-block" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
-                ¡Opps! ¿Desea agregarlo?
+                ¡Opps! ¿Desea adicionar este?
             </button>
         </ion-list>
         <ion-list ng-if="searcher.group==3">
@@ -37,9 +37,6 @@
                 {{ r.Name }} ({{ r.InventoryCode }})
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </ion-item>
-            <button class="button button-assertive button-block" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
-                ¡Opps! ¿Desea agregarlo?
-            </button>
         </ion-list>
         <ion-list ng-if="searcher.group==4">
             <ion-item class="item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
@@ -48,7 +45,7 @@
             </ion-item>
             <div class="spacer"></div>
             <a class="button button-assertive button-block" ng-show="searcher.showAddButton" href="#/app/customer/{{ searcher.search }}">
-                ¡Opps! ¿Desea agregar cliente?
+                ¡Opps! ¿Desea adicionar este?
             </a>
         </ion-list>
     </ion-content>

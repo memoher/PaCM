@@ -537,7 +537,7 @@
                     function (r) {
                         ao.articleId = r.Id;
                         ao.articleName = r.Name + ' (' + r.InventoryCode + ')';
-                    }, true);
+                    });
             });
         };
         
