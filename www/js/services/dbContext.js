@@ -5,10 +5,17 @@
 (function () {
     
     PaCM.servicesModule.factory('dbContext', function ($http) {
-        
-        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 
-        var dbVersion = '2016.01.29.09.40';
+        var db = null;
+        var loadDatabase = function () {
+            if (db === null) {
+                db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 25 * 1024 * 1024 /* 25Mb */);
+            }            
+        };
+        
+        var dbVersion = '2016.02.02.14.40';
+
+        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -72,7 +79,7 @@
                     }
                 };
                 
-                var db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 25 * 1024 * 1024 /* 25Mb */);
+                loadDatabase();
                 db.transaction(function (tx) {
                     scope({
                         executeSql: function (sqlCommand, sqlParameters, onSuccessCommand, onErrorCommand) {
@@ -457,9 +464,9 @@
                 var localData = [];
                 var hasNewData = false;
                 
-                //Obtiene todos los registros con fecha mas reciente en el servidor, o que aún no
-                //existen localmente
-                
+                //Obtiene todos los registros con fecha mas reciente en el servidor, 
+                //o que aún no existen localmente
+
                 var fnc01 = function (tx) {
                     fnc01 = null;
 

@@ -10,14 +10,15 @@
     PaCM.controllersModule = angular.module('pacmApp.controllers', [])
 
         .controller('appCtrl', function ($scope) {
+
         });
         
 
     // PaCM App
 
-    angular.module('pacmApp', ['ionic', 'pacmApp.controllers', 'pacmApp.services'])
+    angular.module('pacmApp', ['ionic', 'pacmApp.services', 'pacmApp.controllers'])
 
-        .run(function ($ionicPlatform, dbContext, synchronizer, userSession) {
+        .run(function ($ionicPlatform, dbContext, synchronizer) {
 
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -32,12 +33,13 @@
                     StatusBar.styleLightContent();
                 }
                 // Check if database installed, update otherwise
-                //dbContext.installDatabase(function () {});
                 dbContext.checkDatabase(function () {
-                    // userSession.sigIn('julian_her@hotmail.com', '123456', function () {}, function () {});
                     // Initialize synchronizer service
                     synchronizer.start();
-                }, null, 1 /*debugMode*/);
+                },
+                function (err) {
+                    PaCM.showErrorMessage(err, 'Fails during check database');
+                }, 1 /*debugMode*/);
             });
 
         })
