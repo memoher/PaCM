@@ -32,13 +32,11 @@
 
 		var _synchronizeFnc = function (onSucess, onError) {
 
-			alert(1);
 			if (_synchronizerTask != null) {
 				clearInterval(_synchronizerTask);
 				_synchronizerTask = setInterval(_synchronizeFnc, _synchronizerInterval);
 			}
 
-			alert(2);
 			if (!PaCM.isNetworkOnline()) {
 				alert(3);
 				_onRuningFnc(3, 'Sin conexión con el servidor');
