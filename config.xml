@@ -22,6 +22,9 @@
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
+  <feature name="NetworkStatus">
+    <param name="ios-package" value="CDVConnection" />
+  </feature>
   <feature name="Storage">
     <param name="android-package" value="org.apache.cordova.Storage" />
   </feature>
