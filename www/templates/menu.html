@@ -1,5 +1,5 @@
 <ion-side-menus enable-menu-with-back-views="false">
-    <ion-side-menu side="left">
+    <ion-side-menu side="left" is-enabled="userSession.isLogged">
         <ion-header-bar class="bar-stable">
             <h1 class="title">Menú</h1>
         </ion-header-bar>
@@ -11,7 +11,7 @@
                 <ion-item menu-close href="#/app/records" ng-show="userSession.isLogged">
                     Historial
                 </ion-item>
-                <ion-item menu-close href="#/app/tools">
+                <ion-item menu-close href="#/app/tools" ng-show="userSession.isLogged">
                     Herramientas
                 </ion-item>
             </ion-list>
