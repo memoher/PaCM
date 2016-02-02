@@ -2,8 +2,8 @@
 
 /* Tab panel */
 
-ion-tabs ion-content.pane.tab-content.has-tabs {
-    top:45px;
+ion-tabs .pane.tab-content {
+    top:40px;
 }
 ion-tabs .tabs .tab-item.tab-item-active {
     background-color: #FFBF00;
