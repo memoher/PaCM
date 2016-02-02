@@ -369,6 +369,11 @@
         isNetworkOnline: function () {
             var self = this;
 
+            alert(navigator);
+            alert(navigator.connection);
+            alert(navigator.connection.type);
+            alert(self.isDefined(navigator.connection));
+
             if (self.isDefined(navigator.connection)) {
                 var networkState = navigator.connection.type;
                 return !(networkState === Connection.NONE);
