@@ -38,22 +38,17 @@
 			}
 
 			if (!PaCM.isNetworkOnline()) {
-				alert(3);
 				_onRuningFnc(3, 'Sin conexión con el servidor');
 				if (PaCM.isFunction(onSucess))
-					alert(4);
             		onSucess();
-            		alert(5);
 				return;
 			}
-			alert(6);
 
 			_onRuningFnc(3, 'Inicia proceso de sincronización con el servidor');
 			_onRuningFnc(3, 'Subiendo datos nuevos al servidor');
 			dbContext.exportData(
 
                 function (uploadedData) {
-                	alert(7);
                 	if (uploadedData === true)
                 		_onRuningFnc(3, 'Datos subidos correctamente');
                 	else

@@ -370,11 +370,9 @@
             var self = this;
 
             if ((navigator) && (navigator.connection)) {
-                alert(11);
                 var networkState = navigator.connection.type;
                 return !(networkState === navigator.connection.NONE);
             } else {
-                alert(12);
                 return true;
             }
         }
