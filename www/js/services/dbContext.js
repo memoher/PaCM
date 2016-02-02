@@ -487,7 +487,6 @@
                     fnc02 = null;
 
                     if (tablesForImport.length > 0) {
-                        alert(addressServer + 'SyncronizeData/GetData');
                         $http.post(addressServer + 'SyncronizeData/GetData', {
                             tables: tablesForImport,
                             records: localData
@@ -592,7 +591,6 @@
                     fnc02 = null;
 
                     if (localData.length > 0) {
-                        alert(addressServer + 'SyncronizeData/SetData');
                         $http.post(addressServer + 'SyncronizeData/SetData', {
                             records: localData
                         }).then(function (response) {
