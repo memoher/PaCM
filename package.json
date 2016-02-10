@@ -23,9 +23,5 @@
     "ionic-plugin-keyboard",
     "cordova-plugin-network-information"
   ],
-  "cordovaPlatforms": [
-    "ios",
-    "android",
-    "wp8"
-  ]
+  "cordovaPlatforms": []
 }

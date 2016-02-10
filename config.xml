@@ -7,9 +7,15 @@
   <author email="julian_her@hotmail.com" href="https://github.com/memoher/">
       Julian Hernández R.
     </author>
+  <plugin name="cordova-plugin-device" spec="n/a" />
+  <plugin name="cordova-plugin-console" spec="n/a" />
+  <plugin name="cordova-plugin-whitelist" spec="n/a" />
+  <plugin name="cordova-plugin-splashscreen" spec="n/a" />
+  <plugin name="cordova-plugin-statusbar" spec="n/a" />
+  <plugin name="ionic-plugin-keyboard" spec="n/a" />
+  <plugin name="cordova-plugin-network-information" spec="n/a" />
   <content src="index.html"/>
   <access origin="*"/>
-  <plugin name="cordova-plugin-whitelist" spec="1" />
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
