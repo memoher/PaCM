@@ -13,6 +13,9 @@
         "cordova-plugin-device": {
             "PACKAGE_NAME": "com.escolcorp.pacm"
         },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.escolcorp.pacm"
+        },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "com.escolcorp.pacm"
         },
@@ -23,9 +26,6 @@
             "PACKAGE_NAME": "com.escolcorp.pacm"
         },
         "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.escolcorp.pacm"
-        },
-        "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.escolcorp.pacm"
         }
     },

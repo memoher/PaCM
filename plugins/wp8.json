@@ -8,25 +8,25 @@
     },
     "installed_plugins": {
         "cordova-plugin-console": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
         },
         "cordova-plugin-device": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
-        },
-        "cordova-plugin-splashscreen": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
-        },
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
-        },
-        "cordova-plugin-whitelist": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
-        },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
         },
         "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "{7da7bba0-c833-11e5-bcfb-8d02bb20a49c}"
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
+        },
+        "cordova-plugin-statusbar": {
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
+        },
+        "ionic-plugin-keyboard": {
+            "PACKAGE_NAME": "{3b5aa7c0-d031-11e5-aab8-e9439adfb11b}"
         }
     },
     "dependent_plugins": {}
