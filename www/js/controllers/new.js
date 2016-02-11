@@ -645,7 +645,7 @@
                 WorkToBeDone: $scope.maintenance.workToBeDone,
                 TechnicalReport: $scope.maintenance.technicalReport,
                 ExecutedById: $scope.maintenance.executedById,
-                StatusId: $scope.maintenance.statusId,
+                StatusId: 'Approved',
                 AcceptedBy: $scope.maintenance.acceptedBy,
                 AcceptedByDigitalSignatureId: $scope.maintenance.acceptedByDigitalSignatureId
             };
@@ -1292,6 +1292,9 @@
                 //Load image
                 if (_this.signatureData) {
                     _this.signature.fromDataURL(_this.signatureData);
+                    if (!($scope.maintenance.statusId === 'InCapture')) {
+                        _this.signature.off();
+                    }
                 }
 
                 //Declare public methods

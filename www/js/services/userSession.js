@@ -10,7 +10,7 @@
             sigIn: function (emailAddress, password, onSuccess, onError) {
                 var self = this;
 
-                dataContext.first('User', { where: 'lower(EmailAddress) = ? and Enabled = ?', parameters: [emailAddress, true] }, function (user) {
+                dataContext.first('User', { where: 'lower(EmailAddress) = lower(?) and Enabled = ?', parameters: [emailAddress, true] }, function (user) {
                     if (user == null)
                         throw 'El usuario o la contraseña no es válido';
                     

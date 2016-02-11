@@ -1,6 +1,6 @@
 <ion-modal-view>
     <ion-header-bar>
-        <h1 class="title">{{ searcher.title }}</h1>
+        <h1 class="title">{{ searcher.title}}</h1>
         <div class="buttons">
             <button class="button button-clear" ng-click="searcher.close()">Cerrar</button>
         </div>
@@ -10,43 +10,43 @@
             <div class="list">
                 <label class="item item-input">
                     <i class="icon ion-search placeholder-icon"></i>
-                    <input type="text" ng-model="searcher.search" ng-model-options="{ debounce: 250 }" ng-change="searcher.filter()">
+                    <input type="text" ng-model="searcher.search" ng-model-options="{debounce: 250}" ng-change="searcher.filter()">
                 </label>
             </div>
         </form>
-        <ion-list ng-if="searcher.group==1">
-            <ion-item class="item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name }}
+        <div class="list" ng-if="searcher.group == 1">
+            <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
+                {{ r.Name}}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
-            </ion-item>
-            <button class="button button-assertive button-block" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
-                ¡Opps! ¿Desea adicionar este?
+            </div>
+            <button class="button button-assertive button-full" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
+                ¡Opps! ¿Desea usar este dato?
             </button>
-        </ion-list>
-        <ion-list ng-if="searcher.group==2">
-            <ion-item class="item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Description }}
+        </div>
+        <div class="list" ng-if="searcher.group == 2">
+            <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
+                {{ r.Description}}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
-            </ion-item>
-            <button class="button button-assertive button-block" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
-                ¡Opps! ¿Desea adicionar este?
+            </div>
+            <button class="button button-assertive button-full" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
+                ¡Opps! ¿Desea usar este dato?
             </button>
-        </ion-list>
-        <ion-list ng-if="searcher.group==3">
-            <ion-item class="item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name }} ({{ r.InventoryCode }})
+        </div>
+        <div class="list" ng-if="searcher.group == 3">
+            <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
+                {{ r.Name}} ({{ r.InventoryCode}})
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
-            </ion-item>
-        </ion-list>
-        <ion-list ng-if="searcher.group==4">
-            <ion-item class="item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name }}
+            </div>
+        </div>
+        <div class="list" ng-if="searcher.group == 4">
+            <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
+                {{ r.Name}}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
-            </ion-item>
+            </div>
             <div class="spacer"></div>
-            <a class="button button-assertive button-block" ng-show="searcher.showAddButton" href="#/app/customer/{{ searcher.search }}">
-                ¡Opps! ¿Desea adicionar este?
+            <a class="button button-assertive button-full" ng-show="searcher.showAddButton" href="#/app/customer/{{ searcher.search}}">
+                ¡Opps! ¿Desea usar este dato?
             </a>
-        </ion-list>
+        </div>
     </ion-content>
 </ion-modal-view>

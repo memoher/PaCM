@@ -273,12 +273,12 @@
             });
 
             //Valores iniciales
-            dataContext.first('IdentityType', { where: 'lower(ShortName) = ?', parameters: ['nit'] }, function (it) {
+            dataContext.first('IdentityType', { where: 'lower(ShortName) = lower(?)', parameters: ['nit'] }, function (it) {
                 if (!(it === null)) {
                     $scope.customer.identityTypeId = it.Id;
                 }
             });
-            dataContext.first('Country', { where: 'lower(Name) = ?', parameters: [ 'colombia' ] }, function (c) {
+            dataContext.first('Country', { where: 'lower(Name) = lower(?)', parameters: [ 'colombia' ] }, function (c) {
                 if (!(c === null)) {
                     $scope.customer.countryId = c.Id;
                     $scope.customer.countryName = c.Name;

@@ -1,13 +1,14 @@
 <ion-view view-title="Herramientas" can-swipe-back="false" hide-back-button="true">
     <ion-content class="has-header" padding="true">
-    	<button class="button button-positive button-block" ng-click="sigOut()" ng-disabled="runningProcess">Cerrar sesión</button>
-        <div class="spacer"></div>
-        <button class="button button-positive button-block" ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
-        <h4>Consola</h4>
-        <ion-list>
-	      <ion-item class="console-item" ng-repeat="ci in entriesConsoleLog">
-	        <p class="level-{{ci.level}}">{{ ci.dateTime | date : 'medium' }} -> {{ci.message}}</p>
-	      </ion-item>
-	    </ion-list>
+        <button class="button button-positive button-block" ng-click="sigOut()" ng-disabled="runningProcess">Cerrar sesión</button>
+        <div class="list">
+            <button class="button button-positive button-block" ng-click="synchronizeData()" ng-disabled="runningProcess">Sincronizar datos</button>
+            <div class="item item-divider">
+                Eventos
+            </div>
+            <div class="item item-console" ng-repeat="ci in entriesConsoleLog">
+                <p class="level-{{ci.level}}">{{ ci.dateTime | date : 'medium' }} -> {{ci.message}}</p>
+            </div>
+        </div>
     </ion-content>
 </ion-view>

@@ -9,58 +9,69 @@ ion-tabs .tabs .tab-item.tab-item-active {
     background-color: #FFBF00;
 }
 
+.spacer.spacer-footer {
+    height: 100px;
+}
+
 .show-errors .ng-invalid {
     border-bottom: 1px solid red;
 }
 
 .list-inset .item.item-input input {
-  padding-right: 0;
+    padding-right: 0;
+}
+
+.item.item-input input:not(.ng-invalid) {
+    border-bottom: 1px solid lightblue;
 }
 
 .item.no-padding {
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
 }
 .item.no-padding .row,
 .item.no-padding .row .col {
-  padding: 0;
+    padding: 0;
 }
+
+/* Signature input */
 
 .item-signature {
-  background-color: lightgray;
-  padding-left: 0;
-  padding-right: 0;
+    background-color: lightgray;
+    padding-left: 0;
+    padding-right: 0;
 }
 .item-signature .input-signature {
-  background-color: white;
-  margin: auto;
-}
-
-@media (max-width: 567px) {
-  .row.responsive-sm {
-    padding: 0;
-  }
-  .row.responsive-sm .col {
-    margin: 0;
-    padding: 0;
-  }
+    background-color: white;
+    margin: auto;
 }
 
 /* Events console */
 
-.console-item {
+.item.item-console {
     padding: 8px;
 }
-.console-item .level-1 {
+.item.item-console .level-1 {
     color: red;
 }
-.console-item .level-2 {
+.item.item-console .level-2 {
     color: orange;
 }
-.console-item .level-3 {
+.item.item-console .level-3 {
     color: blue;
 }
-.console-item .level-4 {
+.item.item-console .level-4 {
     color: green;
+}
+
+
+@media (max-width: 567px) {
+    .row.responsive-sm {
+        padding: 0;
+    }
+    .row.responsive-sm .col {
+        margin: 0;
+        padding: 0;
+    }
 }

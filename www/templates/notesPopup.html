@@ -1,6 +1,6 @@
 <ion-modal-view>
     <ion-header-bar>
-        <h1 class="title">{{ notes.title }}</h1>
+        <h1 class="title">{{ notes.title}}</h1>
         <div class="buttons">
             <button class="button button-clear" ng-click="notes.close()">Cerrar</button>
         </div>
@@ -9,7 +9,7 @@
         <form>
             <div class="list list-inset">
                 <label class="item item-input">
-                    <textarea rows="10" ng-readonly="notes.readOnly" ng-model="notes.value" ng-model-options="{ debounce: 250 }" ng-change="notes.onChange(notes.value)"></textarea>
+                    <textarea rows="10" ng-readonly="notes.readOnly" ng-model="notes.value" ng-model-options="{debounce: 250}" ng-change="notes.onChange(notes.value)"></textarea>
                 </label>
             </div>
         </form>

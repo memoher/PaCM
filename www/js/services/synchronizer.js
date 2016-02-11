@@ -27,7 +27,7 @@
 				_synchronizerTask = null;
 			}
 
-			_onRuningFnc(3, 'Fuera de linea');
+			_onRuningFnc(2, 'Fuera de linea');
 		};
 
 		var _synchronizeFnc = function (onSucess, onError) {
@@ -38,7 +38,7 @@
 			}
 
 			if (!PaCM.isNetworkOnline()) {
-				_onRuningFnc(3, 'Sin conexión con el servidor');
+				_onRuningFnc(2, 'Sin conexión con el servidor');
 				if (PaCM.isFunction(onSucess))
             		onSucess();
 				return;

@@ -13,7 +13,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Identidad</span>
-                        <input type="text" required ng-model="customer.identity" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" required ng-model="customer.identity" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
             </div>
@@ -21,13 +21,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Nombre</span>
-                        <input type="text" required ng-model="customer.name" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" required ng-model="customer.name" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Alias</span>
-                        <input type="text" ng-model="customer.shortName" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" ng-model="customer.shortName" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">País</span>
-                        <input type="text" required readonly ng-model="customer.countryName" ng-focus="searchCountry()">
+                        <input type="text" required ng-model="customer.countryName" ng-focus="searchCountry()">
                     </label>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Departamento</span>
-                        <input type="text" required readonly ng-model="customer.stateName" ng-focus="searchState()">
+                        <input type="text" required ng-model="customer.stateName" ng-focus="searchState()">
                     </label>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Ciudad</span>
-                        <input type="text" required readonly ng-model="customer.cityName" ng-focus="searchCity()">
+                        <input type="text" required ng-model="customer.cityName" ng-focus="searchCity()">
                     </label>
                 </div>
             </div>
@@ -59,13 +59,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Dirección</span>
-                        <input type="text" required ng-model="customer.address" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" required ng-model="customer.address" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Código postal</span>
-                        <input type="text" ng-model="customer.postalCode" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" ng-model="customer.postalCode" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
             </div>
@@ -73,13 +73,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Teléfono</span>
-                        <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Web site</span>
-                        <input type="url" ng-model="customer.webSite" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="url" ng-model="customer.webSite" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
             </div>
@@ -87,19 +87,19 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Nombre del contacto</span>
-                        <input type="text" ng-model="customer.contactName" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="text" ng-model="customer.contactName" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Correo electrónico del contacto</span>
-                        <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{ updateOn: 'blur' }">
+                        <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{updateOn: 'blur'}">
                     </label>
                 </div>
             </div>
             <div class="spacer"></div>
             <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Guardar</button>
         </form>
-        <div style="height: 50px;" class="spacer"></div>
+        <div class="spacer spacer-footer"></div>
     </ion-content>
 </ion-view>

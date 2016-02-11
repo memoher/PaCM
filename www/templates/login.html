@@ -1,18 +1,17 @@
 <ion-view title="Iniciar sesión" can-swipe-back="false" hide-back-button="true">
     <ion-content class="has-header" padding="true">
         <form name="loginForm" ng-class="{'show-errors': showErrors}" ng-submit="sigIn()">
-            <ion-list>
+            <div class="list">
                 <label class="item item-input">
                     <span class="input-label">Correo electrónico</span>
-                    <input type="email" ng-model="login.emailAddress" ng-model-options="{ updateOn: 'blur' }" required>
+                    <input type="email" ng-model="login.emailAddress" ng-model-options="{updateOn: 'blur'}" required>
                 </label>
                 <label class="item item-input">
                     <span class="input-label">Contraseña</span>
-                    <input type="password" ng-model="login.password" ng-model-options="{ updateOn: 'blur' }" required>
+                    <input type="password" ng-model="login.password" ng-model-options="{updateOn: 'blur'}" required>
                 </label>
-            </ion-list>
-            <div class="spacer"></div>
-            <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Iniciar sesión</button>
+                <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Iniciar sesión</button>
+            </div>
         </form>
     </ion-content>
 </ion-view>
