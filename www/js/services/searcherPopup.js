@@ -17,7 +17,7 @@
                             var self = this;
 
                             self.group = null;
-                            if (['Country', 'State', 'City', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(type)>=0)
+                            if (['Country', 'State', 'City', 'BranchCustomer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(type)>=0)
                                 self.group = 1;
                             else if (['ObjectType', 'Battery', 'Charger', 'Machine'].indexOf(type)>=0)
                                 self.group = 2;

@@ -3,7 +3,7 @@
 /* Tab panel */
 
 ion-tabs .pane.tab-content {
-    top:40px;
+    top:45px;
 }
 ion-tabs .tabs .tab-item.tab-item-active {
     background-color: #FFBF00;
@@ -13,16 +13,16 @@ ion-tabs .tabs .tab-item.tab-item-active {
     height: 100px;
 }
 
-.show-errors .ng-invalid {
-    border-bottom: 1px solid red;
-}
-
 .list-inset .item.item-input input {
     padding-right: 0;
 }
 
-.item.item-input input:not(.ng-invalid) {
+.item.item-input input {
     border-bottom: 1px solid lightblue;
+}
+
+.show-errors .item.item-input .ng-invalid {
+    border-bottom: 1px solid red;
 }
 
 .item.no-padding {

@@ -21,6 +21,7 @@
             IdentityType: 'CfgIdentityTypes',
             Company: 'CfgCompany',
             Customer: 'CfgCustomers',
+            BranchCustomer: 'CfgCustomerBranches',
             MachineTrademark: 'MntMachineTrademarks',
             MachineModel: 'MntMachineModels',
             Machine: 'MntMachines',

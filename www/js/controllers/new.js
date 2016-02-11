@@ -71,6 +71,7 @@
         
         $scope.filters = {
             customerSearch: null,
+            branchCustomerSearch: null,
             objectTypeTrademarkSearch: null,
             objectTypeModelSearch: null,
             objectTypeSearch: null,
@@ -111,9 +112,55 @@
             $scope.maintenance.customerId = null;
             $scope.maintenance.customerName = null;
             $scope.filters.customerSearch = null;
+            $scope.resetBranchCustomer();
             $scope.resetObjectType(true);
             $scope.resetObjectType(false);
             $scope.resetMachine();
+        };
+
+        $scope.searchBranchCustomer = function () {
+            if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
+                return;
+            }
+
+            var options = {
+                where: {
+                    CustomerId: $scope.maintenance.customerId
+                },
+                orderBy: 'Name'
+            };
+
+            dataContext.find('BranchCustomer', options, function (customerBranches) {
+                if ($scope.maintenance.branchCustomerId) {
+                    var val = $scope.maintenance.branchCustomerId;
+                    PaCM.eachArray(customerBranches, function (inx, bc) {
+                        if (bc.Id == val) {
+                            bc.Selected = true;
+                            return true; //break;
+                        }
+                    });
+                }
+                $scope.searcher.open(
+                    'BranchCustomer',
+                    'Buscar sucursal',
+                    customerBranches,
+                    $scope.filters.branchCustomerSearch,
+                    function (r) {
+                        $scope.resetBranchCustomer();
+                        if (r === $scope.searcher.search) {
+                            $scope.maintenance.branchCustomerName = r;
+                        } else {
+                            $scope.maintenance.branchCustomerId = r.Id;
+                            $scope.maintenance.branchCustomerName = r.Name;
+                        }
+                        $scope.filters.branchCustomerSearch = $scope.searcher.search;
+                    }, true);
+            });
+        };
+        $scope.resetBranchCustomer = function () {
+            $scope.maintenance.branchCustomerId = null;
+            $scope.maintenance.branchCustomerName = null;
+            $scope.filters.branchCustomerSearch = null;
         };
         
         $scope.searchObjectTypeTrademark = function (applyForBattery) {
@@ -314,11 +361,19 @@
                     function (r) {
                         $scope.resetObjectType(applyForBattery);
                         if (applyForBattery === true) {
-                            $scope.maintenance.batteryId = r.Id;
-                            _this.getBattery();
+                            if (r === $scope.searcher.search) {
+                                $scope.battery.serial = r;
+                            } else {
+                                $scope.maintenance.batteryId = r.Id;
+                                _this.getBattery();
+                            }
                         } else {
-                            $scope.maintenance.chargerId = r.Id;
-                            _this.getCharger();
+                            if (r === $scope.searcher.search) {
+                                $scope.charger.serial = r;
+                            } else {
+                                $scope.maintenance.chargerId = r.Id;
+                                _this.getCharger();
+                            }
                         }
                         $scope.filters.objectTypeSearch = $scope.searcher.search;
                     }, true);
@@ -490,8 +545,12 @@
                     $scope.filters.machineSearch,
                     function (r) {
                         $scope.resetMachine();
-                        $scope.maintenance.machineId = r.Id;
-                        _this.getMachine();
+                        if (r === $scope.searcher.search) {
+                            $scope.machine.serial = r;
+                        } else {
+                            $scope.maintenance.machineId = r.Id;
+                            _this.getMachine();
+                        }
                         $scope.filters.machineSearch = $scope.searcher.search;
                     }, true);
             });
@@ -553,6 +612,8 @@
             corrective: false,
             customerId: ($stateParams.customerId) ? $stateParams.customerId : null,
             customerName: null,
+            branchCustomerId: null,
+            branchCustomerName: null,
             batteryId: $stateParams.elmType === 'battery' ? $stateParams.elmId : null,
             chargerId: $stateParams.elmType === 'charger' ? $stateParams.elmId : null,
             machineId: null,
@@ -574,6 +635,7 @@
                     $scope.maintenance.preventive = r.Preventive;
                     $scope.maintenance.corrective = r.Corrective;
                     $scope.maintenance.customerId = r.CustomerId;
+                    $scope.maintenance.branchCustomerId = r.BranchCustomerId;
                     $scope.maintenance.batteryId = (r.Type.indexOf('Battery') >= 0 ? r.ObjectTypeId : null );
                     $scope.maintenance.chargerId = (r.Type.indexOf('Charger') >= 0 ? r.ObjectTypeId : null );
                     $scope.maintenance.machineId = r.MachineId;
@@ -586,6 +648,11 @@
                     dataContext.get('Customer', $scope.maintenance.customerId, function (c) {
                         $scope.maintenance.customerName = c.Name;
                     });
+                    if ($scope.maintenance.branchCustomerId) {
+                        dataContext.get('BranchCustomer', $scope.maintenance.branchCustomerId, function (cb) {
+                            $scope.maintenance.branchCustomerName = cb.Name;
+                        });
+                    }
                     dataContext.get('MaintenanceStatus', $scope.maintenance.statusId, function (ms) {
                         $scope.maintenance.statusDescription = ms.Description;
                     });
@@ -612,9 +679,25 @@
                 });
             }
         };
+        _this.saveBranchCustomer = function (onSuccess) {
+            dataContext.get('Customer', $scope.maintenance.customerId, function (c) {
+                var bc = {
+                    CustomerId: c.Id,
+                    CityId: c.CityId,
+                    Name: $scope.maintenance.branchCustomerName,
+                    Address: '.',
+                    PhoneNumber: '.'
+                };
+                dataContext.save('BranchCustomer', $scope.maintenance.branchCustomerId, bc, function () {
+                    $scope.maintenance.branchCustomerId = bc.Id;
+                    PaCM.cleaner(bc); bc = null;
+                    onSuccess();
+                }, _this.onSqlError);
+            });
+        };
         _this.saveSignature = function (onSuccess) {
             if (!_this.signature.isEmpty()) {
-                $scope.saveCanvas();
+                $scope.exportCanvas();
                 var f = {
                     Name: 'Signature_accepted_by.png',
                     Extension: 'png',
@@ -639,6 +722,7 @@
                 Preventive: $scope.maintenance.preventive,
                 Corrective: $scope.maintenance.corrective,
                 CustomerId: $scope.maintenance.customerId,
+                BranchCustomerId: $scope.maintenance.branchCustomerId,
                 Type: $scope.maintenance.batteryId ? 'BatteryMaintenance' : 'ChargerMaintenance',
                 ObjectTypeId: $scope.maintenance.batteryId ? $scope.maintenance.batteryId : $scope.maintenance.chargerId,
                 MachineId: $scope.maintenance.machineId,
@@ -1249,9 +1333,12 @@
         };
 
 
-        $scope.saveMaintenance = function () {
+        $scope.save = function () {
             var actions = [];
 
+            if ($scope.maintenance.branchCustomerName && !($scope.maintenance.branchCustomerId)) {
+                actions.push(_this.saveBranchCustomer);
+            }
             if ($scope.battery.typeId) {
                 actions.push(_this.saveBatteryTrademark);
                 actions.push(_this.saveBatteryModel);
@@ -1262,7 +1349,7 @@
                 actions.push(_this.saveChargerModel);
                 actions.push(_this.saveCharger);
             }
-            if ($scope.machine.serial || $scope.machine.customerReference) {
+            if ($scope.machine.serial) {
                 actions.push(_this.saveMachineTrademark);
                 actions.push(_this.saveMachineModel);
                 actions.push(_this.saveMachine);
@@ -1301,7 +1388,7 @@
                 $scope.clearCanvas = function() {
                     _this.signature.clear();
                 }
-                $scope.saveCanvas = function() {
+                $scope.exportCanvas = function() {
                     _this.signatureData = _this.signature.toDataURL('image/png');
                 }
             }
