@@ -107,6 +107,8 @@
                         $scope.filters.customerSearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetCustomer = function () {
             $scope.maintenance.customerId = null;
@@ -156,6 +158,8 @@
                         $scope.filters.branchCustomerSearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetBranchCustomer = function () {
             $scope.maintenance.branchCustomerId = null;
@@ -203,6 +207,8 @@
                         $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
                     }, true); 
             });
+
+            return false;
         };
         $scope.resetObjectTypeTrademark = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -298,7 +304,8 @@
                         }, true); 
                 });
             });
-            
+
+            return false;
         };
         $scope.resetObjectTypeModel = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -378,6 +385,8 @@
                         $scope.filters.objectTypeSearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetObjectType = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -441,6 +450,8 @@
                         $scope.filters.machineTrademarkSearch = $scope.searcher.search;
                     }, true); 
             });
+
+            return false;
         };
         $scope.resetMachineTrademark = function () {
             $scope.machine.trademarkId = null;
@@ -496,7 +507,8 @@
                         $scope.filters.machineModelSearch = $scope.searcher.search;
                     }, true); 
             });
-            
+
+            return false;
         };
         $scope.resetMachineModel = function () {
             $scope.machine.modelId = null;
@@ -554,6 +566,8 @@
                         $scope.filters.machineSearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetMachine = function () {
             $scope.maintenance.machineId = null;
@@ -598,6 +612,8 @@
                         ao.articleName = r.Name + ' (' + r.InventoryCode + ')';
                     });
             });
+
+            return false;
         };
         
         //---------------------------------------------------------------------------------------------------------

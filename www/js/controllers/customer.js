@@ -54,6 +54,8 @@
                         $scope.filters.countrySearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetCountry = function () {
             $scope.customer.countryId = null;
@@ -102,6 +104,8 @@
                         $scope.filters.stateSearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetState = function () {
             $scope.customer.stateId = null;
@@ -158,6 +162,8 @@
                         $scope.filters.citySearch = $scope.searcher.search;
                     }, true);
             });
+
+            return false;
         };
         $scope.resetCity = function () {
             $scope.customer.cityId = null;

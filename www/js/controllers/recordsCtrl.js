@@ -55,6 +55,8 @@
                         }
                     });
             });
+
+            return false;
         };
         $scope.resetCustomer = function () {
             $scope.filters.customerId = null;
@@ -88,6 +90,8 @@
                         }
                     }); 
             });
+
+            return false;
         };
         $scope.resetObjectTypeTrademark = function () {
             $scope.filters.objectTypeTrademarkId = null;
@@ -133,7 +137,8 @@
                         }
                     }); 
             });
-            
+
+            return false;
         };
         $scope.resetObjectTypeModel = function () {
             $scope.filters.objectTypeModelId = null;
@@ -205,6 +210,8 @@
                         }
                     });
             });
+
+            return false;
         };
         $scope.resetObjectType = function () {
             $scope.filters.objectTypeId = null;
