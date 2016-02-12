@@ -13,7 +13,7 @@
             }            
         };
         
-        var dbVersion = '2016.02.10.15.10';
+        var dbVersion = '2016.02.12.08.30';
 
         var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
 

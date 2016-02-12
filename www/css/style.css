@@ -23,6 +23,12 @@
 .item.item-input.item-select select {
     width: 100%;
 }
+input[readonly].selector-dialog:not(.cloned-text-input),
+textarea[readonly].selector-dialog:not(.cloned-text-input),
+select[readonly].selector-dialog {
+  background-color: transparent;
+  cursor: pointer;
+  }
 
 .show-errors .item.item-input .ng-invalid {
     border-bottom: 1px solid red;

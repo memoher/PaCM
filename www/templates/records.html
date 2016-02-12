@@ -5,13 +5,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Cliente</span>
-                        <input type="text" required readonly ng-model="filters.customerName" ng-focus="searchCustomer()">
+                        <input type="text" class="selector-dialog" required readonly ng-model="filters.customerName" ng-focus="searchCustomer()">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Marca</span>
-                        <input type="text" required readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
+                        <input type="text" class="selector-dialog" required readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
                     </label>
                 </div>
             </div>
@@ -19,13 +19,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Modelo</span>
-                        <input type="text" required readonly ng-model="filters.objectTypeModelName" ng-focus="searchObjectTypeModel()">
+                        <input type="text" class="selector-dialog" required readonly ng-model="filters.objectTypeModelName" ng-focus="searchObjectTypeModel()">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Bateria / cargador</span>
-                        <input type="text" readonly ng-model="filters.objectTypeDescription" ng-focus="searchObjectType(recordsForm.$valid)">
+                        <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeDescription" ng-focus="searchObjectType(recordsForm.$valid)">
                     </label>
                 </div>
             </div>
