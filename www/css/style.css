@@ -2,15 +2,15 @@
 
 /* Tab panel */
 
-ion-tabs .pane.tab-content {
+.tab-content {
     top:45px;
 }
-ion-tabs .tabs .tab-item.tab-item-active {
+.tab-item.tab-item-active {
     background-color: #FFBF00;
 }
 
 .spacer.spacer-footer {
-    height: 100px;
+    height: 350px;
 }
 
 .list-inset .item.item-input input {

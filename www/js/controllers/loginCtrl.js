@@ -11,8 +11,8 @@
         $scope.showErrors = true;
 
         $scope.login = {
-            emailAddress: 'julian_her@hotmail.com',
-            password: 123456
+            emailAddress: null,
+            password: null
         };
         $scope.sigIn = function () {
             $scope.runningProcess = true;
