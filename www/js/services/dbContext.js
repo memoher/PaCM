@@ -13,9 +13,9 @@
             }            
         };
         
-        var dbVersion = '2016.02.12.08.30';
+        var dbVersion = '2016.02.12.10.30';
 
-        var addressServer = 'http://eccmant.emhesolutions.com/'; //'http://localhost:8100/api/'; //'http://192.168.0.12:57080/'; //
+        var addressServer = 'http://75.149.186.74:18080/';
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
