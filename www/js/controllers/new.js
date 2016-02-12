@@ -81,6 +81,8 @@
         };
         
         $scope.searchCustomer = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             if ($scope.readOnlyLinks === true || $scope.maintenance.id) {
                 return;
             }
@@ -107,9 +109,6 @@
                         $scope.filters.customerSearch = $scope.searcher.search;
                     }, true);
             });
-
-            e.preventDefault();
-            e.stopPropagation();
         };
         $scope.resetCustomer = function () {
             $scope.maintenance.customerId = null;
@@ -122,6 +121,8 @@
         };
 
         $scope.searchBranchCustomer = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
             if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
                 return;
             }
@@ -159,9 +160,6 @@
                         $scope.filters.branchCustomerSearch = $scope.searcher.search;
                     }, true);
             });
-
-            e.preventDefault();
-            e.stopPropagation();
         };
         $scope.resetBranchCustomer = function () {
             $scope.maintenance.branchCustomerId = null;
