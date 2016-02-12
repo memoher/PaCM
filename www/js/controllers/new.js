@@ -123,9 +123,9 @@
         $scope.searchBranchCustomer = function (e) {
             e.preventDefault();
             e.stopPropagation();
-            if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
+            /*if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
                 return;
-            }
+            }*/
 
             var options = {
                 where: {

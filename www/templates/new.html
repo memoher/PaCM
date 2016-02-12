@@ -12,14 +12,14 @@
                             <span class="input-label">Fecha</span>
                             <input type="date" required ng-readonly="readOnlyMode" ng-model="maintenance.date" ng-model-options="{updateOn: 'blur'}">
                         </label>
-                        <div class="item item-input" ng-click="searchCustomer($event)">
+                        <label class="item item-input">
                             <span class="input-label">Cliente</span>
-                            <input type="text" required ng-readonly="(readOnlyLinks || maintenance.id)" ng-model="maintenance.customerName">
-                        </div>
-                        <div class="item item-input">
+                            <input type="text" required ng-readonly="(readOnlyLinks || maintenance.id)" ng-model="maintenance.customerName" ng-focus="searchCustomer($event)">
+                        </label>
+                        <label class="item item-input">
                             <span class="input-label">Sucursal</span>
                             <input type="text" ng-readonly="(readOnlyMode || !(maintenance.customerId))" ng-model="maintenance.branchCustomerName" ng-focus="searchBranchCustomer($event)">
-                        </div>
+                        </label>
                         <label class="item item-input">
                             <span class="input-label">Realizado por</span>
                             <input type="text" required readonly ng-model="maintenance.executedByUsername">
