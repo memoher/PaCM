@@ -108,6 +108,7 @@
                     }, true);
             });
 
+            e.preventDefault();
             e.stopPropagation();
         };
         $scope.resetCustomer = function () {
@@ -159,6 +160,7 @@
                     }, true);
             });
 
+            e.preventDefault();
             e.stopPropagation();
         };
         $scope.resetBranchCustomer = function () {

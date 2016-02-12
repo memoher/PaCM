@@ -10,7 +10,7 @@
                 // Create the modal popup notes
                 $ionicModal.fromTemplateUrl('templates/notesPopup.html', {
                     scope: $scope,
-                    focusFirstInput: false
+                    focusFirstInput: true
                 }).then(function(modal) {
                     $scope.notes = {
                         open: function (title, readOnly, value, onChange) {

@@ -20,6 +20,9 @@
 .item.item-input input {
     border-bottom: 1px solid lightblue;
 }
+.item.item-input.item-select select {
+    width: 100%;
+}
 
 .show-errors .item.item-input .ng-invalid {
     border-bottom: 1px solid red;
