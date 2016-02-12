@@ -14,11 +14,11 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Cliente</span>
-                            <input type="text" required ng-readonly="(readOnlyLinks || maintenance.id)" ng-model="maintenance.customerName" ng-focus="searchCustomer($event)">
+                            <input type="text" required ng-readonly="(readOnlyLinks || maintenance.id)" ng-model="maintenance.customerName" ng-focus="searchCustomer()">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Sucursal</span>
-                            <input type="text" ng-readonly="(readOnlyMode || !(maintenance.customerId))" ng-model="maintenance.branchCustomerName" ng-focus="searchBranchCustomer($event)">
+                            <input type="text" ng-readonly="(readOnlyMode || !(maintenance.customerId))" ng-model="maintenance.branchCustomerName" ng-focus="searchBranchCustomer()">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Realizado por</span>
@@ -45,15 +45,15 @@
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.trademarkName" ng-focus="searchObjectTypeTrademark($event, true)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.trademarkName" ng-focus="searchObjectTypeTrademark(true)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Modelo</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.modelName" ng-focus="searchObjectTypeModel($event, true)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.modelName" ng-focus="searchObjectTypeModel(true)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Serial</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.serial" ng-focus="searchObjectType($event, true)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="battery.serial" ng-focus="searchObjectType(true)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
@@ -128,15 +128,15 @@
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.trademarkName" ng-focus="searchObjectTypeTrademark($event, false)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.trademarkName" ng-focus="searchObjectTypeTrademark(false)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Modelo</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.modelName" ng-focus="searchObjectTypeModel($event, false)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.modelName" ng-focus="searchObjectTypeModel(false)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Serial</span>
-                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.serial" ng-focus="searchObjectType($event, false)">
+                            <input type="text" required ng-readonly="readOnlyLinks" ng-model="charger.serial" ng-focus="searchObjectType(false)">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
@@ -161,15 +161,15 @@
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
-                            <input type="text" ng-readonly="readOnlyMode" ng-model="machine.trademarkName" ng-focus="searchMachineTrademark($event)">
+                            <input type="text" ng-readonly="readOnlyMode" ng-model="machine.trademarkName" ng-focus="searchMachineTrademark()">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Modelo</span>
-                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode" ng-model="machine.modelName" ng-focus="searchMachineModel($event)">
+                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode" ng-model="machine.modelName" ng-focus="searchMachineModel()">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Serial</span>
-                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyLinks" ng-model="machine.serial" ng-focus="searchMachine($event)">
+                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyLinks" ng-model="machine.serial" ng-focus="searchMachine()">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
@@ -266,7 +266,7 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="item item-input">
-                                        <input type="text" placeholder="Artículo" ng-readonly="readOnlyMode" ng-model="ao.articleName" ng-focus="searchArticle($event, ao)">
+                                        <input type="text" placeholder="Artículo" ng-readonly="readOnlyMode" ng-model="ao.articleName" ng-focus="searchArticle(ao)">
                                     </label>
                                 </div>
                                 <div class="col col-25">

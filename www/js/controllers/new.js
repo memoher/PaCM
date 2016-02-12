@@ -80,9 +80,7 @@
             machineSearch: null
         };
         
-        $scope.searchCustomer = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        $scope.searchCustomer = function () {
             if ($scope.readOnlyLinks === true || $scope.maintenance.id) {
                 return;
             }
@@ -120,12 +118,10 @@
             $scope.resetMachine();
         };
 
-        $scope.searchBranchCustomer = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            /*if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
+        $scope.searchBranchCustomer = function () {
+            if ($scope.readOnlyMode === true || !($scope.maintenance.customerId)) {
                 return;
-            }*/
+            }
 
             var options = {
                 where: {
@@ -167,7 +163,7 @@
             $scope.filters.branchCustomerSearch = null;
         };
         
-        $scope.searchObjectTypeTrademark = function (e, applyForBattery) {
+        $scope.searchObjectTypeTrademark = function (applyForBattery) {
             if ($scope.readOnlyLinks === true) {
                 return;
             }
@@ -207,8 +203,6 @@
                         $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
                     }, true); 
             });
-
-            e.stopPropagation();
         };
         $scope.resetObjectTypeTrademark = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -222,7 +216,7 @@
             $scope.resetObjectTypeModel(applyForBattery);
         };
         
-        $scope.searchObjectTypeModel = function (e, applyForBattery) {
+        $scope.searchObjectTypeModel = function (applyForBattery) {
             if ($scope.readOnlyLinks === true) {
                 return;
             }
@@ -304,8 +298,6 @@
                         }, true); 
                 });
             });
-
-            e.stopPropagation();
         };
         $scope.resetObjectTypeModel = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -319,7 +311,7 @@
             $scope.resetObjectType(applyForBattery);
         };
         
-        $scope.searchObjectType = function (e, applyForBattery) {
+        $scope.searchObjectType = function (applyForBattery) {
             if ($scope.readOnlyLinks === true) {
                 return;
             }
@@ -385,8 +377,6 @@
                         $scope.filters.objectTypeSearch = $scope.searcher.search;
                     }, true);
             });
-
-            e.stopPropagation();
         };
         $scope.resetObjectType = function (applyForBattery) {
             if (applyForBattery === true) {
@@ -419,7 +409,7 @@
             $scope.getMaintenanceInfo();
         };
         
-        $scope.searchMachineTrademark = function (e) {
+        $scope.searchMachineTrademark = function () {
             if ($scope.readOnlyMode === true) {
                 return;
             }
@@ -450,8 +440,6 @@
                         $scope.filters.machineTrademarkSearch = $scope.searcher.search;
                     }, true); 
             });
-
-            e.stopPropagation();
         };
         $scope.resetMachineTrademark = function () {
             $scope.machine.trademarkId = null;
@@ -460,7 +448,7 @@
             $scope.resetMachineModel();
         };
         
-        $scope.searchMachineModel = function (e) {
+        $scope.searchMachineModel = function () {
             if ($scope.readOnlyMode === true) {
                 return;
             }
@@ -507,8 +495,6 @@
                         $scope.filters.machineModelSearch = $scope.searcher.search;
                     }, true); 
             });
-
-            e.stopPropagation();
         };
         $scope.resetMachineModel = function () {
             $scope.machine.modelId = null;
@@ -520,7 +506,7 @@
             $scope.resetMachine();
         };
         
-        $scope.searchMachine = function (e) {
+        $scope.searchMachine = function () {
             if ($scope.readOnlyMode === true) {
                 return;
             }
@@ -566,8 +552,6 @@
                         $scope.filters.machineSearch = $scope.searcher.search;
                     }, true);
             });
-
-            e.stopPropagation();
         };
         $scope.resetMachine = function () {
             $scope.maintenance.machineId = null;
@@ -576,7 +560,7 @@
             $scope.filters.machineSearch = null;
         };
 
-        $scope.searchArticle = function (e, ao) {
+        $scope.searchArticle = function (ao) {
             if ($scope.readOnlyMode === true) {
                 return;
             }
@@ -612,8 +596,6 @@
                         ao.articleName = r.Name + ' (' + r.InventoryCode + ')';
                     });
             });
-
-            e.stopPropagation();
         };
         
         //---------------------------------------------------------------------------------------------------------

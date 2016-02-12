@@ -35,7 +35,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">País</span>
-                        <input type="text" required ng-model="customer.countryName" ng-focus="searchCountry()">
+                        <input type="text" required readonly ng-model="customer.countryName" ng-focus="searchCountry()">
                     </label>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Departamento</span>
-                        <input type="text" required ng-model="customer.stateName" ng-focus="searchState()">
+                        <input type="text" required readonly ng-model="customer.stateName" ng-focus="searchState()">
                     </label>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Ciudad</span>
-                        <input type="text" required ng-model="customer.cityName" ng-focus="searchCity()">
+                        <input type="text" required readonly ng-model="customer.cityName" ng-focus="searchCity()">
                     </label>
                 </div>
             </div>

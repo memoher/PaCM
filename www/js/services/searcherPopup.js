@@ -10,7 +10,7 @@
                 // Create the modal popup searcher
                 $ionicModal.fromTemplateUrl('templates/searcherPopup.html', {
                     scope: $scope,
-                    focusFirstInput: true
+                    focusFirstInput: false
                 }).then(function(modal) {
                     $scope.searcher = {
                         open: function (type, title, data, search, onSelect, canAdd) {
