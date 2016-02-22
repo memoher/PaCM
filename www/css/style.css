@@ -1,6 +1,7 @@
 /* Empty. Add your own CSS if you like */
 
-/* Tab panel */
+
+/* INICIO TAB PANEL */
 
 .tab-content {
     top:45px;
@@ -9,30 +10,65 @@
     background-color: #FFBF00;
 }
 
-.spacer.spacer-footer {
-    height: 400px;
+/* FIN TAB PANEL */
+
+
+/* INICIO INPUTS */
+
+.item.item-input.item-select select {
+    position: relative;
+    padding-left: 3px;
+    text-align: left;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 34px;
+    direction: inherit;
 }
 
-.list-inset .item.item-input input {
+.item.item-input.item-select select[readonly],
+.item.item-input.item-select select[disabled] {
+    background-color: #f8f8f8;
+    cursor: not-allowed;
+}
+
+.list-inset .item.item-input input,
+.list-inset .item.item-input textarea {
     padding-right: 0;
 }
 
-.item.item-input input {
+.item.item-input,
+.item.item-toggle {
+    border: 0;
+}
+
+.item.item-input input,
+.item.item-input select,
+.item.item-input textarea {
+    margin-bottom: 1px;
     border-bottom: 1px solid lightblue;
 }
-.item.item-input.item-select select {
-    width: 100%;
+.item.item-input textarea {
+    border-top: 1px solid lightblue;
 }
+.show-errors .item.item-input .ng-invalid {
+    border-bottom: 1px solid coral;
+}
+.show-errors .item.item-input textarea.ng-invalid {
+    border-top: 1px solid coral;
+}
+
 input[readonly].selector-dialog:not(.cloned-text-input),
 textarea[readonly].selector-dialog:not(.cloned-text-input),
 select[readonly].selector-dialog {
   background-color: transparent;
   cursor: pointer;
-  }
-
-.show-errors .item.item-input .ng-invalid {
-    border-bottom: 1px solid red;
 }
+
+/* FIN INPUTS */
+
 
 .item.no-padding {
     padding-top: 0;
@@ -44,19 +80,23 @@ select[readonly].selector-dialog {
     padding: 0;
 }
 
-/* Signature input */
 
-.item-signature {
+/* INICIO FIRMA */
+
+.item.item-signature {
     background-color: lightgray;
     padding-left: 0;
     padding-right: 0;
 }
-.item-signature .input-signature {
+.item.item-signature .input-signature {
     background-color: white;
     margin: auto;
 }
 
-/* Events console */
+/* FIN FIRMA */
+
+
+/* INICIO CONSOLA EVENTOS */
 
 .item.item-console {
     padding: 8px;
@@ -73,6 +113,39 @@ select[readonly].selector-dialog {
 .item.item-console .level-4 {
     color: green;
 }
+/* FIN CONSOLA EVENTOS */
+
+
+/* INICIO PIE DE FORMULARIOS */
+
+.spacer.spacer-footer {
+    height: 400px;
+}
+
+/* FIN PIE DE FORMULARIOS */
+
+
+/* INICIO MODALS */
+
+.modal .button-clear {
+    color: transparent;
+    height: 35px;
+    width: 35px;
+}
+
+.modal .button-clear:after {
+    color: #333;
+    height: 35px;
+    width: 35px;
+    content: 'x';
+    font-size: 20px;
+    background: white;
+    border-radius: 50%;
+    margin-top: 3px;
+    box-shadow: 1px 1px 5px -2px #000;
+}
+
+/*FIN MODALS*/
 
 
 @media (max-width: 567px) {

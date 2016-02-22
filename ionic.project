@@ -4,7 +4,7 @@
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://eccmant.emhesolutions.com/"
+      "proxyUrl": "http://pacm.app/"
     }
   ]
 }

@@ -594,6 +594,7 @@
                     function (r) {
                         ao.articleId = r.Id;
                         ao.articleName = r.Name + ' (' + r.InventoryCode + ')';
+                        $scope.addArticle();
                     });
             });
         };
@@ -604,7 +605,6 @@
 
         $scope.maintenance = {
             id: ($stateParams.maintenanceId) ? $stateParams.maintenanceId : null,
-            uniqueCode: null,
             date: null,
             preventive: false,
             corrective: false,
@@ -628,7 +628,6 @@
             if ($scope.maintenance.id) {
                 dataContext.get('Maintenance', $scope.maintenance.id, function (r) {
                     $scope.maintenance.id = r.Id;
-                    $scope.maintenance.uniqueCode = r.UniqueCode;
                     $scope.maintenance.date = r.Date;
                     $scope.maintenance.preventive = r.Preventive;
                     $scope.maintenance.corrective = r.Corrective;
@@ -715,7 +714,6 @@
         }
         _this.saveMaintenance = function (onSuccess) {
             var m = {
-                UniqueCode: $scope.maintenance.uniqueCode,
                 Date: $scope.maintenance.date,
                 Preventive: $scope.maintenance.preventive,
                 Corrective: $scope.maintenance.corrective,
@@ -1257,28 +1255,31 @@
                     PaCM.cleaner(articles); articles = null;
 
                     if ($scope.maintenance.corrective === true) {
-                        while ($scope.articlesOutputs.length < 3) {
-                            $scope.addArticle();
-                        }
+                        $scope.addArticle();
                     }
                 });
             } else {
                 PaCM.cleaner($scope.articlesOutputs);
 
                 if ($scope.maintenance.corrective === true) {
-                    while ($scope.articlesOutputs.length < 3) {
-                        $scope.addArticle();
-                    }
+                    $scope.addArticle();
                 }
             }
         };
         $scope.addArticle = function () {
-            $scope.articlesOutputs.push({
-                id: null,
-                articleId: null,
-                articleName: null,
-                quantity: null
+            var itemFree = PaCM.eachArray($scope.articlesOutputs, function (inx, ao) {
+                if (ao.articleId == null) {
+                    return true; //Break
+                }
             });
+            if (!(itemFree === true)) {
+                $scope.articlesOutputs.push({
+                    id: null,
+                    articleId: null,
+                    articleName: null,
+                    quantity: null
+                });
+            }
         };
         $scope.removeArticle = function (ao) {
             $scope.articlesOutputs.splice($scope.articlesOutputs.indexOf(ao), 1);
@@ -1334,6 +1335,14 @@
         $scope.save = function () {
             var actions = [];
 
+            var forms = document.getElementsByClassName('maintenance-validate');
+            for (var i = 0; i < forms.length; i ++) {
+                if (forms[i].classList.contains('ng-valid') === false) {
+                    alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
+                    return false; // Breack
+                }
+            }
+
             if ($scope.maintenance.branchCustomerName && !($scope.maintenance.branchCustomerId)) {
                 actions.push(_this.saveBranchCustomer);
             }
@@ -1377,7 +1386,7 @@
                 //Load image
                 if (_this.signatureData) {
                     _this.signature.fromDataURL(_this.signatureData);
-                    if (!($scope.maintenance.statusId === 'InCapture')) {
+                    if ($scope.readOnlyMode === true) {
                         _this.signature.off();
                     }
                 }
@@ -1453,7 +1462,6 @@
             _this.getMaintenance();
         } else {
             $scope.title = 'Nuevo mantenimiento';
-            $scope.maintenance.uniqueCode = PaCM.newGuid().substring(0,5);
             $scope.maintenance.date = new Date();
             $scope.maintenance.preventive = true;
             $scope.maintenance.corrective = false;

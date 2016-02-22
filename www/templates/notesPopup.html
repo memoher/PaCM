@@ -5,9 +5,9 @@
             <button class="button button-clear" ng-click="notes.close()">Cerrar</button>
         </div>
     </ion-header-bar>
-    <ion-content>
+    <ion-content padding="true">
         <form>
-            <div class="list list-inset">
+            <div class="list">
                 <label class="item item-input">
                     <textarea rows="10" ng-readonly="notes.readOnly" ng-model="notes.value" ng-model-options="{debounce: 250}" ng-change="notes.onChange(notes.value)"></textarea>
                 </label>

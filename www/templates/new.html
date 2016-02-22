@@ -1,13 +1,9 @@
 <ion-view title="{{ title}}" cache-view="false">
     <ion-tabs class="tabs-positive tabs-icon-top">
-        <ion-tab title="Inicio" icon="ion-search" hidden="{{ !tabs.starterTab}}">
+        <ion-tab title="Inicio" icon="ion-calendar" hidden="{{ !tabs.starterTab}}">
             <ion-scroll>
-                <form name="starterForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="starterForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
-                        <label class="item item-input">
-                            <span class="input-label">Código único</span>
-                            <input type="text" required readonly ng-model="maintenance.uniqueCode">
-                        </label>
                         <label class="item item-input">
                             <span class="input-label">Fecha</span>
                             <input type="date" required ng-readonly="readOnlyMode" ng-model="maintenance.date" ng-model-options="{updateOn: 'blur'}">
@@ -29,7 +25,7 @@
                             <input type="text" required readonly ng-model="maintenance.statusDescription">
                         </label>
                         <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.preventive" ng-change="maintenance.preventive = true">Preventivo</ion-toggle>
-                        <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="maintenance.corrective = readOnlyMode ? !maintenance.corrective : maintenance.corrective; getMaintenanceInfo();">Correctivo</ion-toggle>
+                        <ion-toggle toggle-class="toggle-positive" ng-model="maintenance.corrective" ng-change="maintenance.corrective = readOnlyMode ? !maintenance.corrective : maintenance.corrective; tabs.refreshTabs(); addArticle();">Correctivo</ion-toggle>
                         <div class="button-bar" ng-hide="(readOnlyLinks || maintenance.id || !(maintenance.customerId))">
                             <button type="button" class="button button-block  icon ion-battery-charging" ng-click="newBatteryMaintenance()"> Batería</button>
                             <button type="button" class="button button-block  icon ion-flash" ng-click="newChargerMaintenance()"> Cargador</button>
@@ -41,7 +37,7 @@
         </ion-tab>
         <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab}}">
             <ion-scroll>
-                <form name="batteryForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="batteryForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -61,13 +57,13 @@
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Voltaje</span>
-                            <select required ng-disabled="(readOnlyMode || maintenance.batteryId)" ng-options="bt.id as bt.description for bt in resources.batteryTypes" ng-model="battery.typeId" ng-change="getMaintenanceInfo()">
+                            <select required ng-disabled="(readOnlyMode || maintenance.batteryId)" ng-options="bt.id as bt.description for bt in resources.batteryTypes" ng-model="battery.typeId">
                                 <option value=""> </option>
                             </select>
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()">
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Conector</span>
@@ -124,7 +120,7 @@
         </ion-tab>
         <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab}}">
             <ion-scroll>
-                <form name="chargerForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="chargerForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -144,11 +140,11 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Voltaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()">
                         </label>
                     </div>
                 </form>
@@ -157,7 +153,7 @@
         </ion-tab>
         <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ !tabs.machineTab}}">
             <ion-scroll>
-                <form name="machineForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="machineForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -195,9 +191,9 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Trabajo a realizar" icon="ion-hammer" hidden="{{ !tabs.workToBeDoneTab}}">
+        <ion-tab title="Labor" icon="ion-hammer" hidden="{{ !tabs.workToBeDoneTab}}">
             <ion-scroll>
-                <form name="workToBeDoneForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="workToBeDoneForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <textarea rows="20" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}"></textarea>
@@ -207,9 +203,9 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Inspección física" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab}}">
+        <ion-tab title="Inspección" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab}}">
             <ion-scroll>
-                <form name="physicalInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="physicalInspectionForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cl in checkList| orderBy: 'checkOrder'">
                             <label class="item item-input item-select">
@@ -226,9 +222,9 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Inspección de celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab}}">
+        <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab}}">
             <ion-scroll>
-                <form name="cellInspectionForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="cellInspectionForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells| orderBy: 'cellOrder'">
                             <div class="row">
@@ -260,9 +256,9 @@
         </ion-tab>
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab}}">
             <ion-scroll>
-                <form name="suppliesForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="suppliesForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
-                        <div class="item item-icon-right no-padding" ng-repeat="ao in articlesOutputs">
+                        <div class="item no-padding" ng-class="{'item-icon-right': !readOnlyMode}" ng-repeat="ao in articlesOutputs">
                             <div class="row">
                                 <div class="col">
                                     <label class="item item-input">
@@ -277,17 +273,14 @@
                             </div>
                             <i class="icon ion-trash-a" ng-show="(ao.articleId) && !readOnlyMode" ng-click="removeArticle(ao);"></i>
                         </div>
-                        <button type="button" tabindex="-1" class="button button-block" ng-hide="readOnlyMode" ng-click="addArticle();">
-                            <i class="icon ion-plus-round"></i> Agregar
-                        </button>
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Reporte técnico" icon="ion-compose" hidden="{{ !tabs.technicalReportTab}}">
+        <ion-tab title="Reporte" icon="ion-compose" hidden="{{ !tabs.technicalReportTab}}">
             <ion-scroll>
-                <form name="technicalReportForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="technicalReportForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <textarea rows="20" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()"></textarea>
@@ -297,9 +290,9 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Finalizar" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}">
+        <ion-tab title="Fin" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}">
             <ion-content scroll="false">
-                <form name="endingForm" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="endingForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Aceptado por</span>
