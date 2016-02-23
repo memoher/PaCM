@@ -88,30 +88,30 @@
                         <ion-toggle toggle-class="toggle-positive" ng-model="battery.drainHoles" ng-change="battery.drainHoles = readOnlyMode ? !battery.drainHoles : battery.drainHoles">Agujeros de drenaje</ion-toggle>
                         <label class="item item-input">
                             <span class="input-label">Peso mínimo (kg)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.minimunWeight" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.minimunWeight" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Peso máximo (kg)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.maximunWeight" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.maximunWeight" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <div class="item item-divider">
                             Medidas
                         </div>
                         <label class="item item-input">
                             <span class="input-label">Longitud (mm)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.length" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.length" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Ancho (mm)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.width" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.width" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Altura de los ojales (mm)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.handleHeight" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.handleHeight" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Altura de la jarra (mm)</span>
-                            <input type="number" min="0" ng-readonly="readOnlyMode" ng-model="battery.boxHeight" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.boxHeight" ng-model-options="{updateOn: 'blur'}">
                         </label>
                     </div>
                 </form>
@@ -176,15 +176,15 @@
                         </div>
                         <label class="item item-input">
                             <span class="input-label">Longitud (mm)</span>
-                            <input type="number" min="0" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentLength" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentLength" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Ancho (mm)</span>
-                            <input type="number" min="0" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentWidth" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentWidth" ng-model-options="{updateOn: 'blur'}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Altura (mm)</span>
-                            <input type="number" min="0" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentHeight" ng-model-options="{updateOn: 'blur'}">
+                            <input type="number" min="0.0" max="9999.99" ng-required="(machine.trademarkName)" ng-readonly="(readOnlyMode || machine.modelId)" ng-model="machine.compartmentHeight" ng-model-options="{updateOn: 'blur'}">
                         </label>
                     </div>
                 </form>
@@ -236,13 +236,13 @@
                                 <div class="col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Volt.</span>
-                                        <input type="number" min="0" ng-model="cr.voltage" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
+                                        <input type="number" min="0.0" max="9999.99" ng-model="cr.voltage" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
                                 <div class="col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Dens.</span>
-                                        <input type="number" min="0" ng-model="cr.density" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
+                                        <input type="number" min="0.0" max="9999.99" ng-model="cr.density" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
                                 </div>
                                 <div class="col col-25">
                                     <label class="item item-input">
-                                        <input type="number" placeholder="Cant." min="0" ng-model="ao.quantity" ng-model-options="{updateOn: 'blur'}" ng-required="ao.articleId" ng-readonly="readOnlyMode">
+                                        <input type="number" placeholder="Cant." min="0.0" max="9999.99" ng-model="ao.quantity" ng-model-options="{updateOn: 'blur'}" ng-required="ao.articleId" ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
                             </div>
