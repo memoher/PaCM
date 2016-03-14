@@ -2,7 +2,7 @@
     
     // http://pajhome.org.uk/crypt/
     
-    PaCM.servicesModule.factory('crytographySHA1', function () {
+    PaCM.services.factory('crytographySHA1', function () {
         
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined

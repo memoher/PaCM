@@ -3,7 +3,7 @@
 
 (function () {
 
-	PaCM.servicesModule.factory('synchronizer', function (dbContext) {
+	PaCM.services.factory('synchronizer', function (dbContext) {
 
 		var debugMode = 1;
 
@@ -13,11 +13,10 @@
 		var _onLineFnc = function () {
 
 			if (_synchronizerTask == null) {
-				_synchronizerTask = setInterval(_synchronizeFnc, _synchronizerInterval);
+				_synchronizerTask = setInterval(_synchronizeFnc, 100 /* De inmediato */);
 			}
 			
 			_onRuningFnc(3, 'En linea');
-			_synchronizeFnc();
 		};
 
 		var _offLineFnc = function () {
@@ -104,17 +103,15 @@
 				case 1:
 					if (debugMode >= 1)
 						console.error(msg);
-				break;
+					break;
 				case 2:
 					if (debugMode >= 2)
 						console.warn(msg);
-				break;
+					break;
 				case 3:
 					if (debugMode >= 3)
 						console.info(msg);
-				break;
-				default:
-				break;
+					break;
 			}
 			PaCM.eachArray(_eventsOnRuning, function (inx, fnc) {
 				fnc(level, msg);

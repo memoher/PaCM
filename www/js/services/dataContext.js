@@ -4,7 +4,7 @@
 
 (function () {
 
-    PaCM.servicesModule.factory('dataContext', function (dbContext) {
+    PaCM.services.factory('dataContext', function (dbContext) {
 
         var debugMode = 1;
 
@@ -71,8 +71,7 @@
             get: function (entity, id, onSuccess, onError) {
                 var options = {
                     where: 'r.Id = ?',
-                    parameters: [ id ],
-                    orderBy: 'r.Id'
+                    parameters: [ id ]
                 };
                 if (PaCM.isDefined(queries[entity])) {
                     options.select = queries[entity];

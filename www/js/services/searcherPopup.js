@@ -2,7 +2,7 @@
 
 (function () {
     
-    PaCM.servicesModule.factory('searcherPopup', function ($ionicModal, $filter) {
+    PaCM.services.factory('searcherPopup', function ($ionicModal, $filter) {
         
         return {
             initialize: function ($scope) {
@@ -16,16 +16,33 @@
                         open: function (type, title, data, search, onSelect, canAdd) {
                             var self = this;
 
-                            self.group = null;
-                            if (['Country', 'State', 'City', 'BranchCustomer', 'ObjectTypeTrademark', 'ObjectTypeModel', 'MachineTrademark', 'MachineModel'].indexOf(type)>=0)
-                                self.group = 1;
-                            else if (['ObjectType', 'Battery', 'Charger', 'Machine'].indexOf(type)>=0)
-                                self.group = 2;
-                            else if (type === 'Article')
-                                self.group = 3;
-                            else if (type === 'Customer')
-                                self.group = 4;
-                            //
+                            switch (type) {
+                                case 'Country':
+                                case 'State':
+                                case 'City':
+                                case 'BranchCustomer':
+                                case 'ObjectTypeTrademark':
+                                case 'ObjectTypeModel':
+                                case 'MachineTrademark':
+                                case 'MachineModel':
+                                    self.group = 1;
+                                    break;
+                                case 'ObjectType':
+                                case 'Battery':
+                                case 'Charger':
+                                case 'Machine':
+                                    self.group = 2;
+                                    break;
+                                case 'Article':
+                                    self.group = 3;
+                                    break;
+                                case 'Customer':
+                                    self.group = 4;
+                                    break;
+                                default:
+                                    throw 'Type not support';
+                            }
+
                             self.type = type;
                             self.title = title;
                             self.search = search ? search : PaCM.getStringEmpty();
@@ -63,7 +80,7 @@
                                     self.showAddButton = true;
                                 }
                             } else {
-                                PaCM.syncronizeArray(['Id'], self.dataFiltered, []);
+                                self.dataFiltered.length = 0;
                             }
 
                         },
@@ -83,16 +100,17 @@
                             self.onSelect = null;
                             self.canAdd = null;
                             self.showAddButton = null;
-                            PaCM.cleaner(self.data); self.data = null;
-                            PaCM.cleaner(self.dataFiltered); self.dataFiltered = null;
+                            self.data.length = 0; self.data = null;
+                            self.dataFiltered.length = 0; self.dataFiltered = null;
                             modal.hide();
                         },
                         destroy: function () {
                             var self = this;
 
-                            self.close();
+                            modal.hide();
                             modal.remove();
                             $scope.searcher = null;
+                            PaCM.cleaner(self);
                         }
                     };
                 });

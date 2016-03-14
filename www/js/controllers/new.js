@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('newCtrl', function ($scope, $state, $stateParams, searcherPopup, notesPopup, $ionicTabsDelegate, dataContext, userSession) {
+    PaCM.controllers.controller('newCtrl', function ($scope, $state, $stateParams, searcherPopup, notesPopup, $ionicTabsDelegate, dataContext, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
@@ -1072,9 +1072,9 @@
             });
             PaCM.execute(actions, function () {
                 PaCM.mergeArray(['checkId'], arr1, arr2);
+                arr2.length = 0; arr2 = null;
                 PaCM.syncronizeArray(['checkId'], $scope.checkList, arr1);
                 arr1.length = 0; arr1 = null;
-                arr2.length = 0; arr2 = null;
             });
         };
         _this.saveCheckList = function (onSuccess) {
@@ -1181,11 +1181,11 @@
             });
             PaCM.execute(actions, function () {
                 PaCM.mergeArray(['cellOrder'], arr1, arr2);
+                arr2.length = 0; arr2 = null;
                 PaCM.mergeArray(['cellOrder'], arr1, arr3);
+                arr3.length = 0; arr3 = null;
                 PaCM.syncronizeArray(['cellOrder'], $scope.reviewOfCells, arr1);
                 arr1.length = 0; arr1 = null;
-                arr2.length = 0; arr2 = null;
-                arr3.length = 0; arr3 = null;
             });
         };
         _this.saveReviewOfCells = function (onSuccess) {
@@ -1252,14 +1252,14 @@
                         });
                     });
                     PaCM.syncronizeArray(["id"], $scope.articlesOutputs, articles);
-                    PaCM.cleaner(articles); articles = null;
+                    articles.length = 0; articles = null;
 
                     if ($scope.maintenance.corrective === true) {
                         $scope.addArticle();
                     }
                 });
             } else {
-                PaCM.cleaner($scope.articlesOutputs);
+                $scope.articlesOutputs.length = 0;
 
                 if ($scope.maintenance.corrective === true) {
                     $scope.addArticle();

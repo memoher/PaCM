@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('recordsCtrl', function ($scope, $state, searcherPopup, dataContext, userSession) {
+    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, searcherPopup, dataContext, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
@@ -246,16 +246,16 @@
             dataContext.find('Maintenance', options, function (maintenances) {
                 dataContext.find('Assembly', options, function (assemblies) {
                     PaCM.mergeArray(['Id'], maintenances, assemblies);
+                    assemblies.length = 0; assemblies = null;
                     PaCM.syncronizeArray(['Id'], $scope.history, maintenances);
                     maintenances.length = 0; maintenances = null;
-                    assemblies.length = 0; assemblies = null;
                     $scope.runningProcess = false;
                     _this.refreshUI();
                 });
             });
         };
         $scope.resetHistory = function () {
-            PaCM.cleaner($scope.history);
+            $scope.history.length = 0;
         }
 
 
@@ -278,6 +278,7 @@
         //---------------------------------------------------------------------------------------------------------
         
         $scope.$on('$destroy', function() {
+
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_this); _this = null;

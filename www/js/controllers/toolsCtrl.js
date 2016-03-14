@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllersModule.controller('toolsCtrl', function ($scope, $state, synchronizer, userSession) {
+    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, synchronizer, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
@@ -65,12 +65,12 @@
         //---------------------------------------------------------------------------------------------------------
         
         $scope.$on('$destroy', function() {
-            
+
             synchronizer.removeEventOnRuning(_this.refreshConsoleLog);
 
             PaCM.cleaner($scope);
             PaCM.cleaner(_this); _this = null;
-
+            
         });
     });
     

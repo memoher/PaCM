@@ -2,7 +2,7 @@
     
     // http://pajhome.org.uk/crypt/
     
-    PaCM.servicesModule.factory('crytographyMD5', function () {
+    PaCM.services.factory('crytographyMD5', function () {
         
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message

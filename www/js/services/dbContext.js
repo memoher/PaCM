@@ -4,7 +4,7 @@
 
 (function () {
     
-    PaCM.servicesModule.factory('dbContext', function ($http) {
+    PaCM.services.factory('dbContext', function ($http) {
 
         var db = null;
         var loadDatabase = function () {
@@ -13,7 +13,7 @@
             }            
         };
         
-        var dbVersion = '2016.02.22.15.30';
+        var dbVersion = '2016.03.13.15.30';
 
         var addressServer = 'http://localhost:8100/api/';
 
@@ -164,11 +164,9 @@
                                     }
                                 });
                                 
-                                self.executeSql('SELECT 1', null, sqlFncs[sqlFncs.length - 1], onErrorCommands);
-                                
-                                sqlFncs.length = 0; sqlFncs = null;
                                 _buildFnc = null;
-
+                                self.executeSql('SELECT 1', null, sqlFncs[sqlFncs.length - 1], onErrorCommands);
+                                sqlFncs.length = 0; sqlFncs = null;
                             } else {
                                 throw 'sqlCommands: Argument is not valid';
                             }
@@ -498,7 +496,7 @@
                             tables: tablesForImport,
                             records: localData
                         }).then(function (response) {
-                            PaCM.cleaner(localData); delete localData;
+                            localData.length = 0; localData = null;
                             fnc03(response.data);
                         }, onError)
                         .catch(onError);
@@ -617,7 +615,7 @@
                                 tx.update(r.Tb, { ReplicationStatus: 1 }, 'Id="' + r.FS.Id + '"');
                             }
                         });
-                        PaCM.cleaner(localData); delete localData;
+                        localData.length = 0; localData = null;
                     },
                     function () {
                         onSuccess(true);

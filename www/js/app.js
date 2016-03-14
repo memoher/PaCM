@@ -2,12 +2,12 @@
 
     // PaCM Services
 
-    PaCM.servicesModule = angular.module('pacmApp.services', []);
+    PaCM.services = angular.module('pacmApp.services', []);
 
 
     // PaCM Controllers
 
-    PaCM.controllersModule = angular.module('pacmApp.controllers', [])
+    PaCM.controllers = angular.module('pacmApp.controllers', [])
 
         .controller('appCtrl', function ($scope) {
 

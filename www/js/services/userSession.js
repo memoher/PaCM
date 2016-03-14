@@ -2,9 +2,9 @@
 
 (function () {
     
-    PaCM.servicesModule.factory('userSession', function ($rootScope, crytographySHA1, dataContext) {
+    PaCM.services.factory('userSession', function ($rootScope, crytographySHA1, dataContext) {
         
-        var userSession = $rootScope.userSession = {
+        return $rootScope.userSession = {
             user: null,
             isLogged: false,
             sigIn: function (emailAddress, password, onSuccess, onError) {
@@ -32,8 +32,6 @@
                 self.isLogged = false;
             }
         };
-
-        return userSession;
         
     });
     

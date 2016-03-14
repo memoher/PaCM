@@ -2,7 +2,7 @@
 
 (function () {
     
-    PaCM.servicesModule.factory('notesPopup', function ($ionicModal, $filter) {
+    PaCM.services.factory('notesPopup', function ($ionicModal) {
         
         return {
             initialize: function ($scope) {
@@ -34,9 +34,10 @@
                         destroy: function () {
                             var self = this;
 
-                            self.close();
+                            modal.hide();
                             modal.remove();
                             $scope.notes = null;
+                            PaCM.cleaner(self);
                         }
                     };
                 });
