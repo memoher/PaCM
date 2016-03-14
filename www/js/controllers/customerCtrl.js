@@ -1,17 +1,17 @@
 (function () {
     
-    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, searcherPopup, dataContext, userSession) {
+    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, dbRepository, userSession, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
         }
 
-        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
         $scope.showErrors = true;
 
-        _this.onSqlError = function (err) {
+        _priv.onSqlError = function (err) {
             $scope.runningProcess = false;
             $scope.$digest();
             PaCM.showErrorMessage(err);
@@ -21,14 +21,14 @@
         // Create the modal popup searcher
         searcherPopup.initialize($scope);
         
-        $scope.filters = {
+        _priv.filters = {
             countrySearch: null,
             stateSearch: null,
             citySearch: null
         };
         
         $scope.searchCountry = function () {
-            dataContext.find('Country', { orderBy: 'Name' }, function (countries) {
+            dbRepository.find('Country', { orderBy: 'Name' }, function (countries) {
                 if ($scope.customer.countryId) {
                     var val = $scope.customer.countryId;
                     PaCM.eachArray(countries, function (inx, c) {
@@ -42,7 +42,7 @@
                     'Country',
                     'Buscar país',
                     countries,
-                    $scope.filters.countrySearch,
+                    _priv.filters.countrySearch,
                     function (r) {
                         $scope.resetCountry();
                         if (r === $scope.searcher.search) {
@@ -51,7 +51,7 @@
                             $scope.customer.countryId = r.Id;
                             $scope.customer.countryName = r.Name;
                         }
-                        $scope.filters.countrySearch = $scope.searcher.search;
+                        _priv.filters.countrySearch = $scope.searcher.search;
                     }, true);
             });
 
@@ -60,7 +60,7 @@
         $scope.resetCountry = function () {
             $scope.customer.countryId = null;
             $scope.customer.countryName = null;
-            $scope.filters.countrySearch = null;
+            _priv.filters.countrySearch = null;
             $scope.resetState();
         };
         
@@ -74,7 +74,7 @@
             if ($scope.customer.countryId)
                 options.where.CountryId = $scope.customer.countryId;
 
-            dataContext.find('State', options, function (states) {
+            dbRepository.find('State', options, function (states) {
                 if ($scope.customer.stateId) {
                     var val = $scope.customer.stateId;
                     PaCM.eachArray(states, function (inx, c) {
@@ -88,7 +88,7 @@
                     'State',
                     'Buscar departamento',
                     states,
-                    $scope.filters.stateSearch,
+                    _priv.filters.stateSearch,
                     function (r) {
                         $scope.resetState();
                         if (r === $scope.searcher.search) {
@@ -97,11 +97,11 @@
                             $scope.customer.stateId = r.Id;
                             $scope.customer.stateName = r.Name;
                             $scope.customer.countryId = r.CountryId;
-                            dataContext.get('Country', $scope.customer.countryId, function (c) {
+                            dbRepository.get('Country', $scope.customer.countryId, function (c) {
                                 $scope.customer.countryName = c.Name;
                             });
                         }
-                        $scope.filters.stateSearch = $scope.searcher.search;
+                        _priv.filters.stateSearch = $scope.searcher.search;
                     }, true);
             });
 
@@ -110,7 +110,7 @@
         $scope.resetState = function () {
             $scope.customer.stateId = null;
             $scope.customer.stateName = null;
-            $scope.filters.stateSearch = null;
+            _priv.filters.stateSearch = null;
             $scope.resetCity();
         };
         
@@ -128,7 +128,7 @@
             if ($scope.customer.stateId)
                 options.where.StateId = $scope.customer.stateId;
 
-            dataContext.find('City', options, function (cities) {
+            dbRepository.find('City', options, function (cities) {
                 if ($scope.customer.cityId) {
                     var val = $scope.customer.cityId;
                     PaCM.eachArray(cities, function (inx, c) {
@@ -142,7 +142,7 @@
                     'City',
                     'Buscar ciudad',
                     cities,
-                    $scope.filters.citySearch,
+                    _priv.filters.citySearch,
                     function (r) {
                         $scope.resetCity();
                         if (r === $scope.searcher.search) {
@@ -151,15 +151,15 @@
                             $scope.customer.cityId = r.Id;
                             $scope.customer.cityName = r.Name;
                             $scope.customer.stateId = r.StateId;
-                            dataContext.get('State', $scope.customer.stateId, function (s) {
+                            dbRepository.get('State', $scope.customer.stateId, function (s) {
                                 $scope.customer.stateName = s.Name;
                                 $scope.customer.countryId = s.CountryId;
-                                dataContext.get('Country', $scope.customer.countryId, function (c) {
+                                dbRepository.get('Country', $scope.customer.countryId, function (c) {
                                     $scope.customer.countryName = c.Name;
                                 });
                             });
                         }
-                        $scope.filters.citySearch = $scope.searcher.search;
+                        _priv.filters.citySearch = $scope.searcher.search;
                     }, true);
             });
 
@@ -168,7 +168,7 @@
         $scope.resetCity = function () {
             $scope.customer.cityId = null;
             $scope.customer.cityName = null;
-            $scope.filters.citySearch = null;
+            _priv.filters.citySearch = null;
         };
 
         //---------------------------------------------------------------------------------------------------------
@@ -195,15 +195,22 @@
         };
         $scope.saveCustomer = function () {
             var actions = [];
-            actions.push(_this.saveCountry);
-            actions.push(_this.saveState);
-            actions.push(_this.saveCity);
-            actions.push(_this.saveCustomer);
+
+            if (!($scope.customer.countryId))
+                actions.push(_priv.saveCountry);
+
+            if (!($scope.customer.stateId))
+                actions.push(_priv.saveState);
+
+            if (!($scope.customer.cityId))
+                actions.push(_priv.saveCity);
+
+            actions.push(_priv.saveCustomer);
             
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
                 $scope.runningProcess = false;
-                _this.refreshUI();
+                _priv.refreshUI();
                 alert('Registro guardado con éxito');
                 $state.go('app.newByCustomer', {
                     customerId: $scope.customer.id
@@ -211,39 +218,39 @@
             });
         }
 
-        _this.saveCountry = function (onSuccess) {
+        _priv.saveCountry = function (onSuccess) {
             var r = {
                 Name: $scope.customer.countryName
             };
-            dataContext.save('Country', $scope.customer.countryId, r, function () {
+            dbRepository.insert('Country', $scope.customer.countryId, r, function () {
                 $scope.customer.countryId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
-            }, _this.onSqlError);
+            }, _priv.onSqlError);
         }
-        _this.saveState = function (onSuccess) {
+        _priv.saveState = function (onSuccess) {
             var r = {
                 CountryId: $scope.customer.countryId,
                 Name: $scope.customer.stateName
             };
-            dataContext.save('State', $scope.customer.stateId, r, function () {
+            dbRepository.insert('State', $scope.customer.stateId, r, function () {
                 $scope.customer.stateId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
-            }, _this.onSqlError);
+            }, _priv.onSqlError);
         }
-        _this.saveCity = function (onSuccess) {
+        _priv.saveCity = function (onSuccess) {
             var r = {
                 StateId: $scope.customer.stateId,
                 Name: $scope.customer.cityName
             };
-            dataContext.save('City', $scope.customer.cityId, r, function () {
+            dbRepository.insert('City', $scope.customer.cityId, r, function () {
                 $scope.customer.cityId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
-            }, _this.onSqlError);
+            }, _priv.onSqlError);
         }
-        _this.saveCustomer = function (onSuccess) {
+        _priv.saveCustomer = function (onSuccess) {
             var r = {
                 IdentityTypeId: $scope.customer.identityTypeId,
                 Identity: $scope.customer.identity,
@@ -258,18 +265,21 @@
                 ContactEmailAddress: $scope.customer.contactEmailAddress,
                 Enabled: true
             };
-            dataContext.save('Customer', $scope.customer.id, r, function () {
+            dbRepository.insert('Customer', $scope.customer.id, r, function () {
                 $scope.customer.id = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
-            }, _this.onSqlError);
+            }, _priv.onSqlError);
         }
+
+
+        // Recursos
 
         $scope.resources = {
             identityTypes: []
         };
-        _this.getResources = function () {
-            dataContext.find('IdentityType', { orderBy: 'Name' }, function (identityTypes) {
+        _priv.getResources = function () {
+            dbRepository.find('IdentityType', { orderBy: 'ShortName' }, function (identityTypes) {
                 PaCM.eachArray(identityTypes, function (inx, it) {
                     $scope.resources.identityTypes.push({
                         id: it.Id,
@@ -278,36 +288,38 @@
                 });
             });
 
-            //Valores iniciales
-            dataContext.first('IdentityType', { where: 'lower(ShortName) = lower(?)', parameters: ['nit'] }, function (it) {
-                if (!(it === null)) {
-                    $scope.customer.identityTypeId = it.Id;
-                }
-            });
-            dataContext.first('Country', { where: 'lower(Name) = lower(?)', parameters: [ 'colombia' ] }, function (c) {
-                if (!(c === null)) {
-                    $scope.customer.countryId = c.Id;
-                    $scope.customer.countryName = c.Name;
-                }
-            });
         }
+        _priv.getResources();
 
-        _this.getResources();
+
+        // Valores iniciales
+
+        dbRepository.first('IdentityType', { where: 'lower(ShortName) = lower(?)', parameters: ['nit'] }, function (it) {
+            if (!(it === null)) {
+                $scope.customer.identityTypeId = it.Id;
+            }
+        });
+        dbRepository.first('Country', { where: 'lower(Name) = lower(?)', parameters: [ 'colombia' ] }, function (c) {
+            if (!(c === null)) {
+                $scope.customer.countryId = c.Id;
+                $scope.customer.countryName = c.Name;
+            }
+        });
 
 
-        _this.timeoutRefreshUI = null;
-        _this.onRefreshUI = function () {
-            _this.timeoutRefreshUI = null;
+        _priv.timeoutRefreshUI = null;
+        _priv.onRefreshUI = function () {
+            _priv.timeoutRefreshUI = null;
             $scope.$digest();
         }
-        _this.refreshUI = function () {
-            if (_this.timeoutRefreshUI) {
-                clearTimeout(_this.timeoutRefreshUI);
-                _this.timeoutRefreshUI = null;
+        _priv.refreshUI = function () {
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
             }
-            _this.timeoutRefreshUI = setTimeout(_this.onRefreshUI, 100);
+            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _this.refreshUI();
+        _priv.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -315,14 +327,14 @@
         
         $scope.$on('$destroy', function() {
             
-            if (_this.timeoutRefreshUI) {
-                clearTimeout(_this.timeoutRefreshUI);
-                _this.timeoutRefreshUI = null;
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
             }
 
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); _this = null;
+            PaCM.cleaner(_priv); _priv = null;
 
         });
     });

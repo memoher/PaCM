@@ -4,7 +4,7 @@
 
 (function () {
 
-    PaCM.services.factory('dataContext', function (dbContext) {
+    PaCM.services.factory('dbRepository', function (dbContext) {
 
         var debugMode = 1;
 

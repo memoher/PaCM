@@ -1,12 +1,12 @@
 (function () {
     
-    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, searcherPopup, dataContext, userSession) {
+    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, dbRepository, userSession, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
         }
 
-        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
         $scope.showErrors = false;
@@ -31,7 +31,7 @@
         };
         
         $scope.searchCustomer = function () {
-            dataContext.find('Customer', { orderBy: 'Name' }, function (customers) {
+            dbRepository.find('Customer', { orderBy: 'Name' }, function (customers) {
                 if ($scope.filters.customerId) {
                     var val = $scope.filters.customerId;
                     PaCM.eachArray(customers, function (inx, c) {
@@ -66,7 +66,7 @@
         };
         
         $scope.searchObjectTypeTrademark = function () {
-            dataContext.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
+            dbRepository.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
                 if ($scope.filters.objectTypeTrademarkId) {
                     var val = $scope.filters.objectTypeTrademarkId;
                     PaCM.eachArray(trademarks, function (inx, t) {
@@ -109,7 +109,7 @@
             if ($scope.filters.objectTypeTrademarkId)
                 options.where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             
-            dataContext.find('ObjectTypeModel', options, function (models) {
+            dbRepository.find('ObjectTypeModel', options, function (models) {
                 if ($scope.filters.objectTypeModelId) {
                     var val = $scope.filters.objectTypeModelId;
                     PaCM.eachArray(models, function (inx, m) {
@@ -129,7 +129,7 @@
                             $scope.filters.objectTypeModelId = r.Id;
                             $scope.filters.objectTypeModelName = r.Name;
                             $scope.filters.objectTypeModelSearch = $scope.searcher.search;
-                            dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                            dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
                                 $scope.filters.objectTypeTrademarkId = t.Id;
                                 $scope.filters.objectTypeTrademarkName = t.Name;
                             });
@@ -164,7 +164,7 @@
             if ($scope.filters.objectTypeModelId)
                 options.where.ModelId = $scope.filters.objectTypeModelId;
             
-            dataContext.find('ObjectType', options, function (objects) {
+            dbRepository.find('ObjectType', options, function (objects) {
                 if ($scope.filters.objectTypeId) {
                     var val = $scope.filters.objectTypeId;
                     PaCM.eachArray(objects, function (inx, ot) {
@@ -184,25 +184,25 @@
                             $scope.filters.objectTypeId = r.Id;
                             $scope.filters.objectTypeDescription = r.Description;
                             $scope.filters.objectTypeSearch = $scope.searcher.search;
-                            dataContext.get('Battery', r.Id, function (b) {
+                            dbRepository.get('Battery', r.Id, function (b) {
                                 if (b) {
                                     $scope.filters.objectTypeType = 'battery';
                                 }
                             });
-                            dataContext.get('Charger', r.Id, function (c) {
+                            dbRepository.get('Charger', r.Id, function (c) {
                                 if (c) {
                                     $scope.filters.objectTypeType = 'charger';
                                 }
                             });
-                            dataContext.get('Customer', r.CustomerId, function (c) {
+                            dbRepository.get('Customer', r.CustomerId, function (c) {
                                 $scope.filters.customerId = c.Id;
                                 $scope.filters.customerName = c.Name;
                             });
-                            dataContext.get('ObjectTypeModel', r.ModelId, function (m) {
+                            dbRepository.get('ObjectTypeModel', r.ModelId, function (m) {
                                 $scope.filters.objectTypeModelId = m.Id;
                                 $scope.filters.objectTypeModelName = m.Name;
                             });
-                            dataContext.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                            dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
                                 $scope.filters.objectTypeTrademarkId = t.Id;
                                 $scope.filters.objectTypeTrademarkName = t.Name;
                             });
@@ -243,14 +243,14 @@
                 options.where.ObjectTypeId = $scope.filters.objectTypeId;
 
             $scope.runningProcess = true;
-            dataContext.find('Maintenance', options, function (maintenances) {
-                dataContext.find('Assembly', options, function (assemblies) {
+            dbRepository.find('Maintenance', options, function (maintenances) {
+                dbRepository.find('Assembly', options, function (assemblies) {
                     PaCM.mergeArray(['Id'], maintenances, assemblies);
                     assemblies.length = 0; assemblies = null;
                     PaCM.syncronizeArray(['Id'], $scope.history, maintenances);
                     maintenances.length = 0; maintenances = null;
                     $scope.runningProcess = false;
-                    _this.refreshUI();
+                    _priv.refreshUI();
                 });
             });
         };
@@ -259,19 +259,19 @@
         }
 
 
-        _this.timeoutRefreshUI = null;
-        _this.onRefreshUI = function () {
-            _this.timeoutRefreshUI = null;
+        _priv.timeoutRefreshUI = null;
+        _priv.onRefreshUI = function () {
+            _priv.timeoutRefreshUI = null;
             $scope.$digest();
         };
-        _this.refreshUI = function () {
-            if (_this.timeoutRefreshUI) {
-                clearTimeout(_this.timeoutRefreshUI);
-                _this.timeoutRefreshUI = null;
+        _priv.refreshUI = function () {
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
             }
-            _this.timeoutRefreshUI = setTimeout(_this.onRefreshUI, 100);
+            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _this.refreshUI();
+        _priv.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -281,7 +281,7 @@
 
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); _this = null;
+            PaCM.cleaner(_priv); _priv = null;
             
         });
         

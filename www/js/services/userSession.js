@@ -2,7 +2,7 @@
 
 (function () {
     
-    PaCM.services.factory('userSession', function ($rootScope, crytographySHA1, dataContext) {
+    PaCM.services.factory('userSession', function ($rootScope, crytographySHA1, dbRepository) {
         
         return $rootScope.userSession = {
             user: null,
@@ -10,11 +10,11 @@
             sigIn: function (emailAddress, password, onSuccess, onError) {
                 var self = this;
 
-                dataContext.first('User', { where: 'lower(EmailAddress) = lower(?) and Enabled = ?', parameters: [emailAddress, true] }, function (user) {
+                dbRepository.first('User', { where: 'lower(EmailAddress) = lower(?) and Enabled = ?', parameters: [emailAddress, true] }, function (user) {
                     if (user == null)
                         throw 'El usuario o la contraseña no es válido';
                     
-                    dataContext.get('Key', user.PasswordId, function (pass) {
+                    dbRepository.get('Key', user.PasswordId, function (pass) {
                         var hash = crytographySHA1.getHash(password, pass.Salt);
                         if (hash != pass.Hash)
                             throw 'El usuario o la contraseña no es válido';

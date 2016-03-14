@@ -5,7 +5,7 @@
         $ionicHistory.clearHistory();
         $ionicHistory.clearCache();
 
-        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
         $scope.showErrors = true;
@@ -21,7 +21,7 @@
                     $scope.runningProcess = false;
                     $scope.login.emailAddress = null;
                     $scope.login.password = null;
-                    _this.refreshUI();
+                    _priv.refreshUI();
                     
                     $ionicHistory.nextViewOptions({
                         historyRoot: true
@@ -31,25 +31,25 @@
                 function (err) {
                     $scope.runningProcess = false;
                     $scope.login.password = null;
-                    _this.refreshUI();
+                    _priv.refreshUI();
                     PaCM.showErrorMessage(err);
                 });
         };
 
 
-        _this.timeoutRefreshUI = null;
-        _this.onRefreshUI = function () {
-            _this.timeoutRefreshUI = null;
+        _priv.timeoutRefreshUI = null;
+        _priv.onRefreshUI = function () {
+            _priv.timeoutRefreshUI = null;
             $scope.$digest();
         }
-        _this.refreshUI = function () {
-            if (_this.timeoutRefreshUI) {
-                clearTimeout(_this.timeoutRefreshUI);
-                _this.timeoutRefreshUI = null;
+        _priv.refreshUI = function () {
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
             }
-            _this.timeoutRefreshUI = setTimeout(_this.onRefreshUI, 100);
+            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _this.refreshUI();
+        _priv.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@
         $scope.$on('$destroy', function() {
 
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); _this = null;
+            PaCM.cleaner(_priv); _priv = null;
             
         });
 

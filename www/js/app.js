@@ -18,7 +18,7 @@
 
     angular.module('pacmApp', ['ionic', 'pacmApp.services', 'pacmApp.controllers'])
 
-        .run(function ($ionicPlatform, dbContext, synchronizer) {
+        .run(function ($ionicPlatform, dbInstaller, dbSynchronizer) {
 
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -26,25 +26,25 @@
                 if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
                     cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
                     cordova.plugins.Keyboard.disableScroll(true);
-
                 }
                 if (window.StatusBar) {
                     // org.apache.cordova.statusbar required
                     StatusBar.styleLightContent();
                 }
                 // Check if database installed, update otherwise
-                dbContext.checkDatabase(function () {
-                    // Initialize synchronizer service
-                    synchronizer.start();
-                },
-                function (err) {
-                    PaCM.showErrorMessage(err, 'Fails during check database');
-                }, 1 /*debugMode*/);
+                dbInstaller.checkDatabase(
+                    function () {
+                        // Initialize dbSynchronizer service
+                        dbSynchronizer.start();
+                    },
+                    function (err) {
+                        PaCM.showErrorMessage(err, 'Fails during check database');
+                    });
             });
 
         })
         
-        .config(function($ionicConfigProvider) {
+        .config(function ($ionicConfigProvider) {
             
             // Set the tabs in the bottom position
             $ionicConfigProvider.tabs.position('bottom');

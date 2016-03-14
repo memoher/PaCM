@@ -1,12 +1,12 @@
 (function () {
     
-    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, synchronizer, userSession) {
+    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, dbSynchronizer, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');
         }
 
-        var _this = this; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
+        var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
 
@@ -17,21 +17,21 @@
 
         $scope.synchronizeData = function () {
             $scope.runningProcess = true;
-            synchronizer.run(
+            dbSynchronizer.run(
                 function () {
                     $scope.runningProcess = false;
-                    _this.refreshUI();
+                    _priv.refreshUI();
                     alert('Data synchronized successfully');
                 },
                 function (err) {
                     $scope.runningProcess = false;
-                    _this.refreshUI();
+                    _priv.refreshUI();
                     PaCM.showErrorMessage(err, 'Fails during data synchronize');
                 });
         };
 
         $scope.entriesConsoleLog = [];
-        _this.refreshConsoleLog = function (level, msg) {
+        _priv.refreshConsoleLog = function (level, msg) {
             $scope.entriesConsoleLog.push({
                 dateTime: new Date(),
                 level: level,
@@ -40,25 +40,25 @@
             if ($scope.entriesConsoleLog.length > 10) {
                 $scope.entriesConsoleLog.shift();
             }
-            _this.refreshUI();
+            _priv.refreshUI();
         }
 
-        synchronizer.addEventOnRuning(_this.refreshConsoleLog);
+        dbSynchronizer.addEventOnRuning(_priv.refreshConsoleLog);
 
 
-        _this.timeoutRefreshUI = null;
-        _this._onRefreshUI = function () {
-            _this.timeoutRefreshUI = null;
+        _priv.timeoutRefreshUI = null;
+        _priv._onRefreshUI = function () {
+            _priv.timeoutRefreshUI = null;
             $scope.$digest();
         };
-        _this.refreshUI = function () {
-            if (_this.timeoutRefreshUI) {
-                clearTimeout(_this.timeoutRefreshUI);
-                _this.timeoutRefreshUI = null;
+        _priv.refreshUI = function () {
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
             }
-            _this.timeoutRefreshUI = setTimeout(_this._onRefreshUI, 100);
+            _priv.timeoutRefreshUI = setTimeout(_priv._onRefreshUI, 100);
         }
-        _this.refreshUI();
+        _priv.refreshUI();
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -66,10 +66,10 @@
         
         $scope.$on('$destroy', function() {
 
-            synchronizer.removeEventOnRuning(_this.refreshConsoleLog);
+            dbSynchronizer.removeEventOnRuning(_priv.refreshConsoleLog);
 
             PaCM.cleaner($scope);
-            PaCM.cleaner(_this); _this = null;
+            PaCM.cleaner(_priv); _priv = null;
             
         });
     });
