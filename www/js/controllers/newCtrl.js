@@ -40,7 +40,7 @@
                 self.machineTab = validObjectType;
                 self.workToBeDoneTab = validObjectType;
                 self.physicalInspectionTab = validObjectType;
-                self.cellInspectionTab = (validObjectType && $scope.battery.typeId);
+                self.cellInspectionTab = (validObjectType && ($scope.battery.typeId));
                 self.suppliesTab = (validObjectType && $scope.maintenance.corrective === true);
                 self.technicalReportTab = validObjectType;
                 self.endingTab = (validObjectType && ($scope.maintenance.technicalReport));
@@ -318,7 +318,7 @@
 
             var options = {
                 where: {},
-                orderBy: 't.Name, m.Name, p.Serial, p.CustomerReference'
+                orderBy: 'p.Serial, p.CustomerReference'
             };
             if ($scope.maintenance.customerId)
                 options.where.CustomerId = $scope.maintenance.customerId;
@@ -513,7 +513,7 @@
             
             var options = {
                 where: {},
-                orderBy: 't.Name, m.Name, r.Serial, r.CustomerReference'
+                orderBy: 'r.Serial, r.CustomerReference'
             };
             if ($scope.maintenance.customerId)
                 options.where.CustomerId = $scope.maintenance.customerId;
@@ -566,7 +566,8 @@
             }
             
             var options = {
-                where: { EnabledBatteries: false, EnabledChargers: false }
+                where: { EnabledBatteries: false, EnabledChargers: false },
+                orderBy: 'Name'
             };
             if ($scope.battery.typeId) {
                 options.where = { EnabledBatteries: true };
@@ -685,7 +686,7 @@
                     Address: '.',
                     PhoneNumber: '.'
                 };
-                dbRepository.save('BranchCustomer', $scope.maintenance.branchCustomerId, bc, function () {
+                dbRepository.insert('BranchCustomer', $scope.maintenance.branchCustomerId, bc, function () {
                     $scope.maintenance.branchCustomerId = bc.Id;
                     PaCM.cleaner(bc); bc = null;
                     onSuccess();
@@ -805,7 +806,7 @@
             var r = {
                 Name: $scope.battery.trademarkName
             };
-            dbRepository.save('ObjectTypeTrademark', $scope.battery.trademarkId, r, function () {
+            dbRepository.insert('ObjectTypeTrademark', $scope.battery.trademarkId, r, function () {
                 $scope.battery.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -816,7 +817,7 @@
                 Name: $scope.battery.modelName,
                 TrademarkId: $scope.battery.trademarkId
             };
-            dbRepository.save('ObjectTypeModel', $scope.battery.modelId, r, function () {
+            dbRepository.insert('ObjectTypeModel', $scope.battery.modelId, r, function () {
                 $scope.battery.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -905,7 +906,7 @@
             var r = {
                 Name: $scope.charger.trademarkName
             };
-            dbRepository.save('ObjectTypeTrademark', $scope.charger.trademarkId, r, function () {
+            dbRepository.insert('ObjectTypeTrademark', $scope.charger.trademarkId, r, function () {
                 $scope.charger.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -916,7 +917,7 @@
                 Name: $scope.charger.modelName,
                 TrademarkId: $scope.charger.trademarkId
             };
-            dbRepository.save('ObjectTypeModel', $scope.charger.modelId, r, function () {
+            dbRepository.insert('ObjectTypeModel', $scope.charger.modelId, r, function () {
                 $scope.charger.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -985,7 +986,7 @@
             var r = {
                 Name: $scope.machine.trademarkName
             };
-            dbRepository.save('MachineTrademark', $scope.machine.trademarkId, r, function () {
+            dbRepository.insert('MachineTrademark', $scope.machine.trademarkId, r, function () {
                 $scope.machine.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -999,7 +1000,7 @@
                 CompartmentWidth: $scope.machine.compartmentWidth,
                 CompartmentHeight: $scope.machine.compartmentHeight
             };
-            dbRepository.save('MachineModel', $scope.machine.modelId, r, function () {
+            dbRepository.insert('MachineModel', $scope.machine.modelId, r, function () {
                 $scope.machine.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -1027,7 +1028,8 @@
             var actions = [];
             actions.push(function (onSuccess) {
                 var options = {
-                    where: { EnabledBatteries: false, EnabledChargers: false }
+                    where: { EnabledBatteries: false, EnabledChargers: false },
+                    orderBy: '[Order]'
                 };
                 if ($scope.battery.typeId) {
                     options.where = { EnabledBatteries: true };
@@ -1143,7 +1145,7 @@
             });
             actions.push(function (onSuccess) {
                 if ($scope.maintenance.batteryId) {
-                    dbRepository.find('Cell', { where: { BatteryId: $scope.maintenance.batteryId } }, function (cells) {
+                    dbRepository.find('Cell', { where: { BatteryId: $scope.maintenance.batteryId }, orderBy: '[Order]' }, function (cells) {
                         PaCM.eachArray(cells, function (inx, c) {
                             arr2.push({
                                 id: null,
@@ -1180,10 +1182,10 @@
                 }
             });
             PaCM.execute(actions, function () {
+                PaCM.mergeArray(['cellOrder'], arr2, arr3);
+                arr3.length = 0; arr3 = null;
                 PaCM.mergeArray(['cellOrder'], arr1, arr2);
                 arr2.length = 0; arr2 = null;
-                PaCM.mergeArray(['cellOrder'], arr1, arr3);
-                arr3.length = 0; arr3 = null;
                 PaCM.syncronizeArray(['cellOrder'], $scope.reviewOfCells, arr1);
                 arr1.length = 0; arr1 = null;
             });
@@ -1196,7 +1198,7 @@
                         BatteryId: $scope.maintenance.batteryId,
                         Order: c.cellOrder
                     };
-                    dbRepository.save('Cell', c.cellId, cr, function () {
+                    dbRepository.insert('Cell', c.cellId, cr, function () {
                         c.cellId = cr.Id;
                         PaCM.cleaner(cr); cr = null;
                         onSuccess();
@@ -1227,7 +1229,8 @@
 
             var actions = [];
             PaCM.eachArray($scope.reviewOfCells, function (inx, c) {
-                actions.push(_saveFnc01(c));
+                if (!(c.cellId))
+                    actions.push(_saveFnc01(c));
                 actions.push(_saveFnc02(c));
             });
             PaCM.execute(actions, onSuccess);
@@ -1347,18 +1350,24 @@
                 actions.push(_priv.saveBranchCustomer);
             }
             if ($scope.battery.typeId) {
-                actions.push(_priv.saveBatteryTrademark);
-                actions.push(_priv.saveBatteryModel);
+                if (!($scope.battery.trademarkId))
+                    actions.push(_priv.saveBatteryTrademark);
+                if (!($scope.battery.modelId))
+                    actions.push(_priv.saveBatteryModel);
                 actions.push(_priv.saveBattery);
             }
             if ($scope.charger.voltage) {
-                actions.push(_priv.saveChargerTrademark);
-                actions.push(_priv.saveChargerModel);
+                if (!($scope.charger.trademarkId))
+                    actions.push(_priv.saveChargerTrademark);
+                if (!($scope.charger.modelId))
+                    actions.push(_priv.saveChargerModel);
                 actions.push(_priv.saveCharger);
             }
             if ($scope.machine.serial) {
-                actions.push(_priv.saveMachineTrademark);
-                actions.push(_priv.saveMachineModel);
+                if (!($scope.machine.trademarkId))
+                    actions.push(_priv.saveMachineTrademark);
+                if (!($scope.machine.modelId))
+                    actions.push(_priv.saveMachineModel);
                 actions.push(_priv.saveMachine);
             }
             actions.push(_priv.saveSignature);
@@ -1495,7 +1504,9 @@
 
             $scope.readOnlyMode = false;
             if ($scope.maintenance.id) {
-                if (!($scope.maintenance.statusId === 'InCapture'))
+                if (userSession.user.Administrator === true)
+                    $scope.readOnlyMode = false;
+                else if (!($scope.maintenance.statusId === 'InCapture'))
                     $scope.readOnlyMode = true;
                 else if (!($scope.maintenance.executedById === userSession.user.Id))
                     $scope.readOnlyMode = true;
