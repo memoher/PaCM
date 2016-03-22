@@ -6,53 +6,27 @@
     
     PaCM.services.factory('dbContext', function () {
 
-        var db = null;
-        var loadDatabase = function () {
-            if (db === null) {
-                db = window.openDatabase('mydb', '1.0', 'PaCM_DB', 25 * 1024 * 1024 /* 25Mb */);
-            }            
+        var STRING_EMPTY = '';
+
+        var _database = null;
+        var getDatabase = function () {
+            if (_database === null) {
+                _database = window.openDatabase('mydb', '1.0', 'PaCM_DB', 25 * 1024 * 1024 /* 25Mb */);
+            };
+            return _database;
         };
-        
+
         return {
-            beginTransaction: function (scope, onSuccess, onError, debugMode) {
+            beginTransaction: function (scope, onSuccessTransaction, onErrorTransaction, debugMode) {
                 
                 var _sqlError = null;
-                var _onSuccess = function () {
-                    if (_sqlError) {
-                        _onError(_sqlError);
-                    } else {
-                        _onSuccess = null;
-                        _onError = null;
 
-                        if (debugMode >= 3)
-                            console.info('Successful transaction');
-                        
-                        if (PaCM.isFunction(onSuccess))
-                            onSuccess();
-                    }
-                };
-                var _onError = function (sqlError) {
-                    _sqlError = null;
-                    _onSuccess = null;
-                    _onError = null;
-
-                    if (debugMode >= 1)
-                        console.error('Failed transaction', sqlError);
-                    
-                    if (PaCM.isFunction(onError)) {
-                        onError(sqlError);
-                    } else {
-                        throw sqlError;
-                    }
-                };
-                
-                loadDatabase();
-                db.transaction(function (tx) {
+                var callback = function (tx) {
                     scope({
                         executeSql: function (sqlCommand, sqlParameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
-                            
-                            var _onSuccessCommand = function (tx1, sqlResultSet) {
+
+                            var _onSuccessCommand = function (_tx, sqlResultSet) {
                                 _onSuccessCommand = null;
                                 _onErrorCommand = null;
 
@@ -60,18 +34,11 @@
                                     console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
                                 
                                 if (PaCM.isFunction(onSuccessCommand)) {
-                                    try {
-                                        onSuccessCommand(self, sqlResultSet);
-                                    }
-                                    catch (err) {
-                                        if (PaCM.isFunction(onErrorCommand))
-                                            onErrorCommand(self, err);
-                                        else
-                                            _sqlError = err; 
-                                    }
+                                    onSuccessCommand(self, sqlResultSet);
                                 }
                             };
-                            var _onErrorCommand = function (tx1, sqlError) {
+
+                            var _onErrorCommand = function (_tx, sqlError) {
                                 _onSuccessCommand = null;
                                 _onErrorCommand = null;
 
@@ -79,54 +46,57 @@
                                     console.error(new Date(), sqlCommand, sqlParameters, sqlError);
                                 
                                 if (PaCM.isFunction(onErrorCommand))
-                                    onErrorCommand(self, sqlError);
-                                else
+                                    return (onErrorCommand(self, sqlError) === true); //ROLLBACK CONDITIONAL
+                                else {
                                     _sqlError = sqlError;
+                                    return true; //ROLLBACK
+                                }
                             };
                             
-                            PaCM.eachArray(sqlParameters, function (inx, p) {
-                                if (PaCM.isDate(p)) {
-                                    sqlParameters[inx] = p.toISOString();
-                                }
-                            });
-                            
+                            if (sqlParameters) {
+                                PaCM.eachArray(sqlParameters, function (inx, p) {
+                                    if (PaCM.isDate(p)) {
+                                        sqlParameters[inx] = p.toISOString();
+                                    }
+                                });
+                            }
+
                             tx.executeSql(sqlCommand, sqlParameters, _onSuccessCommand, _onErrorCommand);
-                            
-                            return self;
                         },
-                        executeMultiSql: function (sqlCommands, onSuccessIterator, onSuccellCommands, onErrorCommands) {
+                        executeBacthSql: function (sqlCommands, onSuccessCommand, onSuccellCommands, onErrorCommands) {
                             var self = this;
 
-                            if (sqlCommands && sqlCommands.length > 0) {
+                            if (PaCM.isArray(sqlCommands) && sqlCommands.length > 0) {
                                 var _buildFnc = null;
-                                if (PaCM.isFunction(onSuccessIterator)) {
+                                if (PaCM.isFunction(onSuccessCommand)) {
                                     _buildFnc = function (sqlCommand, nextFnc) {
-                                        return function (tx1) {
-                                            tx1.executeSql(sqlCommand, null, function (tx2, sqlResultSet2) {
-                                                onSuccessIterator(tx2, sqlResultSet2);
-                                                nextFnc(tx2);
+                                        return function (_self1) {
+                                            _self1.executeSql(sqlCommand, null, function (_self2, sqlResultSet2) {
+                                                onSuccessCommand(_self2, sqlResultSet2);
+                                                nextFnc(_self2);
                                             }, onErrorCommands);
                                         };
                                     }
                                 } else {
                                     _buildFnc = function (sqlCommand, nextFnc) {
-                                        return function (tx1) {
-                                            tx1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
+                                        return function (_self1) {
+                                            _self1.executeSql(sqlCommand, null, nextFnc, onErrorCommands);
                                         };
                                     }
                                 }
 
+                                var lastCommandInx = sqlCommands.length - 1;
                                 var sqlFncs = [];
                                 PaCM.eachArrayInvert(sqlCommands, function (inx, c) {
                                     // Todos menos el último
-                                    if (inx < (sqlCommands.length - 1)) {
+                                    if (inx < lastCommandInx) {
                                         sqlFncs.push(_buildFnc(c, sqlFncs[sqlFncs.length - 1]));
                                     }
                                     //Último (primera función en la pila, última en ejecutarse)
                                     else {
-                                        sqlFncs.push(_buildFnc(c, function (tx1) {
+                                        sqlFncs.push(_buildFnc(c, function (_self1) {
                                             if (PaCM.isFunction(onSuccellCommands))
-                                                onSuccellCommands(tx1);
+                                                onSuccellCommands(_self1);
                                         }));
                                     }
                                 });
@@ -137,8 +107,6 @@
                             } else {
                                 throw 'sqlCommands: Argument is not valid';
                             }
-                            
-                            return self;
                         },
                         createTable: function (table, fields, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -146,12 +114,12 @@
                             var arrFields = [];
                             PaCM.eachArray(fields, function (inx, f) {
                                 var s = '[' + f.name + ']'
-                                    + (f.type ? ' ' + f.type : PaCM.getStringEmpty())
+                                    + (f.type ? ' ' + f.type : STRING_EMPTY)
                                     + (f.required ? ' NOT NULL' : ' NULL')
-                                    + (f.primaryKey ? ' PRIMARY KEY' : PaCM.getStringEmpty())
-                                    + (f.autoIncrement ? ' AUTOINCREMENT' : PaCM.getStringEmpty())
-                                    + (f.unique ? ' UNIQUE' : PaCM.getStringEmpty())
-                                    + (f.default ? ' ' + f.default : PaCM.getStringEmpty());
+                                    + (f.primaryKey ? ' PRIMARY KEY' : STRING_EMPTY)
+                                    + (f.autoIncrement ? ' AUTOINCREMENT' : STRING_EMPTY)
+                                    + (f.unique ? ' UNIQUE' : STRING_EMPTY)
+                                    + (f.default ? ' ' + f.default : STRING_EMPTY);
                                 arrFields.push(s);
                             });
 
@@ -159,8 +127,6 @@
                             arrFields.length = 0; arrFields = null;
 
                             self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         dropTable: function (table, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -168,8 +134,6 @@
                             var sqlCommand = 'DROP TABLE IF EXISTS ' + table;
                             
                             self.executeSql(sqlCommand, null, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         select: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -213,12 +177,10 @@
                                 }
                             }
                             
-                            if (_parameters.length == 0)
+                            if (_parameters.length === 0)
                                 _parameters = null;
                             
                             self.executeSql(sqlCommand, _parameters, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         first: function (table, options, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -227,8 +189,6 @@
                             options.limit = 1;
                             
                             self.select(table, options, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         insert: function (table, values, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -239,12 +199,7 @@
                             PaCM.eachProperties(values, function (key, val) {
                                 arrFields.push(key);
                                 parFields.push('?');
-                                var date = PaCM.parseDateString(val);
-                                if (date) {
-                                    parameters.push(date);
-                                } else {
-                                    parameters.push(val);
-                                }
+                                parameters.push(val);
                             });
 
                             var sqlStatement = 'INSERT INTO ' + table + ' ([' + arrFields.join('], [') + ']) VALUES (' + parFields.join(', ') + ')';
@@ -252,8 +207,6 @@
                             parFields.length = 0; parFields = null;
 
                             self.executeSql(sqlStatement, parameters, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         update: function (table, values, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -262,12 +215,7 @@
                             var arrFields = [];
                             PaCM.eachProperties(values, function (key, val) {
                                 arrFields.push('[' + key + '] = ?');
-                                var date = PaCM.parseDateString(val);
-                                if (date) {
-                                    _parameters.push(date);
-                                } else {
-                                    _parameters.push(val);
-                                }
+                                _parameters.push(val);
                             });
 
                             var sqlStatement = 'UPDATE ' + table + ' SET ' + arrFields.join(', ');
@@ -276,16 +224,16 @@
                             }
                             arrFields.length = 0; arrFields = null;
                             
-                            PaCM.eachArray(parameters, function (inx, p) {
-                                _parameters.push(p);
-                            });
+                            if (parameters) {
+                                PaCM.eachArray(parameters, function (inx, p) {
+                                    _parameters.push(p);
+                                });
+                            }
 
-                            if (_parameters.length == 0)
+                            if (_parameters.length === 0)
                                 _parameters = null;
 
                             self.executeSql(sqlStatement, _parameters, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         },
                         delete: function (table, where, parameters, onSuccessCommand, onErrorCommand) {
                             var self = this;
@@ -296,11 +244,42 @@
                             }
 
                             self.executeSql(sqlStatement, parameters, onSuccessCommand, onErrorCommand);
-                            
-                            return self;
                         }
                     });
-                }, _onError, _onSuccess);
+                };
+
+                var errorCallback = function (sqlError) {
+                    _sqlError = null;
+                    successCallback = null;
+                    errorCallback = null;
+
+                    if (debugMode >= 1)
+                        console.error(new Date(), 'Failed transaction', sqlError);
+                    
+                    if (PaCM.isFunction(onErrorTransaction)) {
+                        onErrorTransaction(sqlError);
+                    } else {
+                        throw sqlError;
+                    }
+                };
+
+                var successCallback = function () {
+                    if (_sqlError) {
+                        errorCallback(_sqlError);
+                    } else {
+                        successCallback = null;
+                        errorCallback = null;
+
+                        if (debugMode >= 3)
+                            console.info(new Date(), 'Successful transaction');
+                        
+                        if (PaCM.isFunction(onSuccessTransaction))
+                            onSuccessTransaction();
+                    }
+                };
+
+                getDatabase().transaction(callback, errorCallback, successCallback);
+
             }
         };
         

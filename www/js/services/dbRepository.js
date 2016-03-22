@@ -144,11 +144,10 @@
                         PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                             var valid =
                             PaCM.eachProperties(values, function (key, val) {
-                                if (!(r[key] === val)) {
-                                    if (PaCM.isDate(r[key]) && PaCM.isDate(val)) {
-                                        if (!((r[key] - val) === 0)) {
-                                            return true; //Break;
-                                        }
+                                var vlr = r[key];
+                                if (!(vlr === val)) {
+                                    if (PaCM.isDate(vlr) && PaCM.isDate(val)) {
+                                        return !((vlr - val) === 0); //Break;
                                     } else {
                                         return true; //Break;
                                     }

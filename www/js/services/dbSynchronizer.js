@@ -51,7 +51,7 @@
                     }
                     sqlCommands.push(command);
                 });
-                tx.executeMultiSql(sqlCommands, function (tx1, sqlResultSet1) {
+                tx.executeBacthSql(sqlCommands, function (tx1, sqlResultSet1) {
                     PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                         localData.push({
                             Tb: r.Tb,
@@ -84,6 +84,12 @@
                     PaCM.eachArray(data.Records, function (inx, r) {
                         switch (r.Ac) {
                             case 'c':
+                                PaCM.eachProperties(r.Dt, function (key, val) {
+                                    var date = PaCM.parseDateString(val);
+                                    if (date) {
+                                        r.Dt[key] = date;
+                                    };
+                                });
                                 if (tablesInheritedOfMntObjects.indexOf(r.Tb) < 0) {
                                     r.Dt.ReplicationStatus = 1;
                                 }
@@ -91,6 +97,12 @@
                                 hasNewData = true;
                                 break;
                             case 'u':
+                                PaCM.eachProperties(r.Dt, function (key, val) {
+                                    var date = PaCM.parseDateString(val);
+                                    if (date) {
+                                        r.Dt[key] = date;
+                                    };
+                                });
                                 if (tablesInheritedOfMntObjects.indexOf(r.Tb) < 0) {
                                     r.Dt.ReplicationStatus = 1;
                                 }
@@ -137,7 +149,7 @@
                     }
                     sqlCommands.push(command);
                 });
-                tx.executeMultiSql(sqlCommands, function (tx1, sqlResultSet1) {
+                tx.executeBacthSql(sqlCommands, function (tx1, sqlResultSet1) {
                     PaCM.eachSqlRS(sqlResultSet1, function (inx, r) {
                         var dt = { Tb: r.Tb, FS: {}, FI: {}, FN: {}, FD: {}, FB: {}, FO: {} };
                         delete r.Tb;
@@ -145,14 +157,16 @@
                         PaCM.eachProperties(r, function (key, val) {
                             if (PaCM.isString(val)) {
                                 dt.FS[key] = val;
-                            } else if (PaCM.isInteger(val)) {
-                                dt.FI[key] = val;
-                            } else if (PaCM.isNumber(val)) {
-                                dt.FN[key] = val;
-                            } else if (PaCM.isDate(val)) {
-                                dt.FD[key] = val;
                             } else if (PaCM.isBoolean(val)) {
                                 dt.FB[key] = val;
+                            } else if (PaCM.isNumber(val)) {
+                                if (PaCM.isInteger(val)) {
+                                    dt.FI[key] = val;
+                                } else {
+                                    dt.FN[key] = val;
+                                }
+                            } else if (PaCM.isDate(val)) {
+                                dt.FD[key] = val;
                             } else {
                                 dt.FO[key] = val;
                             }

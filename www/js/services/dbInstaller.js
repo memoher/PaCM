@@ -12,7 +12,6 @@
                 
             var fnc01 = function (tx) {
                 fnc01 = null;
-
                 tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" and (name like "App%" or name like "Cfg%" or name like "Mnt%")', null, fnc02);
             };
             var fnc02 = function (tx, sqlResultSet) {
@@ -23,7 +22,7 @@
                     sqlCommands.push('DROP TABLE ' + r.name);
                 });
                 if (sqlCommands.length > 0) {
-                    tx.executeMultiSql(sqlCommands, null, fnc03);
+                    tx.executeBacthSql(sqlCommands, null, fnc03);
                 } else {
                     fnc03(tx);
                 }
@@ -70,7 +69,7 @@
 				    'create table MntCellsReviews ( Id TEXT not null, Voltage NUMERIC not null, Density NUMERIC not null, Comments TEXT, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, CellId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_CellReview_CellId foreign key (CellId) references MntCells, constraint FK_CellReview_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_CellReview_AssemblyId foreign key (AssemblyId) references MntAssemblies )',
 				    'create table MntArticlesOutputs ( Id TEXT not null, Quantity NUMERIC not null, CreatedOn DATETIME not null, LastModified DATETIME not null, ReplicationStatus BOOL not null, ArticleId TEXT not null, MaintenanceId TEXT, AssemblyId TEXT, primary key (Id), constraint FK_ArticleOutput_ArticleId foreign key (ArticleId) references MntArticles, constraint FK_ArticleOutput_MaintenanceId foreign key (MaintenanceId) references MntMaintenances, constraint FK_ArticleOutput_AssemblyId foreign key (AssemblyId) references MntAssemblies )'
                 ];
-                tx.executeMultiSql(sqlCommands, null, fnc04);
+                tx.executeBacthSql(sqlCommands, null, fnc04);
             };
             var fnc04 = function (tx) {
                 fnc04 = null;

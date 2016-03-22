@@ -686,7 +686,7 @@
                     Address: '.',
                     PhoneNumber: '.'
                 };
-                dbRepository.insert('BranchCustomer', $scope.maintenance.branchCustomerId, bc, function () {
+                dbRepository.insert('BranchCustomer', /*$scope.maintenance.branchCustomerId,*/ bc, function () {
                     $scope.maintenance.branchCustomerId = bc.Id;
                     PaCM.cleaner(bc); bc = null;
                     onSuccess();
@@ -806,7 +806,7 @@
             var r = {
                 Name: $scope.battery.trademarkName
             };
-            dbRepository.insert('ObjectTypeTrademark', $scope.battery.trademarkId, r, function () {
+            dbRepository.insert('ObjectTypeTrademark', /*$scope.battery.trademarkId,*/ r, function () {
                 $scope.battery.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -817,7 +817,7 @@
                 Name: $scope.battery.modelName,
                 TrademarkId: $scope.battery.trademarkId
             };
-            dbRepository.insert('ObjectTypeModel', $scope.battery.modelId, r, function () {
+            dbRepository.insert('ObjectTypeModel', /*$scope.battery.modelId,*/ r, function () {
                 $scope.battery.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -906,7 +906,7 @@
             var r = {
                 Name: $scope.charger.trademarkName
             };
-            dbRepository.insert('ObjectTypeTrademark', $scope.charger.trademarkId, r, function () {
+            dbRepository.insert('ObjectTypeTrademark', /*$scope.charger.trademarkId,*/ r, function () {
                 $scope.charger.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -917,7 +917,7 @@
                 Name: $scope.charger.modelName,
                 TrademarkId: $scope.charger.trademarkId
             };
-            dbRepository.insert('ObjectTypeModel', $scope.charger.modelId, r, function () {
+            dbRepository.insert('ObjectTypeModel', /*$scope.charger.modelId,*/ r, function () {
                 $scope.charger.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -986,7 +986,7 @@
             var r = {
                 Name: $scope.machine.trademarkName
             };
-            dbRepository.insert('MachineTrademark', $scope.machine.trademarkId, r, function () {
+            dbRepository.insert('MachineTrademark', /*$scope.machine.trademarkId,*/ r, function () {
                 $scope.machine.trademarkId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -1000,7 +1000,7 @@
                 CompartmentWidth: $scope.machine.compartmentWidth,
                 CompartmentHeight: $scope.machine.compartmentHeight
             };
-            dbRepository.insert('MachineModel', $scope.machine.modelId, r, function () {
+            dbRepository.insert('MachineModel', /*$scope.machine.modelId,*/ r, function () {
                 $scope.machine.modelId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -1198,7 +1198,7 @@
                         BatteryId: $scope.maintenance.batteryId,
                         Order: c.cellOrder
                     };
-                    dbRepository.insert('Cell', c.cellId, cr, function () {
+                    dbRepository.insert('Cell', /*c.cellId,*/ cr, function () {
                         c.cellId = cr.Id;
                         PaCM.cleaner(cr); cr = null;
                         onSuccess();

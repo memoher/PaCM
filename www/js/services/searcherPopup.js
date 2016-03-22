@@ -45,7 +45,7 @@
 
                             self.type = type;
                             self.title = title;
-                            self.search = search ? search : PaCM.getStringEmpty();
+                            self.search = search ? search : '';
                             self.onSelect = onSelect;
                             self.canAdd = canAdd;
                             self.showAddButton = false;
@@ -76,7 +76,7 @@
                                 var result = $filter('filter')(self.data, filter);
                                 PaCM.syncronizeArray(['Id'], self.dataFiltered, result);
 
-                                if (self.dataFiltered.length == 0 && self.canAdd) {
+                                if (self.dataFiltered.length === 0 && self.canAdd) {
                                     self.showAddButton = true;
                                 }
                             } else {
@@ -100,7 +100,7 @@
                             self.onSelect = null;
                             self.canAdd = null;
                             self.showAddButton = null;
-                            self.data.length = 0; self.data = null;
+                            self.data = null;
                             self.dataFiltered.length = 0; self.dataFiltered = null;
                             modal.hide();
                         },

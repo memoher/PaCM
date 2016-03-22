@@ -222,7 +222,7 @@
             var r = {
                 Name: $scope.customer.countryName
             };
-            dbRepository.insert('Country', $scope.customer.countryId, r, function () {
+            dbRepository.insert('Country', /*$scope.customer.countryId,*/ r, function () {
                 $scope.customer.countryId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -233,7 +233,7 @@
                 CountryId: $scope.customer.countryId,
                 Name: $scope.customer.stateName
             };
-            dbRepository.insert('State', $scope.customer.stateId, r, function () {
+            dbRepository.insert('State', /*$scope.customer.stateId,*/ r, function () {
                 $scope.customer.stateId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -244,7 +244,7 @@
                 StateId: $scope.customer.stateId,
                 Name: $scope.customer.cityName
             };
-            dbRepository.insert('City', $scope.customer.cityId, r, function () {
+            dbRepository.insert('City', /*$scope.customer.cityId,*/ r, function () {
                 $scope.customer.cityId = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();
@@ -265,7 +265,7 @@
                 ContactEmailAddress: $scope.customer.contactEmailAddress,
                 Enabled: true
             };
-            dbRepository.insert('Customer', $scope.customer.id, r, function () {
+            dbRepository.insert('Customer', /*$scope.customer.id,*/ r, function () {
                 $scope.customer.id = r.Id;
                 PaCM.cleaner(r); r = null;
                 onSuccess();

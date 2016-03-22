@@ -1,12 +1,35 @@
 (function () {
 
+    var TYPE_STRING = 'string';
+    var TYPE_BOOLEAN = 'boolean';
+    var TYPE_NUMBER = 'number';
+    var TYPE_FUNCTION = 'function';
+    var TYPE_UNDEFINED = 'undefined';
+    var TYPE_OBJECT_GENERIC = 'object';
+    var TYPE_DATE = '[object Date]';
+    var TYPE_OBJECT = '[object Object]';
+
     var STRING_EMPTY = '';
+    var STRING_HYPHEN = '-';
 
     function _randomS4Fnc() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     };
     function _buildGuidFnc() {
-        return _randomS4Fnc() + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + '-' + _randomS4Fnc() + _randomS4Fnc() + _randomS4Fnc();
+        return [
+            _randomS4Fnc(),
+            _randomS4Fnc(),
+            STRING_HYPHEN,
+            _randomS4Fnc(),
+            STRING_HYPHEN,
+            _randomS4Fnc(),
+            STRING_HYPHEN,
+            _randomS4Fnc(),
+            STRING_HYPHEN,
+            _randomS4Fnc(),
+            _randomS4Fnc(),
+            _randomS4Fnc()
+        ].join(STRING_EMPTY);
     };
 
     function _buildFunctionFnc(fnc01, fnc02) {
@@ -19,9 +42,11 @@
         var keyLength = key.length;
         var arr0Length = arr0.length;
         for (var j = 0; j < arr0Length; j++) {
+            var arr0J = arr0[j];
             var valid = true;
             for (var k = 0; k < keyLength; k++) {
-                if (obj[key[k]] != arr0[j][key[k]])
+                var keyK = key[k];
+                if (obj[keyK] != arr0J[keyK])
                     valid = false;
             }
             if (valid === true)
@@ -32,37 +57,31 @@
 
     window.PaCM = {
         isDefined: function (vlr) {
-            var self = this;
-
-            return !self.isUndefined(vlr);
+            return !(typeof vlr === TYPE_UNDEFINED);
         },
         isUndefined: function (vlr) {
-            return (typeof vlr === 'undefined');
+            return (typeof vlr === TYPE_UNDEFINED);
         },
         isNull: function (vlr) {
             return (vlr === null);
         },
         isArray: function (vlr) {
-            return (vlr instanceof Array);
+            return Array.isArray(vlr);
         },
         isFunction: function (vlr) {
-            return (typeof vlr === 'function');
+            return (typeof vlr === TYPE_FUNCTION);
         },
         isObject: function (vlr) {
-            var self = this;
-
-            return (self.isDefined(vlr) && !self.isNull(vlr) && vlr.toString() === '[object Object]');
+            return (typeof vlr === TYPE_OBJECT_GENERIC) && (toString.call(vlr) === TYPE_OBJECT);
         },
         isInteger: function (vlr) {
-            var self = this;
-
-            return (self.isNumber(vlr) && (vlr % 1 === 0));
+            return (typeof vlr === TYPE_NUMBER) && (vlr % 1 === 0);
         },
         isNumber: function (vlr) {
-            return (typeof vlr === 'number');
+            return (typeof vlr === TYPE_NUMBER);
         },
         isDate: function (vlr) {
-            return (vlr instanceof Date);
+            return (typeof vlr === TYPE_OBJECT_GENERIC) && (toString.call(vlr) === TYPE_DATE);
         },
         parseDateString: function (vlr) {
             var self = this;
@@ -71,30 +90,26 @@
                 return vlr;
             
             if (self.isString(vlr)) {
-                if (vlr.length = 24 && vlr.substring(4,5) == '-' && vlr.substring(7,8) == '-' && vlr.substring(10,11) == 'T')
+                if (vlr.length === 24 && vlr.substring(4,5) === STRING_HYPHEN && vlr.substring(7,8) === STRING_HYPHEN && vlr.substring(10,11) === 'T')
+                    return new Date(vlr);
+                
+                if (vlr.indexOf(' GMT') >= 0)
                     return new Date(vlr);
                 
                 if (vlr.indexOf('/Date(') >= 0 && vlr.indexOf(')/') >= 0)
                     return new Date(parseInt(vlr.replace('/Date(', STRING_EMPTY).replace(')/', STRING_EMPTY)));
-                
-                if (vlr.indexOf(' GMT') >= 0)
-                    return new Date(vlr);
             }
+
             return null;
         },
         isBoolean: function (vlr) {
-            return (typeof vlr === 'boolean');
+            return (typeof vlr === TYPE_BOOLEAN);
         },
         isString: function (vlr) {
-            return (typeof vlr === 'string');
+            return (typeof vlr === TYPE_STRING);
         },
-        isStringIsNullOrEmpty: function (vlr) {
-            var self = this;
-
-            return (vlr === STRING_EMPTY || self.isNull(vlr));
-        },
-        getStringEmpty: function () {
-            return STRING_EMPTY;
+        IsNullOrStringEmpty: function (vlr) {
+            return (vlr === STRING_EMPTY) || (vlr == null);
         },
         newGuid: function () {
             return _buildGuidFnc();
@@ -105,18 +120,18 @@
             if (!self.isArray(actions))
                 throw 'Array is not valid';
 
-            var actionsLength = actions.length;
-            if (actionsLength == 0) {
+            if (actions.length === 0) {
                 onSuccess();
                 return;
             }
             
             //Recorre el array del último al primero, arma una pila de funciones,
             //con el objetivo de que se ejecuten de manera ordenada
+            var lastActionInx = actions.length - 1;
             var fncs = [];
-            for (var i = actionsLength - 1; i >= 0; i--) {
+            for (var i = lastActionInx; i >= 0; i--) {
                 // Todos menos el último
-                if (i < (actionsLength - 1)) {
+                if (i < lastActionInx) {
                     fncs.push(_buildFunctionFnc(actions[i], fncs[fncs.length - 1]));
                 }
                 //Último (primera función en la pila, última en ejecutarse)
@@ -164,25 +179,25 @@
         mergeArray: function (key, arr0, arr1) {
             var self = this;
             
-            if (!self.isArray(arr0) || !self.isArray(arr1)) {
-                return;
-            }
+            if (!self.isArray(arr0) || !self.isArray(arr1))
+                throw 'Array0 or Array1 is not valid';
 
+            var arr1Length = arr1.length;
             if (self.isArray(key)) {
-                var arr1Length = arr1.length;
                 for (var i = 0; i < arr1Length; i++) {
-                    var index = _findObjectFnc(arr0, key, arr1[i]);
+                    var arr1I = arr1[i];
+                    var index = _findObjectFnc(arr0, key, arr1I);
                     if (!(index === null)) {
-                        arr0[index] = arr1[i];
+                        arr0[index] = arr1I;
                     } else {
-                        arr0.push(arr1[i]);
+                        arr0.push(arr1I);
                     }
                 };
             } else {
-                var arr1Length = arr1.length;
                 for (var i = 0; i < arr1Length; i++) {
-                    if (arr0.indexOf(arr1[i]) < 0) {
-                        arr0.push(arr1[i]);
+                    var arr1I = arr1[i];
+                    if (arr0.indexOf(arr1I) < 0) {
+                        arr0.push(arr1I);
                     }
                 };
             }
@@ -190,14 +205,13 @@
         syncronizeArray: function (key, arr0, arr1) {
             var self = this;
 
-            if (!self.isArray(arr0) || !self.isArray(arr1)) {
-                return;
-            }
+            if (!self.isArray(arr0) || !self.isArray(arr1))
+                throw 'Array0 or Array1 is not valid';
 
             var arr1Clone = arr1.slice(0);
 
+            var arr0Length = arr0.length;
             if (self.isArray(key)) {
-                var arr0Length = arr0.length;
                 for (var i = arr0Length - 1; i >= 0; i--) {
                     var index = _findObjectFnc(arr1Clone, key, arr0[i]);
                     if (!(index === null)) {
@@ -208,7 +222,6 @@
                     }
                 }
             } else {
-                var arr0Length = arr0.length;
                 for (var i = arr0Length - 1; i >= 0; i--) {
                     var index = arr1Clone.indexOf(arr0[i]);
                     if (index >= 0) {
@@ -229,124 +242,138 @@
         eachArray: function (array, iterator) {
             var self = this;
 
-            if (array) {
-                if (self.isArray(array)) {
-                    var arrayLength = array.length;
-                    for (var i = 0; i < arrayLength; i++) {
-                        var result = iterator(i, array[i], arrayLength);
-                        if (self.isDefined(result))
-                            return result;
-                    }
-                } else
-                    throw 'Array is not valid';
-            }
+            if (self.isArray(array)) {
+                var arrayLength = array.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    var result = iterator(i, array[i], arrayLength);
+                    if (self.isDefined(result))
+                        return result;
+                }
+            } else
+                throw 'Array is not valid';
         },
         eachArrayInvert: function (array, iterator) {
             var self = this;
 
-            if (array) {
-                if (self.isArray(array)) {
-                    var arrayLength = array.length;
-                    for (var i = arrayLength - 1; i >= 0; i--) {
-                        var result = iterator(i, array[i], arrayLength);
-                        if (self.isDefined(result))
-                            return result;
-                    }
-                } else
-                    throw 'Array is not valid';
-            }
+            if (self.isArray(array)) {
+                var arrayLength = array.length;
+                for (var i = arrayLength - 1; i >= 0; i--) {
+                    var result = iterator(i, array[i], arrayLength);
+                    if (self.isDefined(result))
+                        return result;
+                }
+            } else
+                throw 'Array is not valid';
         },
         eachProperties: function (obj, iterator) {
             var self = this;
 
-            if (obj) {
-                if (self.isObject(obj)) {
-                    for (var p in obj) {
-                        if (obj.hasOwnProperty(p)) {
-                            var result = iterator(p, obj[p]);
-                            if (self.isDefined(result))
-                                return result;
-                        }
+            if (self.isObject(obj)) {
+                for (var p in obj) {
+                    if (obj.hasOwnProperty(p)) {
+                        var result = iterator(p, obj[p]);
+                        if (self.isDefined(result))
+                            return result;
                     }
-                } else
-                    throw 'Object is not valid';
-            }
+                }
+            } else
+                throw 'Object is not valid';
         },
         eachSqlRS: function (sqlRS, iterator) {
             var self = this;
 
-            if (sqlRS) {
-                if (self.isDefined(sqlRS.rows)) {
-                    var totalRows = sqlRS.rows.length;
-                    for (var i = 0; i < totalRows; i++) {
+            if (self.isDefined(sqlRS.rows)) {
+                var totalRows = sqlRS.rows.length;
+                if (totalRows > 0) {
+                    var properties = [];
+                    if (true) { // private scope
                         var r = sqlRS.rows.item(i);
-                        var o = {};
-                        // ------------------------
                         for (var p in r) {
                             if (r.hasOwnProperty(p)) {
-                                var v = r[p];
-                                o[p] = v;
-                                if (self.isString(v)) {
-                                    if (v === 'true') {
-                                        o[p] = true;
-                                    } else if (v === 'false') {
-                                        o[p] = false;
-                                    } else {
-                                        var date = self.parseDateString(v);
-                                        if (date) {
-                                            o[p] = date;
-                                        }
+                                properties.push(p);
+                            }
+                        }
+                    }
+                    var propertiesLength = properties.length;
+                    for (var i = 0; i < totalRows; i++) {
+                        // ------------------------
+                        var r = sqlRS.rows.item(i);
+                        var o = {};
+                        for (var j = 0; j < propertiesLength; j++) {
+                            var p = properties[j];
+                            var v = r[p];
+                            o[p] = v;
+                            if (self.isString(v)) {
+                                if (v === 'true') {
+                                    o[p] = true;
+                                } else if (v === 'false') {
+                                    o[p] = false;
+                                } else {
+                                    var date = self.parseDateString(v);
+                                    if (date) {
+                                        o[p] = date;
                                     }
                                 }
                             }
                         }
-                        // ------------------------
                         r = null;
                         var result = iterator(i, o, totalRows);
                         if (self.isDefined(result))
                             return result;
-                    } 
-                } else
-                    throw 'SQLResultSet is not valid';
-            }
+                        // ------------------------
+                    }
+                    properties.length = 0; properties = null;
+                }
+            } else
+                throw 'SQLResultSet is not valid';
         },
         eachSqlRSInvert: function (sqlRS, iterator) {
             var self = this;
 
-            if (sqlRS) {
-                if (self.isDefined(sqlRS.rows)) {
-                    var totalRows = sqlRS.rows.length;
-                    for (var i = totalRows - 1; i >= 0; i--) {
+            if (self.isDefined(sqlRS.rows)) {
+                var totalRows = sqlRS.rows.length;
+                if (totalRows > 0) {
+                    var properties = [];
+                    if (true) { // private scope
                         var r = sqlRS.rows.item(i);
-                        var o = {};
-                        // ------------------------
                         for (var p in r) {
                             if (r.hasOwnProperty(p)) {
-                                var v = r[p];
-                                o[p] = v;
-                                if (self.isString(v)) {
-                                    if (v === 'true') {
-                                        o[p] = true;
-                                    } else if (v === 'false') {
-                                        o[p] = false;
-                                    } else {
-                                        var date = self.parseDateString(v);
-                                        if (date) {
-                                            o[p] = date;
-                                        }
+                                properties.push(p);
+                            }
+                        }
+                    }
+                    var propertiesLength = properties.length;
+                    for (var i = totalRows - 1; i >= 0; i--) {
+                        // ------------------------
+                        var r = sqlRS.rows.item(i);
+                        var o = {};
+                        for (var j = 0; j < propertiesLength; j++) {
+                            var p = properties[j];
+                            var v = r[p];
+                            o[p] = v;
+                            if (self.isString(v)) {
+                                if (v === 'true') {
+                                    o[p] = true;
+                                } else if (v === 'false') {
+                                    o[p] = false;
+                                } else {
+                                    var date = self.parseDateString(v);
+                                    if (date) {
+                                        o[p] = date;
                                     }
                                 }
                             }
                         }
-                        // ------------------------
                         r = null;
                         var result = iterator(i, o, totalRows);
                         if (self.isDefined(result))
                             return result;
-                    } 
-                } else
-                    throw 'SQLResultSet is not valid';
-            }
+                        // ------------------------
+                    }
+                    properties.length = 0; properties = null;    
+                } 
+            } else
+                throw 'SQLResultSet is not valid';
         },
         cleaner: function (obj) {
             var self = this;
