@@ -7,7 +7,7 @@
 
 		var debugMode = 1;
 
-        var addressServer = 'http://192.168.1.33:60080/'; //'http://localhost:8100/api/';
+        var addressServer = 'http://192.168.1.33:60080/'; //'http://localhost:8100/api/' //;
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -301,8 +301,10 @@
 		var onRuningFnc = function (level, msg) {
 			switch (level) {
 				case 1:
-					if (debugMode >= 1)
+					if (debugMode >= 1) {
+                        PaCM.showErrorMessage(msg, 'onRuningFnc');
 						console.error(msg);
+                    }
 					break;
 				case 2:
 					if (debugMode >= 2)

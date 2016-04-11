@@ -42,8 +42,10 @@
                                 _onSuccessCommand = null;
                                 _onErrorCommand = null;
 
-                                if (debugMode >= 1)
+                                if (debugMode >= 1) {
+                                    PaCM.showErrorMessage(sqlError, '_onErrorCommand');
                                     console.error(new Date(), sqlCommand, sqlParameters, sqlError);
+                                }
                                 
                                 if (PaCM.isFunction(onErrorCommand))
                                     return (onErrorCommand(self, sqlError) === true); //ROLLBACK CONDITIONAL
@@ -253,8 +255,10 @@
                     successCallback = null;
                     errorCallback = null;
 
-                    if (debugMode >= 1)
+                    if (debugMode >= 1) {
+                        PaCM.showErrorMessage(sqlError, 'errorCallback');
                         console.error(new Date(), 'Failed transaction', sqlError);
+                    }
                     
                     if (PaCM.isFunction(onErrorTransaction)) {
                         onErrorTransaction(sqlError);
