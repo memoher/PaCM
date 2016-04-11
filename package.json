@@ -1,7 +1,7 @@
 {
-  "name": "pacm",
-  "version": "0.0.3",
-  "description": "PaCM: Preventive and corrective maintenance",
+  "name": "escolcorp-pacm",
+  "version": "0.0.5",
+  "description": "Escolcorp PaCM: Preventive and corrective maintenance",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
