@@ -63,6 +63,7 @@
                                 });
                             }
 
+                            alert(sqlCommand);
                             tx.executeSql(sqlCommand, sqlParameters, _onSuccessCommand, _onErrorCommand);
                         },
                         executeBacthSql: function (sqlCommands, onSuccessCommand, onSuccellCommands, onErrorCommands) {

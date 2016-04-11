@@ -302,7 +302,6 @@
 			switch (level) {
 				case 1:
 					if (debugMode >= 1) {
-                        PaCM.showErrorMessage(msg, 'onRuningFnc');
 						console.error(msg);
                     }
 					break;
