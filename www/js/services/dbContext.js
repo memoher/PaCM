@@ -34,7 +34,12 @@
                                     console.info(new Date(), sqlCommand, sqlParameters, sqlResultSet);
                                 
                                 if (PaCM.isFunction(onSuccessCommand)) {
-                                    onSuccessCommand(self, sqlResultSet);
+                                    try {
+                                        onSuccessCommand(self, sqlResultSet);
+                                    } catch (ex) {
+                                        _sqlError = ex;
+                                        return true; //ROLLBACK   
+                                    }
                                 }
                             };
 
@@ -42,13 +47,11 @@
                                 _onSuccessCommand = null;
                                 _onErrorCommand = null;
 
-                                if (debugMode >= 1) {
-                                    PaCM.showErrorMessage(sqlError, '_onErrorCommand');
+                                if (debugMode >= 1)
                                     console.error(new Date(), sqlCommand, sqlParameters, sqlError);
-                                }
                                 
                                 if (PaCM.isFunction(onErrorCommand))
-                                    return (onErrorCommand(self, sqlError) === true); //ROLLBACK CONDITIONAL
+                                    return !(onErrorCommand(self, sqlError) === false); //ROLLBACK CONDITIONAL
                                 else {
                                     _sqlError = sqlError;
                                     return true; //ROLLBACK
@@ -63,7 +66,6 @@
                                 });
                             }
 
-                            alert(sqlCommand);
                             tx.executeSql(sqlCommand, sqlParameters, _onSuccessCommand, _onErrorCommand);
                         },
                         executeBacthSql: function (sqlCommands, onSuccessCommand, onSuccellCommands, onErrorCommands) {
@@ -256,10 +258,8 @@
                     successCallback = null;
                     errorCallback = null;
 
-                    if (debugMode >= 1) {
-                        PaCM.showErrorMessage(sqlError, 'errorCallback');
+                    if (debugMode >= 1)
                         console.error(new Date(), 'Failed transaction', sqlError);
-                    }
                     
                     if (PaCM.isFunction(onErrorTransaction)) {
                         onErrorTransaction(sqlError);
