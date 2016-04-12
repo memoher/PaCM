@@ -287,7 +287,7 @@
                 if (totalRows > 0) {
                     var properties = [];
                     if (true) { // private scope
-                        var r = sqlRS.rows.item(i);
+                        var r = sqlRS.rows.item(0);
                         for (var p in r) {
                             if (r.hasOwnProperty(p)) {
                                 properties.push(p);
@@ -335,7 +335,7 @@
                 if (totalRows > 0) {
                     var properties = [];
                     if (true) { // private scope
-                        var r = sqlRS.rows.item(i);
+                        var r = sqlRS.rows.item(0);
                         for (var p in r) {
                             if (r.hasOwnProperty(p)) {
                                 properties.push(p);
