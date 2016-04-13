@@ -1,21 +1,10 @@
 (function () {
     
-    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, dbSynchronizer, userSession) {
-
-        if (!(userSession.isLogged === true)) {
-            $state.go('login');
-            return false;
-        }
-
+    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, dbSynchronizer) {
 
         var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
-
-        $scope.sigOut = function () {
-            userSession.sigOut();
-            $state.go('app.login');
-        };
 
         $scope.synchronizeData = function () {
             $scope.runningProcess = true;

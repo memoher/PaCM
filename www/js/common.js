@@ -1,5 +1,9 @@
 (function () {
 
+    window.addEventListener("error", function () {
+        console.debug(arguments);
+    });
+
     var TYPE_STRING = 'string';
     var TYPE_BOOLEAN = 'boolean';
     var TYPE_NUMBER = 'number';
