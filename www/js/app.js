@@ -14,7 +14,7 @@
 
     angular.module('pacmApp', ['ionic', 'pacmApp.services', 'pacmApp.controllers'])
 
-        .run(function ($ionicPlatform, $ionicHistory, dbInstaller, dbSynchronizer) {
+        .run(function ($ionicPlatform, $ionicHistory, IONIC_BACK_PRIORITY, dbInstaller, dbSynchronizer) {
 
             $ionicPlatform.ready(function () {
 
@@ -30,23 +30,22 @@
                     StatusBar.styleLightContent();
                 }
 
-                $ionicPlatform.onHardwareBackButton(function(e) {
-                    if (['login', 'home'].indexOf($ionicHistory.currentStateName()) >= 0) {
-                        alert(e);
-                        e.preventDefault();
-                        e.stopPropagation();
+                $ionicPlatform.registerBackButtonAction(function (e) {
+                    var backView = $ionicHistory.backView();
+                    if (backView) {
+                      // there is a back view, go to it
+                      backView.go();
+                    } else {
+                      // there is no back view, so close the app instead
+                      //ionic.Platform.exitApp();
+                      e.preventDefault();
+                      e.stopPropagation();
+                      alert('Sin salida');
+                      return false;
                     }
-                    alert($ionicHistory.currentStateName());
-                });
-
-                /*$ionicPlatform.registerBackButtonAction(function () {
-                  if ($ionicHistory.currentHistoryId() === 'root') {
-                    //navigator.app.exitApp();
-                    return false;
-                  } else {
-                    //handle back action!
-                  }
-                }, 10);*/
+                  },
+                  IONIC_BACK_PRIORITY.view
+                );
 
                 // Check if database installed, update otherwise
                 dbInstaller.checkDatabase(
