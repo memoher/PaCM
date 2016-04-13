@@ -7,7 +7,7 @@
 
 		var debugMode = 1;
 
-        var addressServer = 'http://192.168.1.37:60080/'; //'http://localhost:8100/api/' //;
+        var addressServer = 'http://localhost:8100/api/' //'http://192.168.1.37:60080/'; //;
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
