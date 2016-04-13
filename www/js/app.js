@@ -7,11 +7,7 @@
 
     // PaCM Controllers
 
-    PaCM.controllers = angular.module('pacmApp.controllers', [])
-
-        .controller('appCtrl', function ($scope) {
-
-        });
+    PaCM.controllers = angular.module('pacmApp.controllers', []);
         
 
     // PaCM App
@@ -38,7 +34,7 @@
                         dbSynchronizer.start();
                     },
                     function (err) {
-                        PaCM.showErrorMessage(err, 'Fails during check database');
+                        PaCM.showErrorMessage(err, 'Problemas durante el chequeo a la base de datos');
                     });
             });
 
@@ -59,105 +55,95 @@
             $stateProvider
 
                 // setup an abstract state for the tabs directive
-                .state('app', {
-                    url: '/app',
-                    abstract: true,
-                    templateUrl: 'templates/menu.html',
-                    controller: 'appCtrl'
-                })
+                // .state('app', {
+                //     url: '/app',
+                //     abstract: true,
+                //     templateUrl: 'templates/menu.html',
+                //     controller: 'appCtrl'
+                // })
 
                 // Each tab has its own nav history stack:
                 
-                .state('app.login', {
-                    url: '/login',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/login.html',
-                            controller: 'loginCtrl'
-                        }
-                    }
+                .state('login', {
+                    url: '/',
+                    templateUrl: 'templates/login.html',
+                    controller: 'loginCtrl',
+                    cache: false
                 })
                 
-                .state('app.home', {
+                .state('home', {
                     url: '/home',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/home.html',
-                            controller: 'homeCtrl'
-                        }
-                    }
+                    templateUrl: 'templates/home.html',
+                    controller: 'homeCtrl',
+                    cache: true
                 })
 
-                .state('app.new', {
-                    url: '/new',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/new.html',
-                            controller: 'newCtrl'
-                        }
-                    }
-                })
-                .state('app.newByCustomer', {
-                    url: '/new/:customerId',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/new.html',
-                            controller: 'newCtrl'
-                        }
-                    }
-                })
-                .state('app.newByCustomerAndElementType', {
-                    url: '/new/:customerId/:elmType/:elmId',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/new.html',
-                            controller: 'newCtrl'
-                        }
-                    }
-                })
-
-                .state('app.customer', {
-                    url: '/customer/:name',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/customer.html',
-                            controller: 'customerCtrl'
-                        }
-                    }
-                })
-
-                .state('app.records', {
+                .state('records', {
                     url: '/records',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/records.html',
-                            controller: 'recordsCtrl'
-                        }
-                    }
+                    templateUrl: 'templates/records.html',
+                    controller: 'recordsCtrl',
+                    cache: true
                 })
 
-                .state('app.details', {
-                    url: '/details/:maintenanceId',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/new.html',
-                            controller: 'newCtrl'
-                        }
-                    }
+                .state('new', {
+                    url: '/new',
+                    templateUrl: 'templates/new.html',
+                    controller: 'newCtrl',
+                    cache: false
                 })
+                // .state('app.newByCustomer', {
+                //     url: '/new/:customerId',
+                //     views: {
+                //         'menuContent': {
+                //             templateUrl: 'templates/new.html',
+                //             controller: 'newCtrl'
+                //         }
+                //     }
+                // })
+                // .state('app.newByCustomerAndElementType', {
+                //     url: '/new/:customerId/:elmType/:elmId',
+                //     views: {
+                //         'menuContent': {
+                //             templateUrl: 'templates/new.html',
+                //             controller: 'newCtrl'
+                //         }
+                //     }
+                // })
 
-                .state('app.tools', {
-                    url: '/tools',
-                    views: {
-                        'menuContent': {
-                            templateUrl: 'templates/tools.html',
-                            controller: 'toolsCtrl'
-                        }
-                    }
-                });
+                // .state('app.customer', {
+                //     url: '/customer/:name',
+                //     views: {
+                //         'menuContent': {
+                //             templateUrl: 'templates/customer.html',
+                //             controller: 'customerCtrl'
+                //         }
+                //     }
+                // })
+
+                // .state('app.details', {
+                //     url: '/details/:maintenanceId',
+                //     views: {
+                //         'menuContent': {
+                //             templateUrl: 'templates/new.html',
+                //             controller: 'newCtrl'
+                //         }
+                //     }
+                // })
+
+                // .state('app.tools', {
+                //     url: '/tools',
+                //     views: {
+                //         'menuContent': {
+                //             templateUrl: 'templates/tools.html',
+                //             controller: 'toolsCtrl'
+                //         }
+                //     }
+                // })
+
+                ;
 
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('/app/login');
+            $urlRouterProvider.otherwise('/');
 
         });
 

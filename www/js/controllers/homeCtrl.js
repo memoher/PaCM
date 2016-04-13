@@ -1,19 +1,19 @@
 (function () {
     
-    PaCM.controllers.controller('homeCtrl', function ($scope, $state, dbSynchronizer, userSession) {
+    PaCM.controllers.controller('homeCtrl', function ($scope, $state, $ionicHistory, dbSynchronizer, userSession) {
 
         if (!(userSession.isLogged === true)) {
-            $state.go('app.login');
+            $state.go('login');
+            return false;
         }
+
+
+        $ionicHistory.clearHistory();
+        $ionicHistory.clearCache();
 
         var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
-
-        $scope.sigOut = function () {
-            userSession.sigOut();
-            $state.go('app.login');
-        };
 
         $scope.synchronizeData = function () {
             $scope.runningProcess = true;
@@ -28,6 +28,14 @@
                     _priv.refreshUI();
                     PaCM.showErrorMessage(err, 'Problemas durante la sincronización');
                 });
+        };
+
+        $scope.sigOut = function () {
+            userSession.sigOut();
+            $ionicHistory.nextViewOptions({
+                historyRoot: true
+            });
+            $state.go('login');
         };
 
         $scope.entriesConsoleLog = [];

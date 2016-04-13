@@ -3,8 +3,10 @@
     PaCM.controllers.controller('newCtrl', function ($scope, $state, $stateParams, $ionicTabsDelegate, dbRepository, userSession, searcherPopup, notesPopup) {
 
         if (!(userSession.isLogged === true)) {
-            $state.go('app.login');
+            $state.go('login');
+            return false;
         }
+
 
         var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 

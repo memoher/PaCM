@@ -28,7 +28,7 @@
                     $ionicHistory.nextViewOptions({
                         historyRoot: true
                     });
-                    $state.go('app.records');
+                    $state.go('home');
                 },
                 function (err) {
                     $scope.runningProcess = false;
@@ -66,6 +66,7 @@
 
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
+
         });
 
     });
