@@ -30,11 +30,13 @@
                     StatusBar.styleLightContent();
                 }
 
-                $ionicPlatform.onHardwareBackButton(function() {
+                $ionicPlatform.onHardwareBackButton(function(e) {
                     if (['login', 'home'].indexOf($ionicHistory.currentStateName()) >= 0) {
-                        event.preventDefault();
-                        event.stopPropagation();
+                        alert(e);
+                        e.preventDefault();
+                        e.stopPropagation();
                     }
+                    alert($ionicHistory.currentStateName());
                 });
 
                 /*$ionicPlatform.registerBackButtonAction(function () {
