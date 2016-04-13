@@ -103,6 +103,7 @@
                             $scope.customer.countryId = r.CountryId;
                             dbRepository.get('Country', $scope.customer.countryId, function (c) {
                                 $scope.customer.countryName = c.Name;
+                                _priv.refreshUI();
                             });
                         }
                         _priv.filters.stateSearch = $scope.searcher.search;
@@ -158,8 +159,10 @@
                             dbRepository.get('State', $scope.customer.stateId, function (s) {
                                 $scope.customer.stateName = s.Name;
                                 $scope.customer.countryId = s.CountryId;
+                                _priv.refreshUI();
                                 dbRepository.get('Country', $scope.customer.countryId, function (c) {
                                     $scope.customer.countryName = c.Name;
+                                    _priv.refreshUI();
                                 });
                             });
                         }
@@ -215,7 +218,8 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
-                $state.go('app.newByCustomer', {
+                $state.go('new-maintenance2', {
+                    type: 'Battery',
                     customerId: $scope.customer.id
                 });
             });

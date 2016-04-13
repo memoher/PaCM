@@ -7,6 +7,8 @@
         return $rootScope.userSession = {
             user: null,
             isLogged: false,
+            isAdminUser: false,
+            isEscolUser: false,
             sigIn: function (emailAddress, password, onSuccess, onError) {
                 var self = this;
 
@@ -20,6 +22,8 @@
 
                         self.user = user;
                         self.isLogged = true;
+                        self.isAdminUser = (user.Administrator) ? true : false;
+                        self.isEscolUser = (user.CustomerId) ? false : true;
                         onSuccess();
                     }, onError);
                     
@@ -30,6 +34,8 @@
                 
                 self.user = null;
                 self.isLogged = false;
+                self.isAdminUser = false;
+                self.isEscolUser = false;
             }
         };
         

@@ -85,7 +85,7 @@
                 // Each tab has its own nav history stack:
                 
                 .state('login', {
-                    url: '/',
+                    url: '/login',
                     templateUrl: 'templates/login.html',
                     controller: 'loginCtrl',
                     cache: false
@@ -99,18 +99,65 @@
                 })
 
                 .state('records', {
-                    url: '/records',
+                    url: '/records/:type',
                     templateUrl: 'templates/records.html',
                     controller: 'recordsCtrl',
                     cache: true
                 })
 
-                .state('new', {
+                .state('new-customer', {
+                    url: '/new-customer/:name',
+                    templateUrl: 'templates/customer.html',
+                    controller: 'customerCtrl',
+                    cache: false
+                })
+
+                .state('new-assembly', {
+                    url: '/new-assembly/:type',
+                    templateUrl: 'templates/assembly.html',
+                    controller: 'assemblyCtrl',
+                    cache: false
+                })
+                .state('new-assembly2', {
+                    url: '/new-assembly/:type/:customerId',
+                    templateUrl: 'templates/assembly.html',
+                    controller: 'assemblyCtrl',
+                    cache: false
+                })
+
+                .state('new-maintenance', {
+                    url: '/new-maintenance/:type',
+                    templateUrl: 'templates/maintenance.html',
+                    controller: 'maintenanceCtrl',
+                    cache: false
+                })
+                .state('new-maintenance2', {
+                    url: '/new-maintenance/:type/:customerId',
+                    templateUrl: 'templates/maintenance.html',
+                    controller: 'maintenanceCtrl',
+                    cache: false
+                })
+                .state('new-maintenance3', {
+                    url: '/new-maintenance/:type/:customerId/:objectId',
+                    templateUrl: 'templates/maintenance.html',
+                    controller: 'maintenanceCtrl',
+                    cache: false
+                })
+
+                .state('maintenance', {
+                    url: '/maintenance/:maintenanceId',
+                    templateUrl: 'templates/maintenance.html',
+                    controller: 'maintenanceCtrl',
+                    cache: false
+                })
+
+
+                /*.state('new', {
                     url: '/new',
                     templateUrl: 'templates/new.html',
                     controller: 'newCtrl',
                     cache: false
-                })
+                })*/
                 // .state('app.newByCustomer', {
                 //     url: '/new/:customerId',
                 //     views: {
@@ -150,16 +197,16 @@
                 //     }
                 // })
 
-                .state('tools', {
+                /*.state('tools', {
                     url: '/tools',
                     templateUrl: 'templates/tools.html',
                     controller: 'toolsCtrl'
-                })
+                })*/
 
                 ;
 
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('/');
+            $urlRouterProvider.otherwise('/login');
 
         });
 

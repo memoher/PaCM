@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, dbRepository, userSession, searcherPopup) {
+    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, dbRepository, userSession, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -17,6 +17,7 @@
         searcherPopup.initialize($scope);
         
         $scope.filters = {
+            objectType: $stateParams.type,
             customerId: null,
             customerName: null,
             customerSearch: null,
@@ -28,7 +29,6 @@
             objectTypeModelSearch: null,
             objectTypeId: null,
             objectTypeDescription: null,
-            objectTypeType: null,
             objectTypeSearch: null
         };
         
@@ -112,32 +112,52 @@
                 options.where.TrademarkId = $scope.filters.objectTypeTrademarkId;
             
             dbRepository.find('ObjectTypeModel', options, function (models) {
-                if ($scope.filters.objectTypeModelId) {
-                    var val = $scope.filters.objectTypeModelId;
-                    PaCM.eachArray(models, function (inx, m) {
-                        if (m.Id == val) {
-                            m.Selected = true;
-                            return true; //break;
+                
+                options.orderBy = 'ModelId';
+                dbRepository.find($stateParams.type, options, function (objects) {
+                    //Debe filtrar los modelos, dependiendo de si aplica a baterías o a cargadores
+                    PaCM.eachArrayInvert(models, function (inxM, m) {
+                        var valid = false;
+                        PaCM.eachArrayInvert(objects, function (inxO, o) {
+                            if (m.Id === o.ModelId) {
+                                valid = true;
+                                objects.splice(inxO, 1);
+                            }
+                        });
+                        if (!(valid === true)) {
+                            models.splice(inxM, 1);
                         }
                     });
-                }
-                $scope.searcher.open(
-                    'ObjectTypeModel',
-                    'Buscar modelo',
-                    models,
-                    $scope.filters.objectTypeModelSearch,
-                    function (r) {
-                        if (!(r.Selected === true)) {
-                            $scope.filters.objectTypeModelId = r.Id;
-                            $scope.filters.objectTypeModelName = r.Name;
-                            $scope.filters.objectTypeModelSearch = $scope.searcher.search;
-                            dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
-                                $scope.filters.objectTypeTrademarkId = t.Id;
-                                $scope.filters.objectTypeTrademarkName = t.Name;
-                            });
-                            $scope.resetObjectType();
-                        }
-                    }); 
+
+                    if ($scope.filters.objectTypeModelId) {
+                        var val = $scope.filters.objectTypeModelId;
+                        PaCM.eachArray(models, function (inx, m) {
+                            if (m.Id == val) {
+                                m.Selected = true;
+                                return true; //break;
+                            }
+                        });
+                    }
+                    $scope.searcher.open(
+                        'ObjectTypeModel',
+                        'Buscar modelo',
+                        models,
+                        $scope.filters.objectTypeModelSearch,
+                        function (r) {
+                            if (!(r.Selected === true)) {
+                                $scope.filters.objectTypeModelId = r.Id;
+                                $scope.filters.objectTypeModelName = r.Name;
+                                $scope.filters.objectTypeModelSearch = $scope.searcher.search;
+                                dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
+                                    $scope.filters.objectTypeTrademarkId = t.Id;
+                                    $scope.filters.objectTypeTrademarkName = t.Name;
+                                    _priv.refreshUI();
+                                });
+                                $scope.resetObjectType();
+                            }
+                        });                    
+                });
+ 
             });
 
             return false;
@@ -178,7 +198,7 @@
                 }
                 $scope.searcher.open(
                     'ObjectType',
-                    'Buscar bateria / cargador',
+                    'Buscar ' + $stateParams.type,
                     objects,
                     $scope.filters.objectTypeSearch,
                     function (r) {
@@ -186,27 +206,20 @@
                             $scope.filters.objectTypeId = r.Id;
                             $scope.filters.objectTypeDescription = r.Description;
                             $scope.filters.objectTypeSearch = $scope.searcher.search;
-                            dbRepository.get('Battery', r.Id, function (b) {
-                                if (b) {
-                                    $scope.filters.objectTypeType = 'battery';
-                                }
-                            });
-                            dbRepository.get('Charger', r.Id, function (c) {
-                                if (c) {
-                                    $scope.filters.objectTypeType = 'charger';
-                                }
-                            });
                             dbRepository.get('Customer', r.CustomerId, function (c) {
                                 $scope.filters.customerId = c.Id;
                                 $scope.filters.customerName = c.Name;
+                                _priv.refreshUI();
                             });
                             dbRepository.get('ObjectTypeModel', r.ModelId, function (m) {
                                 $scope.filters.objectTypeModelId = m.Id;
                                 $scope.filters.objectTypeModelName = m.Name;
+                                _priv.refreshUI();
                             });
                             dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
                                 $scope.filters.objectTypeTrademarkId = t.Id;
                                 $scope.filters.objectTypeTrademarkName = t.Name;
+                                _priv.refreshUI();
                             });
                             $scope.searchHistory();
                         }
@@ -218,7 +231,6 @@
         $scope.resetObjectType = function () {
             $scope.filters.objectTypeId = null;
             $scope.filters.objectTypeDescription = null;
-            $scope.filters.objectTypeType = null;
             $scope.filters.objectTypeSearch = null;
             $scope.resetHistory();
         };
@@ -273,7 +285,7 @@
             }
             _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _priv.refreshUI();
+
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
