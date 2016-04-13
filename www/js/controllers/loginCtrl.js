@@ -10,6 +10,9 @@
         $scope.runningProcess = false;
         $scope.showErrors = true;
 
+
+        // Modelo
+
         $scope.login = {
             emailAddress: null,
             password: null
@@ -22,7 +25,6 @@
                     $scope.login.emailAddress = null;
                     $scope.login.password = null;
                     _priv.refreshUI();
-                    
                     $ionicHistory.nextViewOptions({
                         historyRoot: true
                     });
@@ -49,17 +51,21 @@
             }
             _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _priv.refreshUI();
+
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         
         $scope.$on('$destroy', function() {
+            
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
+            }
 
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
-            
         });
 
     });

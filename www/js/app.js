@@ -77,6 +77,16 @@
                         }
                     }
                 })
+                
+                .state('app.home', {
+                    url: '/home',
+                    views: {
+                        'menuContent': {
+                            templateUrl: 'templates/home.html',
+                            controller: 'homeCtrl'
+                        }
+                    }
+                })
 
                 .state('app.new', {
                     url: '/new',
@@ -96,7 +106,7 @@
                         }
                     }
                 })
-                .state('app.newByElm', {
+                .state('app.newByCustomerAndElementType', {
                     url: '/new/:customerId/:elmType/:elmId',
                     views: {
                         'menuContent': {

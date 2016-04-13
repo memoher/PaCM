@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('toolsCtrl', function ($scope, $state, dbSynchronizer, userSession) {
+    PaCM.controllers.controller('homeCtrl', function ($scope, $state, dbSynchronizer, userSession) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('app.login');

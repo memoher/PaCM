@@ -13,12 +13,14 @@
 
         _priv.onSqlError = function (err) {
             $scope.runningProcess = false;
-            $scope.$digest();
+            _priv.refreshUI();
             PaCM.showErrorMessage(err);
             throw err;
         }
 
-        // Create the modal popup searcher
+
+        // Dialogos de selección
+
         searcherPopup.initialize($scope);
         
         _priv.filters = {
@@ -171,9 +173,8 @@
             _priv.filters.citySearch = null;
         };
 
-        //---------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------------------------------
+
+        // Modelo
 
         $scope.customer = {
             identityTypeId: null,
@@ -193,7 +194,7 @@
             contactName: null,
             contactEmailAddress: null
         };
-        $scope.saveCustomer = function () {
+        $scope.save = function () {
             var actions = [];
 
             if (!($scope.customer.countryId))
@@ -278,18 +279,15 @@
         $scope.resources = {
             identityTypes: []
         };
-        _priv.getResources = function () {
-            dbRepository.find('IdentityType', { orderBy: 'ShortName' }, function (identityTypes) {
-                PaCM.eachArray(identityTypes, function (inx, it) {
-                    $scope.resources.identityTypes.push({
-                        id: it.Id,
-                        shortName: it.ShortName
-                    });
+        dbRepository.find('IdentityType', { orderBy: 'ShortName' }, function (identityTypes) {
+            PaCM.eachArray(identityTypes, function (inx, it) {
+                $scope.resources.identityTypes.push({
+                    id: it.Id,
+                    shortName: it.ShortName
                 });
             });
-
-        }
-        _priv.getResources();
+            _priv.refreshUI();
+        });
 
 
         // Valores iniciales
@@ -298,12 +296,14 @@
             if (!(it === null)) {
                 $scope.customer.identityTypeId = it.Id;
             }
+            _priv.refreshUI();
         });
         dbRepository.first('Country', { where: 'lower(Name) = lower(?)', parameters: [ 'colombia' ] }, function (c) {
             if (!(c === null)) {
                 $scope.customer.countryId = c.Id;
                 $scope.customer.countryName = c.Name;
             }
+            _priv.refreshUI();
         });
 
 
@@ -319,7 +319,7 @@
             }
             _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
-        _priv.refreshUI();
+
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -335,7 +335,6 @@
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
-
         });
     });
     

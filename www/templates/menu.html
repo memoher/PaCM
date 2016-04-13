@@ -5,6 +5,9 @@
         </ion-header-bar>
         <ion-content>
             <ion-list>
+                <ion-item menu-close href="#/app/home" ng-show="userSession.isLogged">
+                    Home
+                </ion-item>
                 <ion-item menu-close href="#/app/new" ng-show="userSession.isLogged">
                     Nuevo
                 </ion-item>

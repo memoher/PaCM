@@ -1522,7 +1522,7 @@
                 clearTimeout(_priv.timeoutRefreshUI);
                 _priv.timeoutRefreshUI = null;
             }
-            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 200);
+            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }        
         _priv.refreshUI();
 
