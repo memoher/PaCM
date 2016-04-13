@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, $ionicTabsDelegate, dbRepository, userSession, searcherPopup, notesPopup) {
+    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, dbRepository, userSession, searcherPopup, notesPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -11,6 +11,10 @@
         var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
         $scope.runningProcess = false;
+
+        $scope.myGoBack = function () {
+            $ionicHistory.goToHistoryRoot($ionicHistory.currentView().historyId);
+        };
 
         _priv.onSqlError = function (err) {
             $scope.runningProcess = false;
