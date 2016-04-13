@@ -40,7 +40,6 @@
                       //ionic.Platform.exitApp();
                       e.preventDefault();
                       e.stopPropagation();
-                      alert('Sin salida');
                       return false;
                     }
                   },
