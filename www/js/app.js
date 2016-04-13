@@ -30,14 +30,20 @@
                     StatusBar.styleLightContent();
                 }
 
-                $ionicPlatform.registerBackButtonAction(function () {
+                $ionicPlatform.onHardwareBackButton(function() {
+                     //event.preventDefault();
+                     //event.stopPropagation();
+                     alert($ionicHistory.currentHistoryId());
+                });
+
+                /*$ionicPlatform.registerBackButtonAction(function () {
                   if ($ionicHistory.currentHistoryId() === 'root') {
                     //navigator.app.exitApp();
                     return false;
                   } else {
                     //handle back action!
                   }
-                }, 10)
+                }, 10);*/
 
                 // Check if database installed, update otherwise
                 dbInstaller.checkDatabase(
@@ -48,7 +54,7 @@
                     function (err) {
                         PaCM.showErrorMessage(err, 'Problemas durante el chequeo a la base de datos');
                     });
-                
+
             });
 
         })
