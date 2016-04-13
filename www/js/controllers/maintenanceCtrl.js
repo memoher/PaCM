@@ -24,6 +24,42 @@
         }
 
         _priv.preloadData = ($stateParams.objectId) ? true : false;
+
+        $scope.title = 'Mantenimiento';
+        $scope.refreshTitle = function () {
+            switch ($scope.tabs.selectedTab()) {
+                case 'starterTab':
+                    $scope.title = 'Mantenimiento : cliente';
+                    break;
+                case 'batteryTab':
+                    $scope.title = 'Mantenimiento : batería';
+                    break;
+                case 'chargerTab':
+                    $scope.title = 'Mantenimiento : cargador';
+                    break;
+                case 'machineTab':
+                    $scope.title = 'Mantenimiento : máquina';
+                    break;
+                case 'workToBeDoneTab':
+                    $scope.title = 'Mantenimiento : labor';
+                    break;
+                case 'physicalInspectionTab':
+                    $scope.title = 'Mantenimiento : inspección física';
+                    break;
+                case 'cellInspectionTab':
+                    $scope.title = 'Mantenimiento : inspección de celdas';
+                    break;
+                case 'suppliesTab':
+                    $scope.title = 'Mantenimiento : insumos y repuestos';
+                    break;
+                case 'technicalReportTab':
+                    $scope.title = 'Mantenimiento : reporte técnico';
+                    break;
+                case 'endingTab':
+                    $scope.title = 'Mantenimiento : recibido por';
+                    break;
+            }
+        };
         
         $scope.tabs = {
             starterTab: true,
@@ -50,9 +86,17 @@
                 self.technicalReportTab = validObjectType;
                 self.endingTab = (validObjectType && ($scope.maintenance.technicalReport));
                 return true;
+            }, selectedTab: function () {
+                var i = $ionicTabsDelegate.selectedIndex();
+                var j = 0;
+                return PaCM.eachProperties(this, function (key, val) {
+                    if (j === i)
+                        return key;
+                    j++;
+                });
             }
         };
-        $scope.selectTab = function (tabName) {
+        /*$scope.selectTab = function (tabName) {
             var i = 0;
             PaCM.eachProperties($scope.tabs, function (key, val) {
                 if (key === tabName) {
@@ -60,9 +104,9 @@
                     $ionicTabsDelegate.select(i);
                     return i;
                 }
-                i += 1;
+                i++;
             });
-        };
+        };*/
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -1479,10 +1523,8 @@
         });
 
         if ($scope.maintenance.id) {
-            $scope.title = 'Mantenimiento';
             _priv.getMaintenance();
         } else {
-            $scope.title = 'Nuevo mantenimiento';
             $scope.maintenance.date = new Date();
             $scope.maintenance.preventive = true;
             $scope.maintenance.corrective = false;
@@ -1550,7 +1592,7 @@
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
-            
+
         });
         
     });
