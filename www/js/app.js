@@ -31,9 +31,10 @@
                 }
 
                 $ionicPlatform.onHardwareBackButton(function() {
-                     //event.preventDefault();
-                     //event.stopPropagation();
-                     alert($ionicHistory.currentHistoryId());
+                    if (['login', 'home'].indexOf($ionicHistory.currentStateName()) >= 0) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                 });
 
                 /*$ionicPlatform.registerBackButtonAction(function () {
