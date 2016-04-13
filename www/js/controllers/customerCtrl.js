@@ -337,6 +337,7 @@
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
+            
         });
     });
     

@@ -38,20 +38,6 @@
             $state.go('login');
         };
 
-        $scope.entriesConsoleLog = [];
-        _priv.refreshConsoleLog = function (level, msg) {
-            $scope.entriesConsoleLog.push({
-                dateTime: new Date(),
-                level: level,
-                message: msg
-            });
-            if ($scope.entriesConsoleLog.length > 10) {
-                $scope.entriesConsoleLog.shift();
-            }
-            _priv.refreshUI();
-        }
-        dbSynchronizer.addEventOnRuning(_priv.refreshConsoleLog);
-
 
         _priv.timeoutRefreshUI = null;
         _priv._onRefreshUI = function () {
@@ -73,8 +59,6 @@
         
         $scope.$on('$destroy', function() {
 
-            dbSynchronizer.removeEventOnRuning(_priv.refreshConsoleLog);
-            
             if (_priv.timeoutRefreshUI) {
                 clearTimeout(_priv.timeoutRefreshUI);
                 _priv.timeoutRefreshUI = null;
@@ -82,6 +66,7 @@
 
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
+            
         });
     });
     

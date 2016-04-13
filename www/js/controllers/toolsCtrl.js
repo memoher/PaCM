@@ -65,6 +65,7 @@
 
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
+            
         });
     });
     
