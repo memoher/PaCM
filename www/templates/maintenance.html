@@ -291,7 +291,7 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Fin" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}" on-select="refreshTitle()">
+        <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}" on-select="refreshTitle()">
             <ion-content scroll="false">
                 <form name="endingForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
@@ -306,7 +306,7 @@
                         </label>
                         <div class="button-bar">
                             <button type="button" class="button button-energized" ng-click="clearCanvas()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Repetir firma</button>
-                            <button type="button" class="button button-balanced" ng-click="save()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Guarda</button>
+                            <button type="button" class="button button-balanced" ng-click="save()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Guardar</button>
                         </div>
                     </div>
                 </form>

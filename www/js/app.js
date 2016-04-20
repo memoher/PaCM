@@ -125,6 +125,13 @@
                     cache: false
                 })
 
+                .state('assembly', {
+                    url: '/assembly/:assemblyId',
+                    templateUrl: 'templates/assembly.html',
+                    controller: 'assemblyCtrl',
+                    cache: false
+                })
+
                 .state('new-maintenance', {
                     url: '/new-maintenance/:type',
                     templateUrl: 'templates/maintenance.html',

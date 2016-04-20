@@ -1,17 +1,5 @@
 <ion-view view-title="Historial">
     <ion-content class="has-header" padding="true">
-        <p>
-            <!-- probablemente hay errores al quitar articulos de la lista de insumos
-*****se deberia traer ordenada la lista de checks
-*****el modo en el que resuelve que modelos debe mostrar no es del todo optimo
-*****la lista de celdas se deberia traer ordenada
-*****la lista de articulos deberia traerse ordenada
-*****la lista de insumos deberia traerse ordenada
-*****falta que los titulos cambien segun el tab seleccionado
-*****no generar actions.push si no son extrictamente necesarios
-listas de tipo de conector en una sola fila
-hay un error con el item de insumos cuando este se encuentra vacio -->
-        </p>
         <form name="recordsForm" ng-class="{'show-errors': showErrors}">
             <div class="row responsive-sm">
                 <div class="col">
@@ -41,7 +29,6 @@ hay un error con el item de insumos cuando este se encuentra vacio -->
                     </label>
                 </div>
             </div>
-
             <div class="row responsive-sm">
                 <div class="col">
                     <a class="button button-positive button-block" href="#/new-maintenance/{{ filters.objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
@@ -49,9 +36,13 @@ hay un error con el item de insumos cuando este se encuentra vacio -->
             </div>
         </form>
         <div class="list">
-            <a class="item" ng-repeat="r in history" href="#/maintenance/{{ r.Id}}">
-                {{ r.Date | date : 'dd/MM/yyyy' }} -> 
-                {{ r.Type.indexOf('Maintenance') >= 0 ? 'Mantenimiento ' : 'Ensamble '}}
+            <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id}}">
+                {{ r.Date | date : 'dd/MM/yyyy' }} -> Mantenimiento 
+                {{ r.Preventive === true ? 'preventivo ' : '' }}
+                {{ r.Corrective === true ? 'correctivo ' : '' }}
+            </a>
+            <a class="item" ng-repeat="r in assemblies" href="#/assembly/{{ r.Id}}">
+                {{ r.Date | date : 'dd/MM/yyyy' }} -> Ensamble 
                 {{ r.Preventive === true ? 'preventivo ' : '' }}
                 {{ r.Corrective === true ? 'correctivo ' : '' }}
             </a>

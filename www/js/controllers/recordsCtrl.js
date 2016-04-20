@@ -239,7 +239,8 @@
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         
-        $scope.history = [];
+        $scope.maintenances = [];
+        $scope.assemblies = [];
         $scope.searchHistory = function () {
             
             var options = {
@@ -258,18 +259,20 @@
 
             $scope.runningProcess = true;
             dbRepository.find('Maintenance', options, function (maintenances) {
+                PaCM.syncronizeArray(['Id'], $scope.maintenances, maintenances);
+                maintenances.length = 0; maintenances = null;
+                //
                 dbRepository.find('Assembly', options, function (assemblies) {
-                    PaCM.mergeArray(['Id'], maintenances, assemblies);
+                    PaCM.syncronizeArray(['Id'], $scope.assemblies, assemblies);
                     assemblies.length = 0; assemblies = null;
-                    PaCM.syncronizeArray(['Id'], $scope.history, maintenances);
-                    maintenances.length = 0; maintenances = null;
                     $scope.runningProcess = false;
                     _priv.refreshUI();
                 });
             });
         };
         $scope.resetHistory = function () {
-            $scope.history.length = 0;
+            $scope.assemblies.length = 0;
+            $scope.maintenances.length = 0;
         }
 
 

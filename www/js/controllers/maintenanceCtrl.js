@@ -56,7 +56,7 @@
                     $scope.title = 'Mantenimiento : reporte técnico';
                     break;
                 case 'endingTab':
-                    $scope.title = 'Mantenimiento : recibido por';
+                    $scope.title = 'Mantenimiento : visto bueno';
                     break;
             }
         };
@@ -71,6 +71,7 @@
             cellInspectionTab: false,
             suppliesTab: false,
             technicalReportTab: false,
+            endingTab: false,
             refreshTabs: function () {
                 var self = this;
 
@@ -1432,7 +1433,6 @@
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
                 $scope.runningProcess = false;
-                $scope.title = 'Mantenimiento';
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
             });
