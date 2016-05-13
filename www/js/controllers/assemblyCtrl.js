@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('assemblyCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, dbRepository, userSession, searcherPopup, notesPopup) {
+    PaCM.controllers.controller('assemblyCtrl', function ($scope, $state, $stateParams, userSession, $ionicHistory, $ionicTabsDelegate, dbRepository, searcherPopup, notesPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -66,8 +66,8 @@
                 self.suppliesTab = validObjectType;
                 self.cellInspectionTab = (validObjectType && ($scope.battery.typeId));
                 self.endingTab = validObjectType;
-                return true;
-            }, selectedTab: function () {
+            },
+            selectedTab: function () {
                 var i = $ionicTabsDelegate.selectedIndex();
                 var j = 0;
                 return PaCM.eachProperties(this, function (key, val) {
@@ -995,7 +995,7 @@
             for (var i = 0; i < forms.length; i ++) {
                 if (forms[i].classList.contains('ng-valid') === false) {
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
-                    return false; // Breack
+                    return false; //break
                 }
             }
 
@@ -1154,6 +1154,7 @@
             }
 
             $scope.searcher.destroy();
+            $scope.notes.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
 

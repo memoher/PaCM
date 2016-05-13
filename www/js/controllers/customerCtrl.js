@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, dbRepository, userSession, searcherPopup) {
+    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');

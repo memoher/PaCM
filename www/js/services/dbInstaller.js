@@ -1,3 +1,4 @@
+
 //Este servicio se encarga de hacer la instalación y configuración de la base de datos
 
 (function () {
@@ -6,7 +7,7 @@
 
         var debugMode = 1;
 
-        var dbVersion = '2016.04.13.08.30';
+        var dbVersion = '2016.05.13.08.30';
 
 		var installDatabase = function (onSuccess, onError, debugMode) {
                 

@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, dbRepository, userSession, searcherPopup, notesPopup) {
+    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, userSession, $ionicHistory, $ionicTabsDelegate, dbRepository, searcherPopup, notesPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -86,8 +86,8 @@
                 self.suppliesTab = (validObjectType && $scope.maintenance.corrective === true);
                 self.technicalReportTab = validObjectType;
                 self.endingTab = (validObjectType && ($scope.maintenance.technicalReport));
-                return true;
-            }, selectedTab: function () {
+            },
+            selectedTab: function () {
                 var i = $ionicTabsDelegate.selectedIndex();
                 var j = 0;
                 return PaCM.eachProperties(this, function (key, val) {
@@ -1396,7 +1396,7 @@
             for (var i = 0; i < forms.length; i ++) {
                 if (forms[i].classList.contains('ng-valid') === false) {
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
-                    return false; // Breack
+                    return false; //break
                 }
             }
 
@@ -1590,6 +1590,7 @@
             }
 
             $scope.searcher.destroy();
+            $scope.notes.destroy();
             PaCM.cleaner($scope);
             PaCM.cleaner(_priv); _priv = null;
 

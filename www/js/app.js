@@ -158,52 +158,6 @@
                     cache: false
                 })
 
-
-                /*.state('new', {
-                    url: '/new',
-                    templateUrl: 'templates/new.html',
-                    controller: 'newCtrl',
-                    cache: false
-                })*/
-                // .state('app.newByCustomer', {
-                //     url: '/new/:customerId',
-                //     views: {
-                //         'menuContent': {
-                //             templateUrl: 'templates/new.html',
-                //             controller: 'newCtrl'
-                //         }
-                //     }
-                // })
-                // .state('app.newByCustomerAndElementType', {
-                //     url: '/new/:customerId/:elmType/:elmId',
-                //     views: {
-                //         'menuContent': {
-                //             templateUrl: 'templates/new.html',
-                //             controller: 'newCtrl'
-                //         }
-                //     }
-                // })
-
-                // .state('app.customer', {
-                //     url: '/customer/:name',
-                //     views: {
-                //         'menuContent': {
-                //             templateUrl: 'templates/customer.html',
-                //             controller: 'customerCtrl'
-                //         }
-                //     }
-                // })
-
-                // .state('app.details', {
-                //     url: '/details/:maintenanceId',
-                //     views: {
-                //         'menuContent': {
-                //             templateUrl: 'templates/new.html',
-                //             controller: 'newCtrl'
-                //         }
-                //     }
-                // })
-
                 /*.state('tools', {
                     url: '/tools',
                     templateUrl: 'templates/tools.html',

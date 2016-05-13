@@ -2,7 +2,7 @@
 
 (function () {
 
-	delete PaCM.services;
-	delete PaCM.controllers;
+	PaCM.services = null; delete PaCM.services;
+	PaCM.controllers = null; delete PaCM.controllers;
 
 })();

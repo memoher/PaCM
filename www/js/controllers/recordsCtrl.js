@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, dbRepository, userSession, searcherPopup) {
+    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -295,6 +295,11 @@
         //---------------------------------------------------------------------------------------------------------
         
         $scope.$on('$destroy', function() {
+
+            if (_priv.timeoutRefreshUI) {
+                clearTimeout(_priv.timeoutRefreshUI);
+                _priv.timeoutRefreshUI = null;
+            }
 
             $scope.searcher.destroy();
             PaCM.cleaner($scope);
