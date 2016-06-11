@@ -106,7 +106,14 @@
                 })
 
                 .state('new-customer', {
-                    url: '/new-customer/:name',
+                    url: '/new-customer',
+                    templateUrl: 'templates/customer.html',
+                    controller: 'customerCtrl',
+                    cache: false
+                })
+
+                .state('new-customer2', {
+                    url: '/new-customer/:name/:redirectTo/:redirectParams',
                     templateUrl: 'templates/customer.html',
                     controller: 'customerCtrl',
                     cache: false

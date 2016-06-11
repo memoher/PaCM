@@ -129,8 +129,16 @@
                     _priv.filters.customerSearch,
                     function (r) {
                         $scope.resetCustomer();
-                        $scope.assembly.customerId = r.Id;
-                        $scope.assembly.customerName = r.Name;
+                        if (r === $scope.searcher.search) {
+                            $state.go('new-customer2', {
+                                name: $scope.searcher.search,
+                                redirectTo: 'new-assembly2',
+                                redirectParams: 'type' + String.fromCharCode(1) + $stateParams.type,
+                            });
+                        } else {
+                            $scope.assembly.customerId = r.Id;
+                            $scope.assembly.customerName = r.Name;
+                        }
                         _priv.filters.customerSearch = $scope.searcher.search;
                     }, true);
             });
@@ -991,7 +999,7 @@
         $scope.save = function () {
             var actions = [];
 
-            var forms = document.getElementsByClassName('assembly-validate');
+            var forms = document.getElementsByClassName('assembly-form');
             for (var i = 0; i < forms.length; i ++) {
                 if (forms[i].classList.contains('ng-valid') === false) {
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');

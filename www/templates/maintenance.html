@@ -7,7 +7,7 @@
     <ion-tabs class="tabs-positive tabs-icon-top">
         <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="starterForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="starterForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Fecha</span>
@@ -38,7 +38,7 @@
         </ion-tab>
         <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="batteryForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="batteryForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -74,7 +74,7 @@
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label" style="color:transparent;">SIN TITULO</span>
-                            <select required ng-disabled="readOnlyMode" ng-options="c.id as c.name for c in resources.connectors| filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId">
+                            <select required ng-disabled="readOnlyMode" ng-options="c.id as c.name for c in resources.connectors | filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId">
                                 <option value=""> </option>
                             </select>
                         </label>
@@ -121,7 +121,7 @@
         </ion-tab>
         <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="chargerForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="chargerForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -154,7 +154,7 @@
         </ion-tab>
         <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ !tabs.machineTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="machineForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="machineForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -194,7 +194,7 @@
         </ion-tab>
         <ion-tab title="Labor" icon="ion-hammer" hidden="{{ !tabs.workToBeDoneTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="workToBeDoneForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="workToBeDoneForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <textarea rows="20" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}"></textarea>
@@ -206,12 +206,12 @@
         </ion-tab>
         <ion-tab title="Inspección" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="physicalInspectionForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="physicalInspectionForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
-                        <div class="item item-icon-right no-padding" ng-repeat="cl in checkList| orderBy: 'checkOrder'">
+                        <div class="item item-icon-right no-padding" ng-repeat="cl in checkList | orderBy: 'checkOrder'">
                             <label class="item item-input item-select">
                                 <span class="input-label">{{ cl.checkName}}</span>
-                                <select required ng-disabled="readOnlyMode" ng-model="cl.diagnosticId" ng-options="d.id as d.name for d in resources.diagnostics| filter: { typeId: cl.diagnosticTypeId }">
+                                <select required ng-disabled="readOnlyMode" ng-model="cl.diagnosticId" ng-options="d.id as d.name for d in resources.diagnostics | filter: { typeId: cl.diagnosticTypeId }">
                                     <option value=""> </option>
                                 </select>
                             </label>
@@ -225,9 +225,9 @@
         </ion-tab>
         <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="cellInspectionForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="cellInspectionForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
-                        <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells| orderBy: 'cellOrder'">
+                        <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells | orderBy: 'cellOrder'">
                             <div class="row">
                                 <div class="col">
                                     <label class="item item-input">
@@ -257,7 +257,7 @@
         </ion-tab>
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="suppliesForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="suppliesForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item no-padding" ng-class="{'item-icon-right': !readOnlyMode}" ng-repeat="ao in articlesOutputs">
                             <div class="row">
@@ -281,7 +281,7 @@
         </ion-tab>
         <ion-tab title="Reporte" icon="ion-compose" hidden="{{ !tabs.technicalReportTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="technicalReportForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="technicalReportForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <textarea rows="20" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()"></textarea>
@@ -293,7 +293,7 @@
         </ion-tab>
         <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}" on-select="refreshTitle()">
             <ion-content scroll="false">
-                <form name="endingForm" class="maintenance-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="endingForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Aceptado por</span>

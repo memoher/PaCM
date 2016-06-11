@@ -59,29 +59,34 @@
                             
                             self.showAddButton = false;
                             if (self.search) {
-                                var filter = null;
+                                var filter1 = null, filter2 = null;
                                 switch (self.group) {
                                     case 1:
-                                        filter = { Name: self.search };
+                                        filter1 = { Name: self.search };
                                         break;
                                     case 2:
-                                        filter = { Description: self.search };
+                                        filter1 = { Description: self.search };
                                         break;
                                     case 3:
-                                        filter = self.search;
+                                        filter1 = { Name: self.search };
+                                        filter2 = { InventoryCode: self.search };
                                         break;
                                     case 4:
-                                        filter = { Name: self.search };
+                                        filter1 = { Name: self.search,  };
+                                        filter2 = { ShortName: self.search };
                                         break;
                                 }
-                                var result = $filter('filter')(self.data, filter);
+                                var result = $filter('filter')(self.data, filter1);
+                                if (filter2) {
+                                    PaCM.mergeArray(['Id'], result, $filter('filter')(self.data, filter2));
+                                }
                                 PaCM.syncronizeArray(['Id'], self.dataFiltered, result);
 
                                 if (self.dataFiltered.length === 0 && self.canAdd) {
                                     self.showAddButton = true;
                                 }
                             } else {
-                                self.dataFiltered.length = 0;
+                                PaCM.syncronizeArray(['Id'], self.dataFiltered, self.data);
                             }
 
                         },

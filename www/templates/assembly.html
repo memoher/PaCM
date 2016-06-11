@@ -7,7 +7,7 @@
     <ion-tabs class="tabs-positive tabs-icon-top">
         <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="starterForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="starterForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Fecha</span>
@@ -36,7 +36,7 @@
         </ion-tab>
         <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="batteryForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="batteryForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -72,7 +72,7 @@
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label" style="color:transparent;">SIN TITULO</span>
-                            <select required ng-disabled="readOnlyMode" ng-options="c.id as c.name for c in resources.connectors| filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId">
+                            <select required ng-disabled="readOnlyMode" ng-options="c.id as c.name for c in resources.connectors | filter: { typeId: battery.connectorTypeId }" ng-model="battery.connectorId">
                                 <option value=""> </option>
                             </select>
                         </label>
@@ -119,7 +119,7 @@
         </ion-tab>
         <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="chargerForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="chargerForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Marca</span>
@@ -152,7 +152,7 @@
         </ion-tab>
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="suppliesForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="suppliesForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item no-padding" ng-class="{'item-icon-right': !readOnlyMode}" ng-repeat="ao in articlesOutputs">
                             <div class="row">
@@ -176,7 +176,7 @@
         </ion-tab>
         <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab}}" on-select="refreshTitle()">
             <ion-scroll>
-                <form name="cellInspectionForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="cellInspectionForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells| orderBy: 'cellOrder'">
                             <div class="row">
@@ -208,7 +208,7 @@
         </ion-tab>
         <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}" on-select="refreshTitle()">
             <ion-content scroll="false">
-                <form name="endingForm" class="assembly-validate" ng-class="{'show-errors': !readOnlyMode}">
+                <form name="endingForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <textarea rows="20" placeholder="Por favor digite aquí los comentarios que desee ... " ng-readonly="readOnlyMode" ng-model="assembly.comments" ng-model-options="{debounce: 250}"></textarea>

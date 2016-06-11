@@ -218,10 +218,19 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
-                $state.go('new-maintenance2', {
-                    type: 'Battery',
-                    customerId: $scope.customer.id
-                });
+                if (!(typeof $state.params.redirectTo === 'undefined')) {
+                    var params = {
+                        customerId: $scope.customer.id
+                    };
+                    if (!(typeof $state.params.redirectParams === 'undefined')) {
+                        var entries = $state.params.redirectParams.split(String.fromCharCode(2));
+                        PaCM.eachArray(entries, function (inx, entry) {
+                            var nameValue = entry.split(String.fromCharCode(1));
+                            params[nameValue[0]] = nameValue[1];
+                        });
+                    }
+                    $state.go($state.params.redirectTo, params);    
+                }
             });
         }
 

@@ -152,8 +152,16 @@
                     _priv.filters.customerSearch,
                     function (r) {
                         $scope.resetCustomer();
-                        $scope.maintenance.customerId = r.Id;
-                        $scope.maintenance.customerName = r.Name;
+                        if (r === $scope.searcher.search) {
+                            $state.go('new-customer2', {
+                                name: $scope.searcher.search,
+                                redirectTo: 'new-maintenance2',
+                                redirectParams: 'type' + String.fromCharCode(1) + $stateParams.type,
+                            });
+                        } else {
+                            $scope.maintenance.customerId = r.Id;
+                            $scope.maintenance.customerName = r.Name;
+                        }
                         _priv.filters.customerSearch = $scope.searcher.search;
                     }, true);
             });
@@ -1392,7 +1400,7 @@
         $scope.save = function () {
             var actions = [];
 
-            var forms = document.getElementsByClassName('maintenance-validate');
+            var forms = document.getElementsByClassName('maintenance-form');
             for (var i = 0; i < forms.length; i ++) {
                 if (forms[i].classList.contains('ng-valid') === false) {
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');

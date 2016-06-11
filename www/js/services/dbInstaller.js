@@ -7,7 +7,7 @@
 
         var debugMode = 1;
 
-        var dbVersion = '2016.05.13.08.30';
+        var dbVersion = '2016.06.11.08.00';
 
 		var installDatabase = function (onSuccess, onError, debugMode) {
                 
