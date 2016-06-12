@@ -54,7 +54,7 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.customerReference" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.customerReference" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Voltaje</span>
@@ -64,7 +64,7 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()" maxlength="20">
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Conector</span>
@@ -137,15 +137,15 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.customerReference" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.customerReference" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Voltaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getMaintenanceInfo()" maxlength="20">
                         </label>
                     </div>
                 </form>
@@ -170,7 +170,7 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
-                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode" ng-model="machine.customerReference" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" ng-required="(machine.trademarkName)" ng-readonly="readOnlyMode" ng-model="machine.customerReference" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <div class="item item-divider">
                             Compartimiento
@@ -197,7 +197,7 @@
                 <form name="workToBeDoneForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}"></textarea>
+                            <textarea rows="20" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
                         </label>
                     </div>
                 </form>
@@ -284,7 +284,7 @@
                 <form name="technicalReportForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()"></textarea>
+                            <textarea rows="20" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()" maxlength="5000"></textarea>
                         </label>
                     </div>
                 </form>
@@ -297,7 +297,7 @@
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Aceptado por</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="maintenance.acceptedBy" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="maintenance.acceptedBy" ng-model-options="{updateOn: 'blur'}" maxlength="50">
                         </label>
                         <label class="item item-input item-signature">
                             <span class="input-signature">

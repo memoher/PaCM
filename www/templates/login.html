@@ -12,7 +12,7 @@
                     <span class="input-label">Contraseña</span>
                     <input type="password" ng-model="login.password" ng-model-options="{updateOn: 'blur'}" required>
                 </label>
-                <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Iniciar sesión</button>
+                <button type="submit" class="button button-positive button-block" ng-click="showErrors = true;" ng-disabled="runningProcess">Iniciar sesión</button>
             </div>
         </form>
     </ion-content>

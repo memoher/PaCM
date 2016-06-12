@@ -135,7 +135,14 @@
                 return;
             }
 
-            dbRepository.find('Customer', { orderBy: 'Name' }, function (customers) {
+            var options = {
+                where: {},
+                orderBy: 'Name'
+            };
+            if (!(userSession.isEscolUser === true)) {
+                options.where.Id = userSession.user.CustomerId;
+            }
+            dbRepository.find('Customer', options, function (customers) {
                 if ($scope.maintenance.customerId) {
                     var val = $scope.maintenance.customerId;
                     PaCM.eachArray(customers, function (inx, c) {

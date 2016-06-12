@@ -52,7 +52,7 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.customerReference" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.customerReference" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Voltaje</span>
@@ -62,7 +62,7 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getAssemblyInfo()">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="battery.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getAssemblyInfo()" maxlength="20">
                         </label>
                         <label class="item item-input item-select">
                             <span class="input-label">Conector</span>
@@ -135,15 +135,15 @@
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Nro Interno</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.customerReference" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.customerReference" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Voltaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.voltage" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Amperaje</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getAssemblyInfo()">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="charger.amperage" ng-model-options="{updateOn: 'blur'}" ng-change="getAssemblyInfo()" maxlength="20">
                         </label>
                     </div>
                 </form>
@@ -211,7 +211,7 @@
                 <form name="endingForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí los comentarios que desee ... " ng-readonly="readOnlyMode" ng-model="assembly.comments" ng-model-options="{debounce: 250}"></textarea>
+                            <textarea rows="20" placeholder="Por favor digite aquí los comentarios que desee ... " ng-readonly="readOnlyMode" ng-model="assembly.comments" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
                         </label>
                         <div class="button-bar">
                             <button type="button" class="button button-balanced" ng-click="save()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Guardar</button>

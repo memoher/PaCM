@@ -13,7 +13,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Identidad</span>
-                        <input type="text" required ng-model="customer.identity" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" required ng-model="customer.identity" ng-model-options="{updateOn: 'blur'}" maxlength="15">
                     </label>
                 </div>
             </div>
@@ -21,13 +21,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Nombre</span>
-                        <input type="text" required ng-model="customer.name" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" required ng-model="customer.name" ng-model-options="{updateOn: 'blur'}" maxlength="50">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Alias</span>
-                        <input type="text" ng-model="customer.shortName" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" ng-model="customer.shortName" ng-model-options="{updateOn: 'blur'}" maxlength="10">
                     </label>
                 </div>
             </div>
@@ -59,13 +59,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Dirección</span>
-                        <input type="text" required ng-model="customer.address" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" required ng-model="customer.address" ng-model-options="{updateOn: 'blur'}" maxlength="100">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Código postal</span>
-                        <input type="text" ng-model="customer.postalCode" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" ng-model="customer.postalCode" ng-model-options="{updateOn: 'blur'}" maxlength="7">
                     </label>
                 </div>
             </div>
@@ -73,13 +73,13 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Teléfono</span>
-                        <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" required ng-model="customer.phoneNumber" ng-model-options="{updateOn: 'blur'}" maxlength="20">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Web site</span>
-                        <input type="url" ng-model="customer.webSite" ng-model-options="{updateOn: 'blur'}">
+                        <input type="url" ng-model="customer.webSite" ng-model-options="{updateOn: 'blur'}" maxlength="100">
                     </label>
                 </div>
             </div>
@@ -87,18 +87,18 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Nombre del contacto</span>
-                        <input type="text" ng-model="customer.contactName" ng-model-options="{updateOn: 'blur'}">
+                        <input type="text" ng-model="customer.contactName" ng-model-options="{updateOn: 'blur'}" maxlength="50">
                     </label>
                 </div>
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Correo electrónico del contacto</span>
-                        <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{updateOn: 'blur'}">
+                        <input type="email" ng-model="customer.contactEmailAddress" ng-model-options="{updateOn: 'blur'}" maxlength="50">
                     </label>
                 </div>
             </div>
             <div class="spacer"></div>
-            <button type="submit" class="button button-positive button-block" ng-disabled="runningProcess">Guardar</button>
+            <button type="submit" class="button button-positive button-block" ng-click="showErrors = true;" ng-disabled="runningProcess">Guardar</button>
         </form>
         <div class="spacer spacer-footer"></div>
     </ion-content>
