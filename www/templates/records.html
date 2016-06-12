@@ -31,11 +31,14 @@
             </div>
             <div class="row responsive-sm">
                 <div class="col">
-                    <a class="button button-positive button-block" href="#/new-maintenance/{{ filters.objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
+                    <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ filters.objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
                 </div>
             </div>
         </form>
         <div class="list">
+            <div class="item item-divider">
+              Registros
+            </div>
             <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id}}">
                 {{ r.Date | date : 'dd/MM/yyyy' }} -> Mantenimiento 
                 {{ r.Preventive === true ? 'preventivo ' : '' }}
