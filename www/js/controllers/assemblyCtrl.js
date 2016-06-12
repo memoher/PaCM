@@ -59,36 +59,37 @@
             refreshTabs: function () {
                 var self = this;
 
-                self.batteryTab = ($scope.assembly.id && $scope.assembly.batteryId) || ($scope.assembly.customerId && $stateParams.type === 'Battery') ? true : false;
-                self.chargerTab = ($scope.assembly.id && $scope.assembly.chargerId) || ($scope.assembly.customerId && $stateParams.type === 'Charger') ? true : false;
+                self.batteryTab = (($scope.assembly.id && $scope.assembly.batteryId) || ($scope.assembly.customerId && $stateParams.type === 'Battery')) ? true : false;
+                self.chargerTab = (($scope.assembly.id && $scope.assembly.chargerId) || ($scope.assembly.customerId && $stateParams.type === 'Charger')) ? true : false;
 
-                var validObjectType = (self.batteryTab === true && $scope.battery.typeId) || (self.chargerTab === true && $scope.charger.voltage) ? true : false;
+                var validObjectType = ((self.batteryTab === true && $scope.battery.typeId) || (self.chargerTab === true && $scope.charger.voltage)) ? true : false;
                 self.suppliesTab = validObjectType;
-                self.cellInspectionTab = (validObjectType && ($scope.battery.typeId));
+                self.cellInspectionTab = (validObjectType && ($scope.battery.typeId)) ? true : false;
                 self.endingTab = validObjectType;
+            },
+            selectTab: function (tabName) {
+                var i = 0;
+                return PaCM.eachProperties(this, function (key, val) {
+                    if (key === tabName) {
+                        if (val === true) {
+                            $ionicTabsDelegate.select(i);
+                        }
+                        return i; //break
+                    }
+                    i++;
+                });
             },
             selectedTab: function () {
                 var i = $ionicTabsDelegate.selectedIndex();
                 var j = 0;
                 return PaCM.eachProperties(this, function (key, val) {
                     if (j === i)
-                        return key;
+                        return key; //break
                     j++;
                 });
             }
         };
-        /*$scope.selectTab = function (tabName) {
-            var i = 0;
-            PaCM.eachProperties($scope.tabs, function (key, val) {
-                if (key === tabName) {
-                    $scope.tabs[key] = true;
-                    $ionicTabsDelegate.select(i);
-                    return i;
-                }
-                i++;
-            });
-        };*/
-
+        
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -1007,8 +1008,10 @@
             var actions = [];
 
             var forms = document.getElementsByClassName('assembly-form');
-            for (var i = 0; i < forms.length; i ++) {
-                if (forms[i].classList.contains('ng-valid') === false) {
+            for (var i = 0, t = forms.length, f = null; i < t; i ++) {
+                f = forms[i];
+                if (f.classList.contains('ng-valid') === false) {
+                    $scope.tabs.selectTab(f.getAttribute('name').replace('Form', 'Tab'));
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
                     return false; //break
                 }
@@ -1032,8 +1035,8 @@
                 actions.push(_priv.saveCharger);
             }
             actions.push(_priv.saveAssembly);
-            actions.push(_priv.saveReviewOfCells);
             actions.push(_priv.saveArticlesOutpus);
+            actions.push(_priv.saveReviewOfCells);
 
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {

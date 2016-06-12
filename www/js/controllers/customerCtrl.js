@@ -218,6 +218,7 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
+                
                 if (!(typeof $state.params.redirectTo === 'undefined')) {
                     var params = {
                         customerId: $scope.customer.id

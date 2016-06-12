@@ -8,11 +8,11 @@
 
 		var debugMode = 1;
 
-        //'http://localhost:8100/api/'  -- ionic server
-        //'http://192.168.1.100:60080/' -- local server
-        //'http://190.84.254.33:18080/' -- calidad
-        //'http://75.149.186.74:18080/' -- producción
-        var addressServer = 'http://190.84.254.33:18080/';
+        // 'http://localhost:8100/api/';  // ionic server
+        // 'http://192.168.1.100:60080/'; // local server
+        // 'http://190.84.254.33:18080/'; // calidad
+        // 'http://75.149.186.74:18080/'; // producción
+        var addressServer = 'http://190.84.254.33:18080/'; // calidad
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 

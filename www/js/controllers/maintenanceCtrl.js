@@ -75,39 +75,40 @@
             refreshTabs: function () {
                 var self = this;
 
-                self.batteryTab = ($scope.maintenance.id && $scope.maintenance.batteryId) || ($scope.maintenance.customerId && $stateParams.type === 'Battery') ? true : false;
-                self.chargerTab = ($scope.maintenance.id && $scope.maintenance.chargerId) || ($scope.maintenance.customerId && $stateParams.type === 'Charger') ? true : false;
+                self.batteryTab = (($scope.maintenance.id && $scope.maintenance.batteryId) || ($scope.maintenance.customerId && $stateParams.type === 'Battery')) ? true : false;
+                self.chargerTab = (($scope.maintenance.id && $scope.maintenance.chargerId) || ($scope.maintenance.customerId && $stateParams.type === 'Charger')) ? true : false;
 
-                var validObjectType = (self.batteryTab === true && $scope.battery.typeId) || (self.chargerTab === true && $scope.charger.voltage) ? true : false;
+                var validObjectType = ((self.batteryTab === true && $scope.battery.typeId) || (self.chargerTab === true && $scope.charger.voltage)) ? true : false;
                 self.machineTab = validObjectType;
                 self.workToBeDoneTab = validObjectType;
                 self.physicalInspectionTab = validObjectType;
-                self.cellInspectionTab = (validObjectType && ($scope.battery.typeId));
-                self.suppliesTab = (validObjectType && $scope.maintenance.corrective === true);
+                self.cellInspectionTab = (validObjectType && ($scope.battery.typeId)) ? true : false;
+                self.suppliesTab = (validObjectType && $scope.maintenance.corrective === true) ? true : false;
                 self.technicalReportTab = validObjectType;
-                self.endingTab = (validObjectType && ($scope.maintenance.technicalReport));
+                self.endingTab = (validObjectType && ($scope.maintenance.technicalReport)) ? true : false;
+            },
+            selectTab: function (tabName) {
+                var i = 0;
+                return PaCM.eachProperties(this, function (key, val) {
+                    if (key === tabName) {
+                        if (val === true) {
+                            $ionicTabsDelegate.select(i);
+                        }
+                        return i; //break
+                    }
+                    i++;
+                });
             },
             selectedTab: function () {
                 var i = $ionicTabsDelegate.selectedIndex();
                 var j = 0;
                 return PaCM.eachProperties(this, function (key, val) {
                     if (j === i)
-                        return key;
+                        return key; //break
                     j++;
                 });
             }
         };
-        /*$scope.selectTab = function (tabName) {
-            var i = 0;
-            PaCM.eachProperties($scope.tabs, function (key, val) {
-                if (key === tabName) {
-                    $scope.tabs[key] = true;
-                    $ionicTabsDelegate.select(i);
-                    return i;
-                }
-                i++;
-            });
-        };*/
 
         //---------------------------------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------------------------------
@@ -1408,8 +1409,10 @@
             var actions = [];
 
             var forms = document.getElementsByClassName('maintenance-form');
-            for (var i = 0; i < forms.length; i ++) {
-                if (forms[i].classList.contains('ng-valid') === false) {
+            for (var i = 0, t = forms.length, f = null; i < t; i ++) {
+                f = forms[i];
+                if (f.classList.contains('ng-valid') === false) {
+                    $scope.tabs.selectTab(f.getAttribute('name').replace('Form', 'Tab'));
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
                     return false; //break
                 }
