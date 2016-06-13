@@ -1338,32 +1338,28 @@
                     });
                     PaCM.syncronizeArray(["id"], $scope.articlesOutputs, articles);
                     articles.length = 0; articles = null;
-
-                    if ($scope.maintenance.corrective === true) {
-                        $scope.addArticle();
-                    }
+                    $scope.addArticle();
                 });
             } else {
                 $scope.articlesOutputs.length = 0;
-
-                if ($scope.maintenance.corrective === true) {
-                    $scope.addArticle();
-                }
+                $scope.addArticle();
             }
         };
         $scope.addArticle = function () {
-            var itemFree = PaCM.eachArray($scope.articlesOutputs, function (inx, ao) {
-                if (ao.articleId == null) {
-                    return true; //Break
-                }
-            });
-            if (!(itemFree === true)) {
-                $scope.articlesOutputs.push({
-                    id: null,
-                    articleId: null,
-                    articleName: null,
-                    quantity: null
+            if ($scope.maintenance.corrective === true) {
+                var itemFree = PaCM.eachArray($scope.articlesOutputs, function (inx, ao) {
+                    if (ao.articleId == null) {
+                        return true; //Break
+                    }
                 });
+                if (!(itemFree === true)) {
+                    $scope.articlesOutputs.push({
+                        id: null,
+                        articleId: null,
+                        articleName: null,
+                        quantity: null
+                    });
+                }
             }
         };
         $scope.removeArticle = function (ao) {
@@ -1446,7 +1442,11 @@
             actions.push(_priv.saveMaintenance);
             actions.push(_priv.saveCheckList);
             actions.push(_priv.saveReviewOfCells);
-            actions.push(_priv.saveArticlesOutpus);
+            
+            if ($scope.maintenance.corrective === true) {
+                actions.push(_priv.saveArticlesOutpus);
+            }
+            
 
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
@@ -1565,6 +1565,7 @@
             if ($scope.maintenance.chargerId) {
                 _priv.getCharger();
             }
+            $scope.addArticle();
         }
 
 

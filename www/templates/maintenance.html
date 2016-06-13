@@ -263,12 +263,12 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="item item-input">
-                                        <input type="text" placeholder="Artículo" ng-class="{'selector-dialog': !readOnlyMode}" ng-required="($first)" readonly ng-model="ao.articleName" ng-model-options="{updateOn: 'blur'}" ng-focus="searchArticle(ao)">
+                                        <input type="text" placeholder="Artículo" ng-class="{'selector-dialog': !readOnlyMode}" ng-required="($first && maintenance.corrective)" readonly ng-model="ao.articleName" ng-model-options="{updateOn: 'blur'}" ng-focus="searchArticle(ao)">
                                     </label>
                                 </div>
                                 <div class="col col-25">
                                     <label class="item item-input">
-                                        <input type="number" placeholder="Cant." min="0.0" max="9999.99" ng-model="ao.quantity" ng-model-options="{updateOn: 'blur'}" ng-required="ao.articleId" ng-readonly="readOnlyMode">
+                                        <input type="number" placeholder="Cant." min="0.0" max="9999.99" ng-model="ao.quantity" ng-model-options="{updateOn: 'blur'}" ng-required="ao.articleId" ng-readonly="readOnlyMode" ng-change="addArticle()">
                                     </label>
                                 </div>
                             </div>
