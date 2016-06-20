@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('loginCtrl', function ($scope, $state, userSession, $ionicHistory) {
+    PaCM.controllers.controller('loginCtrl', function ($scope, $state, $ionicHistory, userSession) {
 
         $ionicHistory.clearHistory();
         $ionicHistory.clearCache();

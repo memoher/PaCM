@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('homeCtrl', function ($scope, $state, userSession, $ionicHistory, dbSynchronizer) {
+    PaCM.controllers.controller('homeCtrl', function ($scope, $state, $ionicHistory, userSession, dbSynchronizer) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');

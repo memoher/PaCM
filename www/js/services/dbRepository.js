@@ -147,7 +147,9 @@
                                 var vlr = r[key];
                                 if (!(vlr === val)) {
                                     if (PaCM.isDate(vlr) && PaCM.isDate(val)) {
-                                        return !((vlr - val) === 0); //Break;
+                                        if (!((vlr - val) === 0)) {
+                                            return true; //Break;    
+                                        }
                                     } else {
                                         return true; //Break;
                                     }

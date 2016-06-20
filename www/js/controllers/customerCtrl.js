@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherPopup) {
+    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, dbSynchronizer, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -218,6 +218,7 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
+                dbSynchronizer.run(function () { }, function () { });
                 
                 if (!(typeof $state.params.redirectTo === 'undefined')) {
                     var params = {

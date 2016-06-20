@@ -1,6 +1,6 @@
 (function () {
     
-    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, userSession, $ionicHistory, $ionicTabsDelegate, dbRepository, searcherPopup, notesPopup) {
+    PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, userSession, dbRepository, dbSynchronizer, searcherPopup, notesPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -1400,20 +1400,19 @@
             _priv.refreshUI();
         }
 
-
         $scope.save = function () {
-            var actions = [];
 
             var forms = document.getElementsByClassName('maintenance-form');
             for (var i = 0, t = forms.length, f = null; i < t; i ++) {
                 f = forms[i];
-                if (f.classList.contains('ng-valid') === false) {
+                if (f.classList.contains('ng-invalid') === true) {
                     $scope.tabs.selectTab(f.getAttribute('name').replace('Form', 'Tab'));
                     alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
                     return false; //break
                 }
             }
 
+            var actions = [];
             if ($scope.maintenance.branchCustomerName && !($scope.maintenance.branchCustomerId)) {
                 actions.push(_priv.saveBranchCustomer);
             }
@@ -1453,6 +1452,7 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
+                dbSynchronizer.run(function () { }, function () { });
             });
         };
 
