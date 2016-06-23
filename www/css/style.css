@@ -13,113 +13,10 @@
 /* FIN TAB PANEL */
 
 
-/* INICIO INPUTS */
-
-.item.item-input.item-select select {
-    position: relative;
-    padding-left: 3px;
-    text-align: left;
-    width: 100%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 34px;
-    direction: inherit;
-}
-
-.item.item-input.item-select select[readonly],
-.item.item-input.item-select select[disabled] {
-    background-color: #f8f8f8;
-    cursor: not-allowed;
-}
-
-.list-inset .item.item-input input,
-.list-inset .item.item-input textarea {
-    padding-right: 0;
-}
-
-.item.item-input,
-.item.item-toggle {
-    border: 0;
-}
-
-.item.item-input input,
-.item.item-input select,
-.item.item-input textarea {
-    margin-bottom: 1px;
-    border-bottom: 1px solid lightblue;
-}
-.item.item-input textarea {
-    border-top: 1px solid lightblue;
-}
-.show-errors .item.item-input .ng-invalid {
-    border-bottom: 1px solid coral;
-}
-.show-errors .item.item-input textarea.ng-invalid {
-    border-top: 1px solid coral;
-}
-
-input[readonly].selector-dialog:not(.cloned-text-input),
-textarea[readonly].selector-dialog:not(.cloned-text-input),
-select[readonly].selector-dialog {
-  background-color: transparent;
-  cursor: pointer;
-}
-
-/* FIN INPUTS */
-
-
-.item.no-padding {
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-}
-.item.no-padding .row,
-.item.no-padding .row .col {
-    padding: 0;
-}
-
-
-/* INICIO FIRMA */
-
-.item.item-signature {
-    background-color: lightgray;
-    padding-left: 0;
-    padding-right: 0;
-}
-.item.item-signature .input-signature {
-    background-color: white;
-    margin: auto;
-}
-
-/* FIN FIRMA */
-
-
-/* INICIO CONSOLA EVENTOS */
-
-.item.item-console {
-    padding: 8px;
-}
-.item.item-console .level-1 {
-    color: red;
-}
-.item.item-console .level-2 {
-    color: orange;
-}
-.item.item-console .level-3 {
-    color: blue;
-}
-.item.item-console .level-4 {
-    color: green;
-}
-/* FIN CONSOLA EVENTOS */
-
-
 /* INICIO PIE DE FORMULARIOS */
 
 .spacer.spacer-footer {
-    height: 400px;
+    height: 50px;
 }
 
 /* FIN PIE DE FORMULARIOS */
@@ -145,15 +42,122 @@ select[readonly].selector-dialog {
     box-shadow: 1px 1px 5px -2px #000;
 }
 
-/*FIN MODALS*/
+/* FIN MODALS */
 
+
+/* INICIO INPUTS */
+
+.item.item-input,
+.item.item-toggle {
+    border: 0;
+}
+
+.item.item-input.item-select select {
+    position: relative;
+    padding-left: 3px;
+    text-align: left;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 34px;
+    direction: inherit;
+}
+.item.item-input.item-select select[readonly],
+.item.item-input.item-select select[disabled] {
+    background-color: #f8f8f8;
+    cursor: not-allowed;
+}
+
+.item.item-input input,
+.item.item-input select,
+.item.item-input textarea {
+    margin-bottom: 1px;
+    border-bottom: 1px solid lightblue;
+}
+.item.item-input textarea {
+    border-top: 1px solid lightblue;
+}
+.show-errors .item.item-input .ng-invalid {
+    border-bottom: 1px solid coral;
+}
+.show-errors .item.item-input textarea.ng-invalid {
+    border-top: 1px solid coral;
+}
+
+input[readonly].selector-dialog:not(.cloned-text-input),
+textarea[readonly].selector-dialog:not(.cloned-text-input),
+select[readonly].selector-dialog {
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.list-inset .item.item-input input,
+.list-inset .item.item-input textarea {
+    padding-right: 0;
+}
+
+/* FIN INPUTS */
+
+
+/* INICIO FIRMA */
+
+.item.item-signature {
+    background-color: lightgray;
+    padding-left: 0;
+    padding-right: 0;
+}
+.item.item-signature .input-signature {
+    background-color: white;
+    margin: auto;
+}
+
+/* FIN FIRMA */
+
+
+/* INICIO OTHERS */
 
 @media (max-width: 567px) {
-    .row.responsive-sm {
-        padding: 0;
-    }
+    
     .row.responsive-sm .col {
-        margin: 0;
-        padding: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 }
+
+.item.no-padding {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+.item.no-padding .row,
+.item.no-padding .row .col {
+    margin: 0;
+    padding: 0;
+}
+
+/* FIN OTHERS */
+
+
+/* INICIO CONSOLA EVENTOS */
+
+.item.item-console {
+    padding: 8px;
+}
+.item.item-console .level-1 {
+    color: red;
+}
+.item.item-console .level-2 {
+    color: orange;
+}
+.item.item-console .level-3 {
+    color: blue;
+}
+.item.item-console .level-4 {
+    color: green;
+}
+
+/* FIN CONSOLA EVENTOS */
