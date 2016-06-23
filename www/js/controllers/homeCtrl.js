@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('homeCtrl', function ($scope, $state, $ionicHistory, userSession, dbSynchronizer) {
 

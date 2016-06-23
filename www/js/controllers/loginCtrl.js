@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('loginCtrl', function ($scope, $state, $ionicHistory, userSession) {
 

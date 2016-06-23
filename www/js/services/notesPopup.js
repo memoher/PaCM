@@ -1,8 +1,8 @@
-
-//Este servicio permite el trabajo con el popup de busquedas
-
 (function () {
+    "use strict";
     
+    // Servicio que permite el trabajo con el popup de notas
+
     PaCM.services.factory('notesPopup', function ($ionicModal) {
         
         return {

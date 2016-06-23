@@ -1,18 +1,11 @@
-
-//Este servicio detecta los cambios de conexión en la red, con el objetivo de
-//sincronizar de manera silenciosa los registros de la base de datos
-
 (function () {
+    "use strict";
 
-	PaCM.services.factory('dbSynchronizer', function (dbContext, $http) {
+    // Servicio que permite sincronizar los registros de la base de datos
+
+	PaCM.services.factory('dbSynchronizer', function ($http, settings, dbContext) {
 
 		var debugMode = 1;
-
-        // 'http://localhost:8100/api/';  // ionic server
-        // 'http://192.168.1.100:60080/'; // local server
-        // 'http://190.84.254.33:18080/'; // calidad
-        // 'http://75.149.186.74:18080/'; // producción
-        var addressServer = 'http://75.149.186.74:18080/'; // producción
 
         var tablesForImport = [
             'AppSettings', 'AppFiles', 'AppKeys', 
@@ -70,7 +63,7 @@
                 fnc02 = null;
 
                 if (tablesForImport.length > 0) {
-                    $http.post(addressServer + 'SyncronizeData/GetData', {
+                    $http.post(settings.serverUrl + 'SyncronizeData/GetData', {
                         tables: tablesForImport,
                         records: localData
                     }).then(function (response) {
@@ -184,7 +177,7 @@
                 fnc02 = null;
 
                 if (localData.length > 0) {
-                    $http.post(addressServer + 'SyncronizeData/SetData', {
+                    $http.post(settings.serverUrl + 'SyncronizeData/SetData', {
                         records: localData
                     }).then(function (response) {
                         fnc03(response.data);

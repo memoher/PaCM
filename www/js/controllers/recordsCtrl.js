@@ -1,10 +1,24 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherPopup) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
             return false;
+        }
+        
+        $scope.objectTypeLabel = null;
+        switch ($stateParams.type)
+        {
+            case 'Battery':
+                $scope.objectTypeLabel = 'Batería';
+            break;
+            case 'Charger':
+                $scope.objectTypeLabel = 'Cargador';
+            break;
+            default:
+                throw 'Object type is not valid';
         }
 
 
@@ -17,7 +31,6 @@
         searcherPopup.initialize($scope);
         
         $scope.filters = {
-            objectType: $stateParams.type,
             customerId: null,
             customerName: null,
             customerSearch: null,
@@ -76,28 +89,48 @@
         
         $scope.searchObjectTypeTrademark = function () {
             dbRepository.find('ObjectTypeTrademark', { orderBy: 'Name' }, function (trademarks) {
-                if ($scope.filters.objectTypeTrademarkId) {
-                    var val = $scope.filters.objectTypeTrademarkId;
-                    PaCM.eachArray(trademarks, function (inx, t) {
-                        if (t.Id == val) {
-                            t.Selected = true;
-                            return true; //break;
+
+                dbRepository.find($stateParams.type, { fields: 'TrademarkId', groupBy: 'TrademarkId' }, function (objects) {
+                    
+                    //Debe filtrar las marcas, dependiendo de si aplica a baterías o a cargadores
+                    //se deberán mostrar sólo aquellas marcas que tengan al menos un dispositivo
+                    PaCM.eachArrayInvert(trademarks, function (inxT, t) {
+                        var valid = false;
+                        PaCM.eachArrayInvert(objects, function (inxO, o) {
+                            if (t.Id === o.TrademarkId) {
+                                valid = true;
+                                objects.splice(inxO, 1);
+                            }
+                        });
+                        if (!(valid === true)) {
+                            trademarks.splice(inxT, 1);
                         }
                     });
-                }
-                $scope.searcher.open(
-                    'ObjectTypeTrademark',
-                    'Buscar marca',
-                    trademarks,
-                    $scope.filters.objectTypeTrademarkSearch,
-                    function (r) {
-                        if (!(r.Selected === true)) {
-                            $scope.filters.objectTypeTrademarkId = r.Id;
-                            $scope.filters.objectTypeTrademarkName = r.Name;
-                            $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
-                            $scope.resetObjectTypeModel();
-                        }
-                    }); 
+
+                    if ($scope.filters.objectTypeTrademarkId) {
+                        var val = $scope.filters.objectTypeTrademarkId;
+                        PaCM.eachArray(trademarks, function (inx, t) {
+                            if (t.Id == val) {
+                                t.Selected = true;
+                                return true; //break;
+                            }
+                        });
+                    }
+                    $scope.searcher.open(
+                        'ObjectTypeTrademark',
+                        'Buscar marca',
+                        trademarks,
+                        $scope.filters.objectTypeTrademarkSearch,
+                        function (r) {
+                            if (!(r.Selected === true)) {
+                                $scope.filters.objectTypeTrademarkId = r.Id;
+                                $scope.filters.objectTypeTrademarkName = r.Name;
+                                $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
+                                $scope.resetObjectTypeModel();
+                            }
+                        });
+                });
+                 
             });
 
             return false;
@@ -120,9 +153,10 @@
             
             dbRepository.find('ObjectTypeModel', options, function (models) {
                 
-                options.orderBy = 'ModelId';
-                dbRepository.find($stateParams.type, options, function (objects) {
+                dbRepository.find($stateParams.type, { fields: 'ModelId', groupBy: 'ModelId' }, function (objects) {
+                    
                     //Debe filtrar los modelos, dependiendo de si aplica a baterías o a cargadores
+                    //se deberán mostrar sólo aquellos modelos que tengan al menos un dispositivo
                     PaCM.eachArrayInvert(models, function (inxM, m) {
                         var valid = false;
                         PaCM.eachArrayInvert(objects, function (inxO, o) {
@@ -184,7 +218,7 @@
 
             var options = {
                 where: {},
-                orderBy: 't.Name, m.Name, r.Serial, r.CustomerReference'
+                orderBy: 't.Name, m.Name, p.Serial, p.CustomerReference'
             };
             if ($scope.filters.customerId)
                 options.where.CustomerId = $scope.filters.customerId;
@@ -193,7 +227,7 @@
             if ($scope.filters.objectTypeModelId)
                 options.where.ModelId = $scope.filters.objectTypeModelId;
             
-            dbRepository.find('ObjectType', options, function (objects) {
+            dbRepository.find($stateParams.type, options, function (objects) {
                 if ($scope.filters.objectTypeId) {
                     var val = $scope.filters.objectTypeId;
                     PaCM.eachArray(objects, function (inx, ot) {
@@ -205,7 +239,7 @@
                 }
                 $scope.searcher.open(
                     'ObjectType',
-                    'Buscar ' + $stateParams.type,
+                    'Buscar ' + $scope.objectTypeLabel,
                     objects,
                     $scope.filters.objectTypeSearch,
                     function (r) {

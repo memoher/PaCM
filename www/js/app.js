@@ -1,30 +1,48 @@
 (function () {
+    "use strict";
+
+    // PaCM Constants
+
+    window.PaCM.constants = angular.module('pacmApp.constants', [])
+        .constant("settings", {
+            //serverUrl: 'http://localhost:8100/api/'  // ionic server
+            //serverUrl: 'http://192.168.1.100:60080/' // local server
+            serverUrl: 'http://190.84.254.33:18080/' // calidad
+            //serverUrl: 'http://75.149.186.74:18080/' // producción
+        });
 
     // PaCM Services
 
-    PaCM.services = angular.module('pacmApp.services', []);
-
+    window.PaCM.services = angular.module('pacmApp.services', []);
 
     // PaCM Controllers
 
-    PaCM.controllers = angular.module('pacmApp.controllers', []);
-        
+    window.PaCM.controllers = angular.module('pacmApp.controllers', []);
 
     // PaCM App
 
-    angular.module('pacmApp', ['ionic', 'pacmApp.services', 'pacmApp.controllers'])
+    angular.module('pacmApp', ['ionic', 'pacmApp.constants', 'pacmApp.services', 'pacmApp.controllers'])
 
         .run(function ($ionicPlatform, $ionicHistory, IONIC_BACK_PRIORITY, dbInstaller, dbSynchronizer) {
 
             $ionicPlatform.ready(function () {
 
-                // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-                // for form inputs)
                 if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+                    // Hide the keyboard accessory bar with the next, previous and done buttons.
+                    // (remove this to show the accessory bar above the keyboard for form inputs)
                     cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+                    // Prevent the native UIScrollView from moving when an input is focused.
+                    // The telltale sign that this is happening is the top of your app scrolls out
+                    // of view (if using Ionic, your header bar will disappear).
+                    // This does not prevent any DOM elements from being able to scroll.
+                    // That needs to happen from CSS and JavaScript, not this plugin. 
                     cordova.plugins.Keyboard.disableScroll(false);
+
+                    // If your app is running in fullscreen, i.e. you have <preference name="Fullscreen" value="true" />
+                    // in your config.xml file you will need to set ionic.Platform.isFullScreen = true manually.
+                    ionic.Platform.isFullScreen = true;
                 }
-                ionic.Platform.isFullScreen = true;
 
                 if (window.StatusBar) {
                     // org.apache.cordova.statusbar required

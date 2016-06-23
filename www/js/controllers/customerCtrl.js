@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, dbSynchronizer, searcherPopup) {
 
@@ -215,10 +216,10 @@
             
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
+                dbSynchronizer.run(function () { }, function () { });
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
-                dbSynchronizer.run(function () { }, function () { });
                 
                 if (!(typeof $state.params.redirectTo === 'undefined')) {
                     var params = {

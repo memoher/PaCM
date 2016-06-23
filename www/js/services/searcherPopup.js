@@ -1,9 +1,11 @@
-
-//Este servicio permite el trabajo con el popup de busquedas
-
 (function () {
+    "use strict";
     
+    // Servicio que permite el trabajo con el popup de busquedas
+
     PaCM.services.factory('searcherPopup', function ($ionicModal, $filter) {
+
+        var STRING_EMPTY = '';
         
         return {
             initialize: function ($scope) {
@@ -46,7 +48,7 @@
 
                             self.type = type;
                             self.title = title;
-                            self.search = search ? search : '';
+                            self.search = search ? search : STRING_EMPTY;
                             self.onSelect = onSelect;
                             self.canAdd = canAdd;
                             self.showAddButton = false;

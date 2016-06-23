@@ -1,9 +1,8 @@
-
-// Este servicio permite leer y guardar datos en una base de datos local
-// Tambien permite sincronizar información con el servidor
-
 (function () {
+    "use strict";
     
+    // Servicio que permite leer y guardar en una base de datos local
+
     PaCM.services.factory('dbContext', function () {
 
         var STRING_EMPTY = '';
@@ -173,6 +172,9 @@
                                     PaCM.eachArray(options.parameters, function (inx, p) {
                                         _parameters.push(p);
                                     });
+                                }
+                                if (options.groupBy) {
+                                    sqlCommand += ' GROUP BY ' + options.groupBy;
                                 }
                                 if (options.orderBy) {
                                     sqlCommand += ' ORDER BY ' + options.orderBy;

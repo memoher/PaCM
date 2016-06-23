@@ -1,7 +1,7 @@
-
-//Este servicio permite mantener la sesión de los usuarios activa
-
 (function () {
+    "use strict";
+
+    // Servicio que mantiene la sesión de los usuarios activa
     
     PaCM.services.factory('userSession', function ($rootScope, crytographySHA1, dbRepository) {
         

@@ -297,7 +297,7 @@
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Aceptado por</span>
-                            <input type="text" required ng-readonly="readOnlyMode" ng-model="maintenance.acceptedBy" ng-model-options="{updateOn: 'blur'}" maxlength="50">
+                            <input type="text" required ng-readonly="readOnlyMode" ng-model="maintenance.acceptedBy" ng-model-options="{debounce: 250}" maxlength="50">
                         </label>
                         <label class="item item-input item-signature">
                             <span class="input-signature">

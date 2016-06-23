@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('toolsCtrl', function ($scope, $state, userSession, dbSynchronizer) {
 

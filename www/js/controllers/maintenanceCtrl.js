@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     
     PaCM.controllers.controller('maintenanceCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, userSession, dbRepository, dbSynchronizer, searcherPopup, notesPopup) {
 
@@ -305,8 +306,8 @@
             
             dbRepository.find('ObjectTypeModel', options, function (models) {
 
-                options.orderBy = 'ModelId';
-                dbRepository.find((applyForBattery === true) ? 'Battery' : 'Charger', options, function (objects) {
+                dbRepository.find((applyForBattery === true) ? 'Battery' : 'Charger', { fields: 'ModelId', groupBy: 'ModelId' }, function (objects) {
+                    
                     //Debe filtrar los modelos, dependiendo de si aplica a baterías o a cargadores
                     PaCM.eachArrayInvert(models, function (inxM, m) {
                         var valid = false;
@@ -1449,10 +1450,11 @@
 
             $scope.runningProcess = true;
             PaCM.execute(actions, function () {
+                dbSynchronizer.run(function () { }, function () { });
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
-                dbSynchronizer.run(function () { }, function () { });
+                $ionicHistory.goToHistoryRoot($ionicHistory.currentView().historyId);
             });
         };
 

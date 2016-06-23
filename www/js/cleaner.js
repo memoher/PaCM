@@ -1,8 +1,10 @@
 //Elimina todas las referencias públicas
 
 (function () {
+	"use strict";
 
-	PaCM.services = null; delete PaCM.services;
-	PaCM.controllers = null; delete PaCM.controllers;
+	window.PaCM.constants = null; delete window.PaCM.constants;
+	window.PaCM.services = null; delete window.PaCM.services;
+	window.PaCM.controllers = null; delete window.PaCM.controllers;
 
 })();

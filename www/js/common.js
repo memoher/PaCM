@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
 
     window.addEventListener("error", function () {
         console.debug(arguments);

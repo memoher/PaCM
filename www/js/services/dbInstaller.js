@@ -1,13 +1,13 @@
-
-//Este servicio se encarga de hacer la instalación y configuración de la base de datos
-
 (function () {
+    "use strict";
+
+    // Servicio que se encarga de hacer la instalación y configuración de la base de datos
 
 	PaCM.services.factory('dbInstaller', function (dbContext) {
 
         var debugMode = 1;
 
-        var dbVersion = '2016.06.11.08.00';
+        var dbVersion = '2016.06.23.08.00';
 
 		var installDatabase = function (onSuccess, onError, debugMode) {
                 

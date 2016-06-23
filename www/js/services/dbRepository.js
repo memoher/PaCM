@@ -1,8 +1,8 @@
-
-// Este servicio provee todos métodos para consultar, insertar, editar y eliminar
-// registros, de una manera mas comoda que permite usar el nombre de las entidades
-
 (function () {
+    "use strict";
+
+    // Servicio que provee todos métodos para consultar, insertar, editar y eliminar
+    // registros, de una manera mas comoda que permite usar el nombre de las entidades
 
     PaCM.services.factory('dbRepository', function (dbContext) {
 
