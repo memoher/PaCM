@@ -11,7 +11,7 @@
                 <div class="col">
                     <label class="item item-input">
                         <span class="input-label">Marca</span>
-                        <input type="text" class="selector-dialog" required readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
+                        <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
                     </label>
                 </div>
             </div>
@@ -29,16 +29,13 @@
                     </label>
                 </div>
             </div>
-            <div class="row responsive-sm">
-                <div class="col">
-                    <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ filters.objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
-                </div>
-            </div>
         </form>
         <div class="list">
+            <button type="button" class="item button button-energized button-block" ng-click="clearFilters()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
             <div class="item item-divider">
               Registros
             </div>
+            <a ng-if="userSession.isEscolUser" class="item button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
             <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id}}">
                 {{ r.Date | date : 'dd/MM/yyyy' }} -> Mantenimiento 
                 {{ r.Preventive === true ? 'preventivo ' : '' }}

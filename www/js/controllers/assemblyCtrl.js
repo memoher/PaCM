@@ -138,7 +138,7 @@
                     _priv.filters.customerSearch,
                     function (r) {
                         $scope.resetCustomer();
-                        if (r === $scope.searcher.search) {
+                        if (r == $scope.searcher.search) {
                             $state.go('new-customer2', {
                                 name: $scope.searcher.search,
                                 redirectTo: 'new-assembly2',
@@ -190,7 +190,7 @@
                     _priv.filters.branchCustomerSearch,
                     function (r) {
                         $scope.resetBranchCustomer();
-                        if (r === $scope.searcher.search) {
+                        if (r == $scope.searcher.search) {
                             $scope.assembly.branchCustomerName = r;
                         } else {
                             $scope.assembly.branchCustomerId = r.Id;
@@ -229,14 +229,14 @@
                     function (r) {
                         $scope.resetObjectTypeTrademark(applyForBattery);
                         if (applyForBattery === true) {
-                            if (r === $scope.searcher.search) {
+                            if (r == $scope.searcher.search) {
                                 $scope.battery.trademarkName = r;
                             } else {
                                 $scope.battery.trademarkId = r.Id;
                                 $scope.battery.trademarkName = r.Name;
                             }
                         } else {
-                            if (r === $scope.searcher.search) {
+                            if (r == $scope.searcher.search) {
                                 $scope.charger.trademarkName = r;
                             } else {
                                 $scope.charger.trademarkId = r.Id;
@@ -315,7 +315,7 @@
                         function (r) {
                             $scope.resetObjectTypeModel(applyForBattery);
                             if (applyForBattery === true) {
-                                if (r === $scope.searcher.search) {
+                                if (r == $scope.searcher.search) {
                                     $scope.battery.modelName = r;
                                 } else {
                                     $scope.battery.modelId = r.Id;
@@ -327,7 +327,7 @@
                                     });
                                 }
                             } else {
-                                if (r === $scope.searcher.search) {
+                                if (r == $scope.searcher.search) {
                                     $scope.charger.modelName = r;
                                 } else {
                                     $scope.charger.modelId = r.Id;
@@ -405,14 +405,14 @@
                     function (r) {
                         $scope.resetObjectType(applyForBattery);
                         if (applyForBattery === true) {
-                            if (r === $scope.searcher.search) {
+                            if (r == $scope.searcher.search) {
                                 $scope.battery.serial = r;
                             } else {
                                 $scope.assembly.batteryId = r.Id;
                                 _priv.getBattery();
                             }
                         } else {
-                            if (r === $scope.searcher.search) {
+                            if (r == $scope.searcher.search) {
                                 $scope.charger.serial = r;
                             } else {
                                 $scope.assembly.chargerId = r.Id;
@@ -1045,7 +1045,7 @@
                 $scope.runningProcess = false;
                 _priv.refreshUI();
                 alert('Registro guardado con éxito');
-                $ionicHistory.goToHistoryRoot($ionicHistory.currentView().historyId);
+                $scope.myGoBack();
             });
         };
 

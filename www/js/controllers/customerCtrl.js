@@ -50,7 +50,7 @@
                     _priv.filters.countrySearch,
                     function (r) {
                         $scope.resetCountry();
-                        if (r === $scope.searcher.search) {
+                        if (r == $scope.searcher.search) {
                             $scope.customer.countryName = r;
                         } else {
                             $scope.customer.countryId = r.Id;
@@ -96,7 +96,7 @@
                     _priv.filters.stateSearch,
                     function (r) {
                         $scope.resetState();
-                        if (r === $scope.searcher.search) {
+                        if (r == $scope.searcher.search) {
                             $scope.customer.stateName = r;
                         } else {
                             $scope.customer.stateId = r.Id;
@@ -151,7 +151,7 @@
                     _priv.filters.citySearch,
                     function (r) {
                         $scope.resetCity();
-                        if (r === $scope.searcher.search) {
+                        if (r == $scope.searcher.search) {
                             $scope.customer.cityName = r;
                         } else {
                             $scope.customer.cityId = r.Id;

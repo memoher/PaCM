@@ -8,6 +8,8 @@
             return false;
         }
         
+
+        $scope.objectType = $stateParams.type;
         $scope.objectTypeLabel = null;
         switch ($stateParams.type)
         {
@@ -43,6 +45,11 @@
             objectTypeId: null,
             objectTypeDescription: null,
             objectTypeSearch: null
+        };
+
+        $scope.clearFilters = function () {
+            PaCM.cleaner($scope.filters);
+            $scope.resetHistory();
         };
         
         $scope.searchCustomer = function () {
