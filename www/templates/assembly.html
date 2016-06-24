@@ -185,13 +185,13 @@
                                         <span class="input-label"># {{ cr.cellOrder}}</span>
                                     </label>
                                 </div>
-                                <div class="col-40">
+                                <div class="col col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Volt.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.voltage" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
-                                <div class="col-40">
+                                <div class="col col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Dens.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.density" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
@@ -211,7 +211,7 @@
                 <form name="endingForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí los comentarios que desee ... " ng-readonly="readOnlyMode" ng-model="assembly.comments" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
+                            <textarea rows="15" placeholder="Por favor digite aquí los comentarios que desee ... " ng-readonly="readOnlyMode" ng-model="assembly.comments" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
                         </label>
                         <div class="button-bar">
                             <button type="button" class="button button-balanced" ng-click="save()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Guardar</button>

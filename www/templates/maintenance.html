@@ -197,7 +197,7 @@
                 <form name="workToBeDoneForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
+                            <textarea rows="15" placeholder="Por favor digite aquí la labor a realizar ..." required ng-readonly="readOnlyMode" ng-model="maintenance.workToBeDone" ng-model-options="{debounce: 250}" maxlength="5000"></textarea>
                         </label>
                     </div>
                 </form>
@@ -234,13 +234,13 @@
                                         <span class="input-label"># {{ cr.cellOrder}}</span>
                                     </label>
                                 </div>
-                                <div class="col-40">
+                                <div class="col col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Volt.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.voltage" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
-                                <div class="col-40">
+                                <div class="col col-40">
                                     <label class="item item-input">
                                         <span class="input-label">Dens.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.density" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
@@ -284,7 +284,7 @@
                 <form name="technicalReportForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <textarea rows="20" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()" maxlength="5000"></textarea>
+                            <textarea rows="15" placeholder="Por favor digite aquí los problemas detectados, el diagnóstico de la batería o el cargador, y las recomendaciones que el cliente se compromete a tener en cuenta ... " required ng-readonly="readOnlyMode" ng-model="maintenance.technicalReport" ng-model-options="{debounce: 250}" ng-change="tabs.refreshTabs()" maxlength="5000"></textarea>
                         </label>
                     </div>
                 </form>
