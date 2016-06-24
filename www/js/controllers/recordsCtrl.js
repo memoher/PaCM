@@ -33,6 +33,7 @@
         searcherPopup.initialize($scope);
         
         $scope.filters = {
+            enabledClearFilterButton: null,
             customerId: null,
             customerName: null,
             customerSearch: null,
@@ -80,6 +81,7 @@
                             $scope.filters.customerId = r.Id;
                             $scope.filters.customerName = r.Name;
                             $scope.filters.customerSearch = $scope.searcher.search;
+                            $scope.filters.enabledClearFilterButton = true;
                             $scope.resetObjectType();
                         }
                     });
@@ -133,6 +135,7 @@
                                 $scope.filters.objectTypeTrademarkId = r.Id;
                                 $scope.filters.objectTypeTrademarkName = r.Name;
                                 $scope.filters.objectTypeTrademarkSearch = $scope.searcher.search;
+                                $scope.filters.enabledClearFilterButton = true;
                                 $scope.resetObjectTypeModel();
                             }
                         });
@@ -196,6 +199,7 @@
                                 $scope.filters.objectTypeModelId = r.Id;
                                 $scope.filters.objectTypeModelName = r.Name;
                                 $scope.filters.objectTypeModelSearch = $scope.searcher.search;
+                                $scope.filters.enabledClearFilterButton = true;
                                 dbRepository.get('ObjectTypeTrademark', r.TrademarkId, function (t) {
                                     $scope.filters.objectTypeTrademarkId = t.Id;
                                     $scope.filters.objectTypeTrademarkName = t.Name;
@@ -254,6 +258,7 @@
                             $scope.filters.objectTypeId = r.Id;
                             $scope.filters.objectTypeDescription = r.Description;
                             $scope.filters.objectTypeSearch = $scope.searcher.search;
+                            $scope.filters.enabledClearFilterButton = true;
                             dbRepository.get('Customer', r.CustomerId, function (c) {
                                 $scope.filters.customerId = c.Id;
                                 $scope.filters.customerName = c.Name;

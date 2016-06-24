@@ -30,12 +30,14 @@
                 </div>
             </div>
         </form>
+        <div class="button-bar">
+            <button type="button" class="button button-energized button-block" ng-click="clearFilters()" ng-disabled="!(filters.enabledClearFilterButton) || runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
+            <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
+        </div>
         <div class="list">
-            <button type="button" class="item button button-energized button-block" ng-click="clearFilters()" ng-disabled="runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
             <div class="item item-divider">
               Registros
             </div>
-            <a ng-if="userSession.isEscolUser" class="item button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
             <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id}}">
                 {{ r.Date | date : 'dd/MM/yyyy' }} -> Mantenimiento 
                 {{ r.Preventive === true ? 'preventivo ' : '' }}

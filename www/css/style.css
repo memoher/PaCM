@@ -47,43 +47,56 @@
 
 /* INICIO INPUTS */
 
+/*Ini - Copy of ionic.css ".item-input input {}"*/
+.item.item-input.item-select select {
+    -webkit-border-radius: 0;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 220px;
+    -moz-box-flex: 1;
+    -moz-flex: 1 220px;
+    -ms-flex: 1 220px;
+    flex: 1 220px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+/*Fin - Copy of ionic.css ".item-input input {}"*/
+
 .item.item-input,
 .item.item-toggle {
     border: 0;
 }
 
+.item.item-input input,
+.item.item-input select,
+.item.item-input textarea {
+    max-width: 100%;
+    margin-bottom: 1px;
+    border-bottom: 1px solid lightblue;
+}
+.show-errors .item.item-input .ng-invalid {
+    border-bottom: 1px solid coral;
+}
+
+.item.item-input textarea {
+    border-top: 1px solid lightblue;
+}
+.show-errors .item.item-input textarea.ng-invalid {
+    border-top: 1px solid coral;
+}
+
 .item.item-input.item-select select {
     position: relative;
-    padding-left: 3px;
+    direction: ltr;
     text-align: left;
+    padding-left: 3px;
     width: 100%;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     height: 34px;
-    direction: inherit;
 }
 .item.item-input.item-select select[readonly],
 .item.item-input.item-select select[disabled] {
     background-color: #f8f8f8;
     cursor: not-allowed;
-}
-
-.item.item-input input,
-.item.item-input select,
-.item.item-input textarea {
-    margin-bottom: 1px;
-    border-bottom: 1px solid lightblue;
-}
-.item.item-input textarea {
-    border-top: 1px solid lightblue;
-}
-.show-errors .item.item-input .ng-invalid {
-    border-bottom: 1px solid coral;
-}
-.show-errors .item.item-input textarea.ng-invalid {
-    border-top: 1px solid coral;
 }
 
 input[readonly].selector-dialog:not(.cloned-text-input),
@@ -94,6 +107,7 @@ select[readonly].selector-dialog {
 }
 
 .list-inset .item.item-input input,
+/*.list-inset .item.item-input select,*/
 .list-inset .item.item-input textarea {
     padding-right: 0;
 }
