@@ -17,6 +17,7 @@
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="phonegap-version" value="cli-5.1.1" />
+  <preference name="fullscreen" value="false" />
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
@@ -25,7 +26,7 @@
   <preference name="SplashScreenDelay" value="3000"/>
   <preference name="android-minSdkVersion" value="14"/>
   <preference name="android-targetSdkVersion" value="22"/>
-  <preference name="android-windowSoftInputMode" value="adjustPan" />
+  <preference name="android-windowSoftInputMode" value="stateVisible|adjustPan" />
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
