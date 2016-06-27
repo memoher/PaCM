@@ -16,7 +16,7 @@
 /* INICIO PIE DE FORMULARIOS */
 
 .spacer.spacer-footer {
-    height: 50px;
+    height: 150px;
 }
 
 /* FIN PIE DE FORMULARIOS */
@@ -87,6 +87,10 @@
 
 .item.item-input.item-select select {
     position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
     direction: ltr;
     text-align: left;
     padding-left: 3px;
@@ -117,13 +121,15 @@ select[readonly].selector-dialog {
 
 /* INICIO FIRMA */
 
-.item.item-signature {
+.item.item-input.item-signature {
     background-color: lightgray;
     padding-left: 0;
     padding-right: 0;
 }
-.item.item-signature .input-signature {
+.item.item-input.item-signature .input-signature {
     background-color: white;
+    width: 400px;
+    height: 200px;
     margin: auto;
 }
 
