@@ -38,6 +38,10 @@
                     // This does not prevent any DOM elements from being able to scroll.
                     // That needs to happen from CSS and JavaScript, not this plugin. 
                     cordova.plugins.Keyboard.disableScroll(false);
+
+                    // If your app is running in fullscreen, i.e. you have <preference name="Fullscreen" value="true" />
+                    // in your config.xml file you will need to set ionic.Platform.isFullScreen = true manually.
+                    ionic.Platform.isFullScreen = true;
                 }
 
                 if (window.StatusBar) {
