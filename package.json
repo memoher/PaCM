@@ -1,6 +1,6 @@
 {
-  "name": "escolcorp-pacm",
-  "version": "0.0.5",
+  "name": "com.escolcorp.pacm",
+  "version": "0.0.6",
   "description": "Escolcorp PaCM: Preventive and corrective maintenance",
   "dependencies": {
     "gulp": "^3.5.6",
@@ -24,8 +24,9 @@
     "cordova-plugin-network-information"
   ],
   "cordovaPlatforms": [
-	"ios",
-	"android",
-	"wp8"
+    "ios",
+    "android",
+    "windows",
+    "wp8"
   ]
 }

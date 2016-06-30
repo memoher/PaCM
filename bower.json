@@ -2,9 +2,9 @@
   "name": "escolcorp-pacm",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.4"
+    "ionic": "driftyco/ionic-bower#1.3.1"
   },
   "dependencies": {
-    "signature_pad": "~1.5.2"
+    "signature_pad": "~1.5.3"
   }
 }
