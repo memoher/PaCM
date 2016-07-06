@@ -449,30 +449,34 @@
         };
         $scope.resetObjectType = function (applyForBattery) {
             if (applyForBattery === true) {
-                $scope.maintenance.batteryId = null;
-                $scope.battery.serial = null;
-                $scope.battery.customerReference = null;
-                $scope.battery.typeId = null;
-                $scope.battery.amperage = null;
-                $scope.battery.connectorTypeId = null;
-                $scope.battery.connectorColorRequired = null;
-                $scope.battery.connectorId = null;
-                $scope.battery.connectorColorId = null;
-                $scope.battery.standarBox = false;
-                $scope.battery.cover = false;
-                $scope.battery.drainHoles = false;
-                $scope.battery.minimunWeight = null;
-                $scope.battery.maximunWeight = null;
-                $scope.battery.length = null;
-                $scope.battery.width = null;
-                $scope.battery.handleHeight = null;
-                $scope.battery.boxHeight = null;
+                if ($scope.maintenance.batteryId) {
+                    $scope.maintenance.batteryId = null;
+                    $scope.battery.serial = null;
+                    $scope.battery.customerReference = null;
+                    $scope.battery.typeId = null;
+                    $scope.battery.amperage = null;
+                    $scope.battery.connectorTypeId = null;
+                    $scope.battery.connectorColorRequired = null;
+                    $scope.battery.connectorId = null;
+                    $scope.battery.connectorColorId = null;
+                    $scope.battery.standarBox = false;
+                    $scope.battery.cover = false;
+                    $scope.battery.drainHoles = false;
+                    $scope.battery.minimunWeight = null;
+                    $scope.battery.maximunWeight = null;
+                    $scope.battery.length = null;
+                    $scope.battery.width = null;
+                    $scope.battery.handleHeight = null;
+                    $scope.battery.boxHeight = null;
+                }
             } else {
-                $scope.maintenance.chargerId = null;
-                $scope.charger.serial = null;
-                $scope.charger.customerReference = null;
-                $scope.charger.voltage = null;
-                $scope.charger.amperage = null;
+                if ($scope.maintenance.chargerId) {
+                    $scope.maintenance.chargerId = null;
+                    $scope.charger.serial = null;
+                    $scope.charger.customerReference = null;
+                    $scope.charger.voltage = null;
+                    $scope.charger.amperage = null;
+                }
             }
             _priv.filters.objectTypeSearch = null;
             $scope.getMaintenanceInfo();
@@ -624,9 +628,11 @@
             });
         };
         $scope.resetMachine = function () {
-            $scope.maintenance.machineId = null;
-            $scope.machine.serial = null;
-            $scope.machine.customerReference = null;
+            if ($scope.maintenance.machineId) {
+                $scope.maintenance.machineId = null;
+                $scope.machine.serial = null;
+                $scope.machine.customerReference = null;
+            }
             _priv.filters.machineSearch = null;
         };
 
@@ -1160,6 +1166,7 @@
                 arr2.length = 0; arr2 = null;
                 PaCM.syncronizeArray(['checkId'], $scope.checkList, arr1);
                 arr1.length = 0; arr1 = null;
+                $scope.checkList.sort(function(a, b){return ((a.checkOrder == b.checkOrder) ? 0 : a.checkOrder < b.checkOrder) ? -1 : 1;});
             });
         };
         _priv.saveCheckList = function (onSuccess) {
@@ -1271,6 +1278,7 @@
                 arr2.length = 0; arr2 = null;
                 PaCM.syncronizeArray(['cellOrder'], $scope.reviewOfCells, arr1);
                 arr1.length = 0; arr1 = null;
+                $scope.reviewOfCells.sort(function(a, b){return ((a.cellOrder == b.cellOrder) ? 0 : a.cellOrder < b.cellOrder) ? -1 : 1;});
             });
         };
         _priv.saveReviewOfCells = function (onSuccess) {
@@ -1339,6 +1347,7 @@
                     });
                     PaCM.syncronizeArray(["id"], $scope.articlesOutputs, articles);
                     articles.length = 0; articles = null;
+                    $scope.articlesOutputs.sort(function(a, b){return ((a.articleName == b.articleName) ? 0 : a.articleName < b.articleName) ? -1 : 1;});
                     $scope.addArticle();
                 });
             } else {

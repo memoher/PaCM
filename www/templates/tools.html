@@ -6,7 +6,7 @@
                 Eventos
             </div>
             <div class="item item-console" ng-repeat="ci in entriesConsoleLog">
-                <p class="level-{{ci.level}}">{{ ci.dateTime | date : 'medium' }} -> {{ci.message}}</p>
+                <p class="level-{{ ci.level }}">{{ ci.dateTime | date : 'medium' }} -> {{ ci.message }}</p>
             </div>
         </div>
     </ion-content>

@@ -32,21 +32,19 @@
         </form>
         <div class="button-bar">
             <button type="button" class="button button-energized button-block" ng-click="clearFilters()" ng-disabled="!(filters.enabledClearFilterButton) || runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
-            <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="runningProcess || !(filters.objectTypeId)">Nuevo mantenimiento</a>
+            <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="!(filters.objectTypeId) || runningProcess">Nuevo mantenimiento</a>
         </div>
         <div class="list">
             <div class="item item-divider">
               Registros
             </div>
-            <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id}}">
+            <a class="item" ng-repeat="r in maintenances" href="#/maintenance/{{ r.Id }}">
                 {{ r.Date | date : 'dd/MM/yyyy' }} -> Mantenimiento 
                 {{ r.Preventive === true ? 'preventivo ' : '' }}
                 {{ r.Corrective === true ? 'correctivo ' : '' }}
             </a>
-            <a class="item" ng-repeat="r in assemblies" href="#/assembly/{{ r.Id}}">
-                {{ r.Date | date : 'dd/MM/yyyy' }} -> Ensamble 
-                {{ r.Preventive === true ? 'preventivo ' : '' }}
-                {{ r.Corrective === true ? 'correctivo ' : '' }}
+            <a class="item" ng-repeat="r in assemblies" href="#/assembly/{{ r.Id }}">
+                {{ r.Date | date : 'dd/MM/yyyy' }} -> Ensamble
             </a>
         </div>
     </ion-content>

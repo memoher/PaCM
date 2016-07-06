@@ -1,6 +1,6 @@
 <ion-modal-view>
     <ion-header-bar>
-        <h1 class="title">{{ searcher.title}}</h1>
+        <h1 class="title">{{ searcher.title }}</h1>
         <div class="buttons">
             <button class="button button-clear" ng-click="searcher.close()">Cerrar</button>
         </div>
@@ -16,7 +16,7 @@
         </form>
         <div class="list" ng-if="searcher.group == 1">
             <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name}}
+                {{ r.Name }}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </div>
             <button class="button button-assertive button-full" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
@@ -25,7 +25,7 @@
         </div>
         <div class="list" ng-if="searcher.group == 2">
             <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Description}}
+                {{ r.Description }}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </div>
             <button class="button button-assertive button-full" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">
@@ -34,13 +34,13 @@
         </div>
         <div class="list" ng-if="searcher.group == 3">
             <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name}} ({{ r.InventoryCode}})
+                {{ r.Name }} ({{ r.InventoryCode }})
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </div>
         </div>
         <div class="list" ng-if="searcher.group == 4">
             <div class="item item-icon-right" ng-repeat="r in searcher.dataFiltered" ng-click="searcher.select(r)">
-                {{ r.Name}}
+                {{ r.Name }}
                 <i class="icon ion-checkmark" ng-show="r.Selected"></i>
             </div>
             <button class="button button-assertive button-full" ng-show="searcher.showAddButton" ng-click="searcher.select(searcher.search)">

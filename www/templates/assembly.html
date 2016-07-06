@@ -5,7 +5,7 @@
       </ion-nav-back-button>
     </ion-nav-bar>
     <ion-tabs class="tabs-positive tabs-icon-top">
-        <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab}}" on-select="refreshTitle()">
+        <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="starterForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
@@ -34,7 +34,7 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab}}" on-select="refreshTitle()">
+        <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="batteryForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
@@ -117,7 +117,7 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab}}" on-select="refreshTitle()">
+        <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="chargerForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
@@ -150,7 +150,7 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab}}" on-select="refreshTitle()">
+        <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="suppliesForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
@@ -174,15 +174,15 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab}}" on-select="refreshTitle()">
+        <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="cellInspectionForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
-                        <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells| orderBy: 'cellOrder'">
+                        <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells">
                             <div class="row">
                                 <div class="col">
                                     <label class="item item-input">
-                                        <span class="input-label"># {{ cr.cellOrder}}</span>
+                                        <span class="input-label"># {{ cr.cellOrder }}</span>
                                     </label>
                                 </div>
                                 <div class="col col-40">
@@ -206,7 +206,7 @@
                 <div class="spacer spacer-footer"></div>
             </ion-scroll>
         </ion-tab>
-        <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab}}" on-select="refreshTitle()">
+        <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab }}" on-select="refreshTitle()">
             <ion-content scroll="false">
                 <form name="endingForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
