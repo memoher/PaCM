@@ -149,7 +149,7 @@
             fncs.length = 0; fncs = null;
             actions.length = 0; actions = null;
         },
-        prepareErrorMessage: function (err, msg) {
+        buildErrorMessage: function (err, msg) {
             var self = this;
 
             if (err) {
@@ -176,10 +176,16 @@
                 return msg;
             }
         },
+        showInfoMessage: function (msg) {
+            alert(msg);
+        },
+        showWarningMessage: function (msg) {
+            alert('ALERTA: ' + msg);
+        },
         showErrorMessage: function (err, msg) {
             var self = this;
 
-            alert(self.prepareErrorMessage(err, msg));
+            alert(self.buildErrorMessage(err, msg));
         },
         mergeArray: function (key, arr0, arr1) {
             var self = this;

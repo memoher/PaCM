@@ -19,7 +19,7 @@
                 function () {
                     $scope.runningProcess = false;
                     _priv.refreshUI();
-                    alert('Información sincronizada con éxito');
+                    PaCM.showInfoMessage('Información sincronizada con éxito');
                 },
                 function (err) {
                     $scope.runningProcess = false;
@@ -49,11 +49,9 @@
             $scope.$digest();
         };
         _priv.refreshUI = function () {
-            if (_priv.timeoutRefreshUI) {
-                clearTimeout(_priv.timeoutRefreshUI);
-                _priv.timeoutRefreshUI = null;
+            if (!(_priv.timeoutRefreshUI)) {
+                _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 50);
             }
-            _priv.timeoutRefreshUI = setTimeout(_priv._onRefreshUI, 100);
         }
 
 

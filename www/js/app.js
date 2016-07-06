@@ -5,9 +5,9 @@
 
     window.PaCM.constants = angular.module('pacmApp.constants', [])
         .constant("settings", {
-            //serverUrl: 'http://localhost:8100/api/'  // ionic server
-            serverUrl: 'http://190.84.254.33:18080/' // calidad
-            //serverUrl: 'http://75.149.186.74:18080/' // producción
+            //serverUrl: 'http://localhost:8100/api'  // ionic server
+            serverUrl: 'http://190.84.254.33:18080' // calidad
+            //serverUrl: 'http://75.149.186.74:18080' // producción
         });
 
     // PaCM Services
@@ -29,7 +29,7 @@
                 if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
                     // Hide the keyboard accessory bar with the next, previous and done buttons.
                     // (remove this to show the accessory bar above the keyboard for form inputs)
-                    cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+                    cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
 
                     // Prevent the native UIScrollView from moving when an input is focused.
                     // The telltale sign that this is happening is the top of your app scrolls out
@@ -72,6 +72,12 @@
 
             });
 
+        })
+        
+        .config(function ($ionicConfigProvider) {
+            
+            // Set the tabs in the bottom position
+            $ionicConfigProvider.tabs.position('bottom');
         })
 
         .config(function ($stateProvider, $urlRouterProvider) {

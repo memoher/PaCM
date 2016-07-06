@@ -63,7 +63,7 @@
                 fnc02 = null;
 
                 if (tablesForImport.length > 0) {
-                    $http.post(settings.serverUrl + 'SyncronizeData/GetData', {
+                    $http.post(settings.serverUrl + '/SyncronizeData/GetData', {
                         tables: tablesForImport,
                         records: localData
                     }).then(function (response) {
@@ -177,7 +177,7 @@
                 fnc02 = null;
 
                 if (localData.length > 0) {
-                    $http.post(settings.serverUrl + 'SyncronizeData/SetData', {
+                    $http.post(settings.serverUrl + '/SyncronizeData/SetData', {
                         records: localData
                     }).then(function (response) {
                         fnc03(response.data);
@@ -244,7 +244,7 @@
 		                		onSucess();
 		                },
 		                function (err) {
-		                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+		                	onRuningFnc(1, PaCM.buildErrorMessage(err, 'Errores durante el proceso: '));
 
 		                	if (PaCM.isFunction(onError))
 		                		onError();
@@ -252,7 +252,7 @@
 		                debugMode);
                 },
                 function (err) {
-                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+                	onRuningFnc(1, PaCM.buildErrorMessage(err, 'Errores durante el proceso: '));
 
 					onRuningFnc(3, 'Descargando datos nuevos del servidor');
                     importData(
@@ -266,7 +266,7 @@
 		                		onError();
 		                },
 		                function (err) {
-		                	onRuningFnc(1, PaCM.prepareErrorMessage(err, 'Errores durante el proceso: '));
+		                	onRuningFnc(1, PaCM.buildErrorMessage(err, 'Errores durante el proceso: '));
 
 		                	if (PaCM.isFunction(onError))
 		                		onError();

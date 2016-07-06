@@ -219,7 +219,7 @@
                 dbSynchronizer.run(function () { }, function () { });
                 $scope.runningProcess = false;
                 _priv.refreshUI();
-                alert('Registro guardado con éxito');
+                PaCM.showInfoMessage('Registro guardado con éxito');
                 
                 if (!(typeof $state.params.redirectTo === 'undefined')) {
                     var params = {
@@ -331,11 +331,9 @@
             $scope.$digest();
         }
         _priv.refreshUI = function () {
-            if (_priv.timeoutRefreshUI) {
-                clearTimeout(_priv.timeoutRefreshUI);
-                _priv.timeoutRefreshUI = null;
+            if (!(_priv.timeoutRefreshUI)) {
+                _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 50);
             }
-            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
 
 

@@ -11,6 +11,9 @@
 
         var _priv = {}; //Objeto en el que se declaran todas las funciones, objetos, arrays y demas de uso privado
 
+        _priv.systemDate = new Date();
+        $scope.minDate = new Date(_priv.systemDate.getFullYear() - 2, _priv.systemDate.getMonth(), _priv.systemDate.getDate());
+        $scope.maxDate = new Date(_priv.systemDate.getFullYear(), _priv.systemDate.getMonth(), _priv.systemDate.getDate() + 1);
         $scope.runningProcess = false;
 
         $scope.myGoBack = function () {
@@ -1417,7 +1420,7 @@
                 f = forms[i];
                 if (f.classList.contains('ng-invalid') === true) {
                     $scope.tabs.selectTab(f.getAttribute('name').replace('Form', 'Tab'));
-                    alert('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
+                    PaCM.showWarningMessage('Faltan datos obligatorios o tiene algun error. Por favor revise antes de continuar...');
                     return false; //break
                 }
             }
@@ -1462,7 +1465,7 @@
                 dbSynchronizer.run(function () { }, function () { });
                 $scope.runningProcess = false;
                 _priv.refreshUI();
-                alert('Registro guardado con éxito');
+                PaCM.showInfoMessage('Registro guardado con éxito');
                 $scope.myGoBack();
             });
         };
@@ -1600,11 +1603,9 @@
             $scope.$digest();
         };
         _priv.refreshUI = function () {
-            if (_priv.timeoutRefreshUI) {
-                clearTimeout(_priv.timeoutRefreshUI);
-                _priv.timeoutRefreshUI = null;
+            if (!(_priv.timeoutRefreshUI)) {
+                _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 50);
             }
-            _priv.timeoutRefreshUI = setTimeout(_priv.onRefreshUI, 100);
         }
 
 

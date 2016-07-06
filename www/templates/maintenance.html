@@ -4,14 +4,14 @@
         <i class="ion-arrow-left-c"></i> Inicio
       </ion-nav-back-button>
     </ion-nav-bar>
-    <ion-tabs class="tabs-positive tabs-icon-top">
+    <ion-tabs class="tabs-positive tabs-icon-top tabs-hide-on-keyboard-open">
         <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab }}" on-select="refreshTitle()">
             <ion-scroll>
                 <form name="starterForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
                             <span class="input-label">Fecha</span>
-                            <input type="date" required ng-readonly="readOnlyMode" ng-model="maintenance.date" ng-model-options="{updateOn: 'blur'}">
+                            <input type="date" required ng-readonly="readOnlyMode" ng-model="maintenance.date" ng-model-options="{updateOn: 'blur'}" min="{{ minDate | date:'yyyy-MM-dd' }}" max="{{ maxDate | date:'yyyy-MM-dd' }}">
                         </label>
                         <label class="item item-input">
                             <span class="input-label">Cliente</span>

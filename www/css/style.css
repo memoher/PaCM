@@ -9,6 +9,9 @@
 .tab-item.tab-item-active {
     background-color: #FFBF00;
 }
+.keyboard-open .tabs-hide-on-keyboard-open > .tabs {
+    display: none;
+}
 
 /* FIN TAB PANEL */
 
