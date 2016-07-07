@@ -1,9 +1,9 @@
 <ion-view title="Bienvenido">
-    <ion-content class="has-header" padding="true">
+    <ion-content padding="false" class="has-header">
         <img src="img/escol.png" style="width:64%;" />
         <img src="img/midac1.png" style="width:34%;" />
         <form name="loginForm" ng-class="{'show-errors': showErrors}" ng-submit="sigIn()">
-            <div class="list">
+            <div class="list list-inset">
                 <label class="item item-input">
                     <span class="input-label">Correo electrónico</span>
                     <input type="email" ng-model="login.emailAddress" ng-model-options="{updateOn: 'blur'}" required>

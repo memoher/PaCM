@@ -4,14 +4,14 @@
 /* INICIO TAB PANEL */
 
 .tab-content {
-    top:45px;
+    top: 40px;
 }
 .tab-item.tab-item-active {
     background-color: #FFBF00;
 }
-.keyboard-open .tabs-hide-on-keyboard-open > .tabs {
+/*.keyboard-open .tabs-hide-on-keyboard-open > .tabs {
     display: none;
-}
+}*/
 
 /* FIN TAB PANEL */
 
@@ -66,7 +66,8 @@
 /*Fin - Copy of ionic.css ".item-input input {}"*/
 
 .item.item-input,
-.item.item-toggle {
+.item.item-toggle,
+.item.no-borders {
     border: 0;
 }
 
@@ -154,7 +155,12 @@ select[readonly].selector-dialog {
 .item.no-padding {
     padding-top: 0;
     padding-bottom: 0;
+}
+.item.no-padding:not(.item-icon-left):not(.item-button-left):not(.item-thumbnail-left):not(.item-avatar-left):not(.item-checkbox-left) {
     padding-left: 0;
+}
+.item.no-padding:not(.item-icon-right):not(.item-button-right):not(.item-thumbnail-right):not(.item-avatar-right):not(.item-checkbox-right) {
+    padding-right: 0;
 }
 .item.no-padding .row,
 .item.no-padding .row .col {

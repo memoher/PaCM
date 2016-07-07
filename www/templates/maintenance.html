@@ -6,7 +6,7 @@
     </ion-nav-bar>
     <ion-tabs class="tabs-positive tabs-icon-top tabs-hide-on-keyboard-open">
         <ion-tab title="Cliente" icon="ion-calendar" hidden="{{ !tabs.starterTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="starterForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -34,10 +34,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Batería" icon="ion-battery-charging" hidden="{{ !tabs.batteryTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="batteryForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -117,10 +117,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Cargador" icon="ion-flash" hidden="{{ !tabs.chargerTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="chargerForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -150,10 +150,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Máquina" icon="ion-gear-a" hidden="{{ !tabs.machineTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="machineForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -190,10 +190,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Labor" icon="ion-hammer" hidden="{{ !tabs.workToBeDoneTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="workToBeDoneForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -202,10 +202,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Inspección" icon="ion-clipboard" hidden="{{ !tabs.physicalInspectionTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="physicalInspectionForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cl in checkList">
@@ -221,10 +221,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Celdas" icon="ion-battery-empty" hidden="{{ !tabs.cellInspectionTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="cellInspectionForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells">
@@ -253,10 +253,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Insumos" icon="ion-medkit" hidden="{{ !tabs.suppliesTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="suppliesForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <div class="item no-padding" ng-class="{'item-icon-right': !readOnlyMode}" ng-repeat="ao in articlesOutputs">
@@ -277,10 +277,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Reporte" icon="ion-compose" hidden="{{ !tabs.technicalReportTab }}" on-select="refreshTitle()">
-            <ion-scroll>
+            <ion-content padding="false">
                 <form name="technicalReportForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
@@ -289,10 +289,10 @@
                     </div>
                 </form>
                 <div class="spacer spacer-footer"></div>
-            </ion-scroll>
+            </ion-content>
         </ion-tab>
         <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab }}" on-select="refreshTitle()">
-            <ion-content scroll="false">
+            <ion-content padding="false" scroll="false">
                 <form name="endingForm" class="maintenance-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">

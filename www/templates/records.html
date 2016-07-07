@@ -1,40 +1,46 @@
 <ion-view view-title="Historial de {{ objectTypeLabel }}">
-    <ion-content class="has-header" padding="true">
+    <ion-content padding="false" class="has-header">
         <form name="recordsForm" ng-class="{'show-errors': showErrors}">
-            <div class="row responsive-sm">
-                <div class="col">
-                    <label class="item item-input">
-                        <span class="input-label">Cliente</span>
-                        <input type="text" class="selector-dialog" required readonly ng-model="filters.customerName" ng-focus="searchCustomer()">
-                    </label>
+            <div class="list list-inset">
+                <div class="item no-padding no-borders">
+                    <div class="row responsive-sm">
+                        <div class="col">
+                            <label class="item item-input">
+                                <span class="input-label">Cliente</span>
+                                <input type="text" class="selector-dialog" required readonly ng-model="filters.customerName" ng-focus="searchCustomer()">
+                            </label>
+                        </div>
+                        <div class="col">
+                            <label class="item item-input">
+                                <span class="input-label">Marca</span>
+                                <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    <label class="item item-input">
-                        <span class="input-label">Marca</span>
-                        <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeTrademarkName" ng-focus="searchObjectTypeTrademark()">
-                    </label>
+                <div class="item no-padding no-borders">
+                    <div class="row responsive-sm">
+                        <div class="col">
+                            <label class="item item-input">
+                                <span class="input-label">Modelo</span>
+                                <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeModelName" ng-focus="searchObjectTypeModel()">
+                            </label>
+                        </div>
+                        <div class="col">
+                            <label class="item item-input">
+                                <span class="input-label">{{ objectTypeLabel }}</span>
+                                <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeDescription" ng-focus="searchObjectType(recordsForm.$valid)">
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row responsive-sm">
-                <div class="col">
-                    <label class="item item-input">
-                        <span class="input-label">Modelo</span>
-                        <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeModelName" ng-focus="searchObjectTypeModel()">
-                    </label>
-                </div>
-                <div class="col">
-                    <label class="item item-input">
-                        <span class="input-label">{{ objectTypeLabel }}</span>
-                        <input type="text" class="selector-dialog" readonly ng-model="filters.objectTypeDescription" ng-focus="searchObjectType(recordsForm.$valid)">
-                    </label>
-                </div>
+                <div class="button-bar">
+                    <button type="button" class="button button-energized button-block" ng-click="clearFilters()" ng-disabled="!(filters.enabledClearFilterButton) || runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
+                    <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="!(filters.objectTypeId) || runningProcess">Nuevo mantenimiento</a>
+                </div> 
             </div>
         </form>
-        <div class="button-bar">
-            <button type="button" class="button button-energized button-block" ng-click="clearFilters()" ng-disabled="!(filters.enabledClearFilterButton) || runningProcess" ng-hide="readOnlyMode">Limpiar filtros</button>
-            <a ng-if="userSession.isEscolUser" class="button button-positive button-block" href="#/new-maintenance/{{ objectType }}/{{ filters.customerId }}/{{ filters.objectTypeId }}" ng-disabled="!(filters.objectTypeId) || runningProcess">Nuevo mantenimiento</a>
-        </div>
-        <div class="list">
+        <div class="list list-inset">
             <div class="item item-divider">
               Registros
             </div>

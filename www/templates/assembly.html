@@ -207,7 +207,7 @@
             </ion-scroll>
         </ion-tab>
         <ion-tab title="Visto bueno" icon="ion-checkmark" hidden="{{ !tabs.endingTab }}" on-select="refreshTitle()">
-            <ion-content scroll="false">
+            <ion-content padding="false" scroll="false">
                 <form name="endingForm" class="assembly-form" ng-class="{'show-errors': !readOnlyMode}">
                     <div class="list list-inset">
                         <label class="item item-input">
