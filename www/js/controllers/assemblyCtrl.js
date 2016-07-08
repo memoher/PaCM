@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    PaCM.controllers.controller('assemblyCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, userSession, dbRepository, dbSynchronizer, searcherPopup, notesPopup) {
+    PaCM.controllers.controller('assemblyCtrl', function ($scope, $state, $stateParams, $ionicHistory, $ionicTabsDelegate, userSession, dbRepository, dbSynchronizer, searcherModal, notesModal) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -99,10 +99,10 @@
         //---------------------------------------------------------------------------------------------------------
 
         // Create the modal popup notes
-        notesPopup.initialize($scope);
+        notesModal.initialize($scope);
         
         // Create the modal popup searcher
-        searcherPopup.initialize($scope);
+        searcherModal.initialize($scope);
         
         _priv.filters = {
             customerSearch: null,

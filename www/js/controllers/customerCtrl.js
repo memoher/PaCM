@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, dbSynchronizer, searcherPopup) {
+    PaCM.controllers.controller('customerCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, dbSynchronizer, searcherModal) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -24,7 +24,7 @@
 
         // Dialogos de selección
 
-        searcherPopup.initialize($scope);
+        searcherModal.initialize($scope);
         
         _priv.filters = {
             countrySearch: null,

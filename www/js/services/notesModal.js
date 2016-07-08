@@ -3,13 +3,13 @@
     
     // Servicio que permite el trabajo con el popup de notas
 
-    PaCM.services.factory('notesPopup', function ($ionicModal) {
+    PaCM.services.factory('notesModal', function ($ionicModal) {
         
         return {
             initialize: function ($scope) {
 
                 // Create the modal popup notes
-                $ionicModal.fromTemplateUrl('templates/notesPopup.html', {
+                $ionicModal.fromTemplateUrl('templates/notesModal.html', {
                     scope: $scope,
                     focusFirstInput: false
                 }).then(function(modal) {

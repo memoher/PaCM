@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     
-    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherPopup) {
+    PaCM.controllers.controller('recordsCtrl', function ($scope, $state, $stateParams, userSession, dbRepository, searcherModal) {
 
         if (!(userSession.isLogged === true)) {
             $state.go('login');
@@ -30,7 +30,7 @@
         $scope.showErrors = false;
         
         // Create the modal popup searcher
-        searcherPopup.initialize($scope);
+        searcherModal.initialize($scope);
         
         $scope.filters = {
             enabledClearFilterButton: null,

@@ -3,7 +3,7 @@
     
     // Servicio que permite el trabajo con el popup de busquedas
 
-    PaCM.services.factory('searcherPopup', function ($ionicModal, $filter) {
+    PaCM.services.factory('searcherModal', function ($ionicModal, $filter) {
 
         var STRING_EMPTY = '';
         
@@ -11,7 +11,7 @@
             initialize: function ($scope) {
 
                 // Create the modal popup searcher
-                $ionicModal.fromTemplateUrl('templates/searcherPopup.html', {
+                $ionicModal.fromTemplateUrl('templates/searcherModal.html', {
                     scope: $scope,
                     focusFirstInput: false
                 }).then(function(modal) {

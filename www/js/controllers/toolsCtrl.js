@@ -44,7 +44,7 @@
 
 
         _priv.timeoutRefreshUI = null;
-        _priv._onRefreshUI = function () {
+        _priv.onRefreshUI = function () {
             _priv.timeoutRefreshUI = null;
             $scope.$digest();
         };
