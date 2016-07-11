@@ -67,6 +67,8 @@
 
 .item.item-input,
 .item.item-toggle,
+.item.item-checkbox,
+.item.item-radio,
 .item.no-borders {
     border: 0;
 }

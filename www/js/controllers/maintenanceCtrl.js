@@ -1176,21 +1176,17 @@
 
             var _saveFnc = function (c) {
                 return function (onSuccess) {
-                    if (c.diagnosticId) {
-                        var mc = {
-                            MaintenanceId: $scope.maintenance.id,
-                            CheckId: c.checkId,
-                            DiagnosticId: c.diagnosticId,
-                            Comments: c.comments
-                        };
-                        dbRepository.save('MaintenanceCheck', c.id, mc, function () {
-                            c.id = mc.Id;
-                            PaCM.cleaner(mc); mc = null;
-                            onSuccess();
-                        }, _priv.onSqlError);
-                    } else {
+                    var mc = {
+                        MaintenanceId: $scope.maintenance.id,
+                        CheckId: c.checkId,
+                        DiagnosticId: c.diagnosticId,
+                        Comments: c.comments
+                    };
+                    dbRepository.save('MaintenanceCheck', c.id, mc, function () {
+                        c.id = mc.Id;
+                        PaCM.cleaner(mc); mc = null;
                         onSuccess();
-                    }
+                    }, _priv.onSqlError);
                 };
             };
 
@@ -1227,7 +1223,9 @@
                             cellId: null,
                             cellOrder: i,
                             voltage: null,
+                            withVoltage: true,
                             density: null,
+                            withDensity: true,
                             comments: null
                         });
                     }
@@ -1245,7 +1243,9 @@
                                 cellId: c.Id,
                                 cellOrder: c.Order,
                                 voltage: null,
+                                withVoltage: true,
                                 density: null,
+                                withDensity: true,
                                 comments: null
                             });
                         });
@@ -1264,7 +1264,9 @@
                                 cellId: cr.CellId,
                                 cellOrder: cr.CellOrder,
                                 voltage: cr.Voltage,
+                                withVoltage: cr.WithVoltage,
                                 density: cr.Density,
+                                withDensity: cr.WithDensity,
                                 comments: cr.Comments
                             });
                         });
@@ -1302,22 +1304,20 @@
 
             var _saveFnc02 = function (c) {
                 return function (onSuccess) {
-                    if (c.voltage && c.density) {
-                        var cr = {
-                            MaintenanceId: $scope.maintenance.id,
-                            CellId: c.cellId,
-                            Voltage: c.voltage,
-                            Density: c.density,
-                            Comments: c.comments
-                        };
-                        dbRepository.save('CellReview', c.id, cr, function () {
-                            c.id = cr.Id;
-                            PaCM.cleaner(cr); cr = null;
-                            onSuccess();
-                        }, _priv.onSqlError);
-                    } else {
+                    var cr = {
+                        MaintenanceId: $scope.maintenance.id,
+                        CellId: c.cellId,
+                        Voltage: (c.withVoltage) ? c.voltage : null,
+                        WithVoltage: (c.withVoltage),
+                        Density: (c.withDensity) ? c.density : null,
+                        WithDensity: (c.withDensity),
+                        Comments: c.comments
+                    };
+                    dbRepository.save('CellReview', c.id, cr, function () {
+                        c.id = cr.Id;
+                        PaCM.cleaner(cr); cr = null;
                         onSuccess();
-                    }
+                    }, _priv.onSqlError);
                 };
             };
 
@@ -1382,20 +1382,16 @@
 
             var _saveFnc01 = function (a) {
                 return function (onSuccess) {
-                    if (a.articleId && a.quantity) {
-                        var ao = {
-                            MaintenanceId: $scope.maintenance.id,
-                            ArticleId: a.articleId,
-                            Quantity: a.quantity
-                        };
-                        dbRepository.save('ArticleOutput', a.id, ao, function () {
-                            a.id = ao.Id;
-                            PaCM.cleaner(ao); ao = null;
-                            onSuccess();
-                        }, _priv.onSqlError);
-                    } else {
+                    var ao = {
+                        MaintenanceId: $scope.maintenance.id,
+                        ArticleId: a.articleId,
+                        Quantity: a.quantity
+                    };
+                    dbRepository.save('ArticleOutput', a.id, ao, function () {
+                        a.id = ao.Id;
+                        PaCM.cleaner(ao); ao = null;
                         onSuccess();
-                    }
+                    }, _priv.onSqlError);
                 };
             };
 

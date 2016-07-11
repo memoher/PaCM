@@ -82,9 +82,9 @@
                                 <option value=""> </option>
                             </select>
                         </label>
-                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.standardBox" ng-change="battery.standardBox = readOnlyMode ? !battery.standardBox : battery.standardBox">Caja estandar</ion-toggle>
-                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.cover" ng-change="battery.cover = readOnlyMode ? !battery.cover : battery.cover">Tapa</ion-toggle>
-                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.drainHoles" ng-change="battery.drainHoles = readOnlyMode ? !battery.drainHoles : battery.drainHoles">Agujeros de drenaje</ion-toggle>
+                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.standardBox" ng-disabled="readOnlyMode">Caja estandar</ion-toggle>
+                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.cover" ng-disabled="readOnlyMode">Tapa</ion-toggle>
+                        <ion-toggle toggle-class="toggle-positive" ng-model="battery.drainHoles" ng-disabled="readOnlyMode">Agujeros de drenaje</ion-toggle>
                         <label class="item item-input">
                             <span class="input-label">Peso mínimo (kg)</span>
                             <input type="number" min="0.00" max="9999.99" ng-readonly="readOnlyMode" ng-model="battery.minimunWeight" ng-model-options="{updateOn: 'blur'}">
@@ -180,18 +180,18 @@
                     <div class="list list-inset">
                         <div class="item item-icon-right no-padding" ng-repeat="cr in reviewOfCells">
                             <div class="row">
-                                <div class="col">
+                                <div class="col col-10">
                                     <label class="item item-input">
                                         <span class="input-label"># {{ cr.cellOrder }}</span>
                                     </label>
                                 </div>
-                                <div class="col col-40">
+                                <div class="col">
                                     <label class="item item-input">
                                         <span class="input-label">Volt.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.voltage" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">
                                     </label>
                                 </div>
-                                <div class="col col-40">
+                                <div class="col">
                                     <label class="item item-input">
                                         <span class="input-label">Dens.</span>
                                         <input type="number" min="0.00" max="9999.99" ng-model="cr.density" ng-model-options="{updateOn: 'blur'}" required ng-readonly="readOnlyMode">

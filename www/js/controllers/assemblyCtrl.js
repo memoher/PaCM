@@ -905,22 +905,20 @@
 
             var _saveFnc02 = function (c) {
                 return function (onSuccess) {
-                    if (c.voltage && c.density) {
-                        var cr = {
-                            AssemblyId: $scope.assembly.id,
-                            CellId: c.cellId,
-                            Voltage: c.voltage,
-                            Density: c.density,
-                            Comments: c.comments
-                        };
-                        dbRepository.save('CellReview', c.id, cr, function () {
-                            c.id = cr.Id;
-                            PaCM.cleaner(cr); cr = null;
-                            onSuccess();
-                        }, _priv.onSqlError);
-                    } else {
+                    var cr = {
+                        AssemblyId: $scope.assembly.id,
+                        CellId: c.cellId,
+                        Voltage: c.voltage,
+                        WithVoltage: true,
+                        Density: c.density,
+                        WithDensity: true,
+                        Comments: c.comments
+                    };
+                    dbRepository.save('CellReview', c.id, cr, function () {
+                        c.id = cr.Id;
+                        PaCM.cleaner(cr); cr = null;
                         onSuccess();
-                    }
+                    }, _priv.onSqlError);
                 };
             };
 
@@ -983,20 +981,16 @@
 
             var _saveFnc01 = function (a) {
                 return function (onSuccess) {
-                    if (a.articleId && a.quantity) {
-                        var ao = {
-                            AssemblyId: $scope.assembly.id,
-                            ArticleId: a.articleId,
-                            Quantity: a.quantity
-                        };
-                        dbRepository.save('ArticleOutput', a.id, ao, function () {
-                            a.id = ao.Id;
-                            PaCM.cleaner(ao); ao = null;
-                            onSuccess();
-                        }, _priv.onSqlError);
-                    } else {
+                    var ao = {
+                        AssemblyId: $scope.assembly.id,
+                        ArticleId: a.articleId,
+                        Quantity: a.quantity
+                    };
+                    dbRepository.save('ArticleOutput', a.id, ao, function () {
+                        a.id = ao.Id;
+                        PaCM.cleaner(ao); ao = null;
                         onSuccess();
-                    }
+                    }, _priv.onSqlError);
                 };
             };
 
