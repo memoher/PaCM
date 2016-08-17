@@ -7,7 +7,7 @@
         .constant("settings", {
             //serverUrl: 'http://localhost:8100/api'  // ionic server
             //serverUrl: 'http://190.84.254.33:18080' // calidad
-            serverUrl: 'http://75.149.186.74:18080' // producción
+            serverUrl: 'http://escolserver.dyndns.org:18080' // producción
         });
 
     // PaCM Services
